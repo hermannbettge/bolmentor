@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg-deep: #0d1b2a;
+  --color-bg-section: #112240;
+  --color-bg-card: #162032;
+  --color-bg-light: #1a2a42;
+  --color-gold: #B8975A;
+  --color-gold-light: #D4AF72;
+  --color-gold-muted: #8B6E3E;
+  --color-text-primary: #E8E8E8;
+  --color-text-muted: #8899AA;
+  --color-white: #FFFFFF;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg-deep);
+  color: var(--color-text-primary);
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: 0.95rem;
+  line-height: 1.85;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Typography helpers */
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-gold-muted);
+}
+
+.headline-display {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  color: var(--color-gold);
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.headline-section {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  color: var(--color-gold);
+  line-height: 1.3;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid rgba(139, 110, 62, 0.3);
+  margin: 0;
+}
+
+/* Section padding */
+.section-pad {
+  padding: 80px 24px;
+}
+
+@media (max-width: 768px) {
+  .section-pad {
+    padding: 48px 20px;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold-muted);
+  border-radius: 3px;
+}
+
+/* Prose styling for analysis content */
+.analysis-content h2 {
+  color: var(--color-gold);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(139, 110, 62, 0.3);
+}
+
+.analysis-content p {
+  color: var(--color-text-primary);
+  font-weight: 300;
+  line-height: 1.85;
+  margin-bottom: 1rem;
+}
+
+/* Pulse animation for loading */
+@keyframes pulse-gold {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.pulse-gold {
+  animation: pulse-gold 2s ease-in-out infinite;
+}
+
+/* Accordion transition */
+.accordion-content {
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
