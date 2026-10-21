@@ -442,47 +442,6 @@ Tiefe Partnerschaftsanalyse, jeder Abschnitt 4–6 Absätze:
 
 Mindestens 3000 Wörter.`,
 
-    compatibility: (() => {
-      let partnerKin = null
-      if (extraData?.birthDate) {
-        try {
-          const parts = extraData.birthDate.split('.')
-          const iso = `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`
-          partnerKin = calculateKinFromDate(iso)
-        } catch {}
-      }
-      return `Du bist ein weltklasse Maya-Kalender-Experte. Erstelle eine vollständige Partner-Kompatibilitäts-Analyse auf Deutsch.
-${SYSTEM_RULES}
-
-PERSON 1: ${name}
-Geburts-Kin: ${kin}
-Lebensthema: ${theme}
-
-PERSON 2 (Partner):
-Geburtsdatum: ${extraData?.birthDate || 'unbekannt'}
-${partnerKin ? `Geburts-Kin: Kin ${partnerKin.kin} – ${partnerKin.tone} ${partnerKin.seal}` : ''}
-
-Tiefe Kompatibilitätsanalyse, jeder Abschnitt 4–6 Absätze:
-
-## EURE ENERGETISCHE GRUNDKOMPATIBILITÄT
-## WAS EUCH MAGISCH ANZIEHT
-## EURE KOMMUNIKATIONSDYNAMIK
-## WO IHR EUCH GEGENSEITIG HERAUSFORDERT
-## KOMPLEMENTÄRE KRÄFTE & SYNERGIEN
-## EURE TIEFSTEN GEMEINSAMKEITEN
-## POTENZIELLE KONFLIKTZONEN
-## EURE SEXUELLE & KÖRPERLICHE CHEMIE
-## GEMEINSAME LEBENSZIELE & VISIONEN
-## WACHSTUM DURCH DIESE BEZIEHUNG
-## EURE GEMEINSAME SEELENMISSION
-## ALLTAGSKOMPATIBILITÄT & LEBENSGESTALTUNG
-## LANGZEITPOTENZIAL DER BEZIEHUNG
-## EMPFEHLUNGEN FÜR EURE PARTNERSCHAFT
-## INDIVIDUELLE RATSCHLÄGE FÜR BEIDE
-## AFFIRMATION FÜR EUER PAAR
-
-Mindestens 3000 Wörter.`
-    })(),
   }
 
   return prompts[type]

@@ -19,7 +19,6 @@ const PRODUCT_MAP = {
   career: { type: 'analysis', key: 'career' },
   lifephases: { type: 'analysis', key: 'lifephases' },
   partnership: { type: 'analysis', key: 'partnership' },
-  compatibility: { type: 'analysis', key: 'compatibility' },
 }
 
 function verifySignature(payload, signature, secret) {
