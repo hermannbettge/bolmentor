@@ -13,7 +13,7 @@ const TEXT_LIGHT = 'var(--text-2)'
 const LABELS = {
   business: 'Business-Analyse', health: 'Gesundheitsanalyse', family: 'Familienanalyse',
   selfexpression: 'Selbstausdruck-Analyse', finance: 'Finanzanalyse', career: 'Karriere-Analyse',
-  lifephases: 'Lebensphasen-Analyse', partnership: 'Partnerschaftsanalyse', compatibility: 'Partner-Kompatibilität',
+  lifephases: 'Lebensphasen-Analyse', partnership: 'Partnerschaftsanalyse',
 }
 
 export default function AnalysePage() {

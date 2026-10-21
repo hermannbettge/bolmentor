@@ -14,7 +14,6 @@ const ANALYSES = [
   { key: 'career', icon: '🎯', title: 'Karriere-Analyse', description: 'Dein beruflicher Weg und deine Berufung', tcLink: '#tc-career' },
   { key: 'lifephases', icon: '📅', title: 'Lebensphasen', description: 'Die wichtigsten Jahre deines Lebens', tcLink: '#tc-lifephases', hasModal: true },
   { key: 'partnership', icon: '💫', title: 'Partnerschaftsanalyse', description: 'Du in Beziehungen', tcLink: '#tc-partnership' },
-  { key: 'compatibility', icon: '💑', title: 'Partner-Kompatibilität', description: 'Ihr als Paar', tcLink: '#tc-compatibility', hasModal: true },
 ]
 
 function LifephasesModal({ onClose, onSubmit }) {

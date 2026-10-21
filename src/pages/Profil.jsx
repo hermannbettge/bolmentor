@@ -13,7 +13,7 @@ const BORDER = 'rgba(42,32,24,0.12)'
 const ANALYSE_LABELS = {
   business: 'Business-Analyse', health: 'Gesundheitsanalyse', family: 'Familienanalyse',
   selfexpression: 'Selbstausdruck-Analyse', finance: 'Finanzanalyse', career: 'Karriere-Analyse',
-  lifephases: 'Lebensphasen-Analyse', partnership: 'Partnerschaftsanalyse', compatibility: 'Partner-Kompatibilität',
+  lifephases: 'Lebensphasen-Analyse', partnership: 'Partnerschaftsanalyse',
 }
 
 function Field({ label, value, onChange, type = 'text', placeholder = '', required = false }) {

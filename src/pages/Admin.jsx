@@ -12,7 +12,6 @@ const ANALYSIS_TYPES = [
   { key: 'career', label: 'Karriere' },
   { key: 'lifephases', label: 'Lebensphasen' },
   { key: 'partnership', label: 'Partnerschaft' },
-  { key: 'compatibility', label: 'Kompatibilität' },
 ]
 
 async function apiCall(path, method = 'GET', body = null) {

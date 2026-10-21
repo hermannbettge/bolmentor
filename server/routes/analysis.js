@@ -592,7 +592,7 @@ router.post('/monthly', requireAuth, async (req, res) => {
 })
 
 // Special analyses
-const SPECIAL_TYPES = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership', 'compatibility']
+const SPECIAL_TYPES = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership']
 
 SPECIAL_TYPES.forEach(type => {
   router.post(`/${type}`, requireAuth, async (req, res) => {
