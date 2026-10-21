@@ -19,7 +19,7 @@ function ProtectedRoute({ children }) {
     return (
       <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg-deep)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ color: 'var(--color-gold)', fontSize: '0.85rem', letterSpacing: '0.1em' }} className="pulse-gold">
-          BEWUSSTSEIN.OHNE.LIMIT.
+          BEWUSSTSEIN.OHNE.LIMIT
         </div>
       </div>
     )

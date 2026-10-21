@@ -78,7 +78,7 @@ export default function Registrieren() {
       <div style={{ width: '100%', maxWidth: '420px' }}>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <div style={{ color: 'var(--color-gold)', fontSize: '0.85rem', fontWeight: 500, letterSpacing: '0.15em', marginBottom: '24px' }}>
-            BEWUSSTSEIN.OHNE.LIMIT.
+            BEWUSSTSEIN.OHNE.LIMIT
           </div>
           <h1 style={{ color: 'var(--color-gold)', fontWeight: 300, fontSize: '1.8rem', margin: 0 }}>
             Dein Maya Profil erstellen

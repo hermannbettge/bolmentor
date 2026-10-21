@@ -16,7 +16,7 @@ export default function Footer() {
           letterSpacing: '0.15em',
           marginBottom: '20px',
         }}>
-          BEWUSSTSEIN.OHNE.LIMIT.
+          BEWUSSTSEIN.OHNE.LIMIT
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginBottom: '20px', flexWrap: 'wrap' }}>

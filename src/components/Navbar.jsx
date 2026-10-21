@@ -31,7 +31,7 @@ export default function Navbar() {
           letterSpacing: '0.15em',
           textDecoration: 'none',
         }}>
-          BEWUSSTSEIN.OHNE.LIMIT.
+          BEWUSSTSEIN.OHNE.LIMIT
         </Link>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
