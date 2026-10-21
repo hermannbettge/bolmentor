@@ -158,12 +158,13 @@ export default function Salespage() {
       {/* SECTION 1 – HERO */}
       <Section bg="var(--color-bg-deep)">
         <Eyebrow>Maya Kalender Analyse</Eyebrow>
-        <Headline>Du weißt, dass du mehr bist. Aber du weißt noch nicht, wer.</Headline>
+        <Headline>Du weißt, dass da mehr ist. Der Maya Kalender zeigt dir, was.</Headline>
         <BodyText>
-          <p>Der Maya Kalender zeigt dir das Muster, das deinem Leben zugrunde liegt. Nicht als Prophezeiung. Als Spiegel.</p>
+          <p>Dein Geburtsdatum enthält ein Muster. Nicht als Versprechen. Nicht als Schicksal. Als Sprache – die beschreibt, wie du in der Welt wirkst, welche Themen dich begleiten und warum bestimmte Situationen immer wieder auftauchen.</p>
+          <p>Jeden Tag. Jeden Monat. So lange du es möchtest.</p>
         </BodyText>
         <div style={{ marginTop: '32px' }}>
-          <PrimaryButton to="/registrieren">Jetzt entdecken – 27 € / Monat</PrimaryButton>
+          <PrimaryButton to="/registrieren">Jetzt starten – 27 € / Monat</PrimaryButton>
         </div>
         <p style={{ color: 'var(--color-text-muted)', fontSize: '0.78rem', marginTop: '12px' }}>
           Keine Mindestlaufzeit. Jederzeit kündbar.
@@ -175,13 +176,12 @@ export default function Salespage() {
       {/* SECTION 2 – SCHMERZ */}
       <Section bg="var(--color-bg-section)">
         <Eyebrow>Kennst du das?</Eyebrow>
-        <Headline size="section">Du funktionierst. Aber du spürst dich kaum noch.</Headline>
+        <Headline size="section">Du verstehst dich gut. Und trotzdem wiederholen sich bestimmte Dinge.</Headline>
         <BodyText>
-          <p>Du tust, was getan werden muss. Du funktionierst nach außen. Aber tief drinnen weißt du, dass da mehr sein sollte.</p>
-          <p>Mehr Klarheit darüber, wer du wirklich bist. Mehr Verständnis für die Muster, die sich in deinem Leben immer wiederholen. Mehr das Gefühl, dass dein Leben einen Sinn ergibt – nicht irgendwann. Jetzt.</p>
-          <p>Vielleicht fragst du dich, warum manche Lebensphasen dich erschöpfen und andere dich beflügeln. Warum bestimmte Beziehungsmuster immer wieder auftauchen. Warum du manchmal gegen den Strom schwimmst, egal wie sehr du dich anstrengst.</p>
-          <p>Das ist kein Zufall. Und es ist kein Fehler in dir.</p>
-          <p>Es ist ein Muster. Und Muster kann man lesen.</p>
+          <p>Du hast dich mit dir beschäftigt. Du weißt einiges über dich. Und trotzdem gibt es diese Situationen, die immer wieder auftauchen – in Beziehungen, im Beruf, im Umgang mit dir selbst.</p>
+          <p>Vielleicht weißt du längst, was du anders machen möchtest. Die Frage ist, warum es im entscheidenden Moment trotzdem nicht so läuft.</p>
+          <p>Manche Phasen fühlen sich leicht an. Andere zäh. Manche Entscheidungen treffen sich wie von selbst. Andere kosten dich alles.</p>
+          <p>Das ist kein Zufall. Und es ist kein Fehler in dir. Es ist ein Muster. Und Muster kann man lesen.</p>
         </BodyText>
       </Section>
 
@@ -189,13 +189,12 @@ export default function Salespage() {
 
       {/* SECTION 3 – WUNSCHZUSTAND */}
       <Section bg="var(--color-bg-deep)">
-        <Eyebrow>Stell dir vor</Eyebrow>
-        <Headline size="section">Was wäre, wenn du wüsstest, wer du wirklich bist?</Headline>
+        <Eyebrow>Was möglich wird</Eyebrow>
+        <Headline size="section">Du weißt, welche Energie dieser Tag trägt. Bevor er beginnt.</Headline>
         <BodyText>
-          <p>Du wachst morgen früh auf und weißt genau, welche Energie dieser Tag trägt. Du weißt, wo deine natürliche Kraft liegt, wo deine blinden Flecken sind, welche Themen gerade wirklich relevant sind.</p>
-          <p>Du verstehst, warum Beziehungen sich so anfühlen, wie sie sich anfühlen. Warum deine Karriere in bestimmten Phasen aufblüht und in anderen stagniert. Was dein Körper dir eigentlich sagen will.</p>
-          <p>Nicht weil jemand es dir erklärt hat. Sondern weil du dein eigenes Muster kennst.</p>
-          <p>Der Maya Kalender gibt dir diese Sprache zurück. Die Sprache deines eigenen Lebens.</p>
+          <p>Jeden Morgen eine Analyse, die dir zeigt, was dieser Tag in sich trägt. Nicht als Horoskop. Sondern als konkreter Einblick in das, was gerade wirkt – auf dich, in dir, um dich herum.</p>
+          <p>Du verstehst, warum bestimmte Phasen sich leicht anfühlen und andere nicht. Warum Beziehungen manchmal reibungslos laufen und manchmal nicht. Was in einer Lebensphase gerade wirklich relevant ist.</p>
+          <p>Nicht weil jemand es dir gesagt hat. Sondern weil du dein eigenes Muster erkennst.</p>
         </BodyText>
       </Section>
 
@@ -203,25 +202,24 @@ export default function Salespage() {
 
       {/* SECTION 4 – LÖSUNG */}
       <Section bg="var(--color-bg-section)">
-        <Eyebrow>Die Lösung</Eyebrow>
-        <Headline size="section">Der Maya Kalender – dein kosmischer Fingerabdruck</Headline>
+        <Eyebrow>Der Maya Kalender</Eyebrow>
+        <Headline size="section">Ein über 5.000 Jahre altes System. Dein ganz persönlicher Einblick.</Headline>
         <BodyText>
-          <p>Vor über 5.000 Jahren entwickelten die Maya ein Kalendersystem, das nicht Zeit misst – sondern Bewusstsein.</p>
-          <p>Das Maya Tzolkin ist ein 260-tägiger Zyklus aus 20 Sonnensiegeln und 13 galaktischen Tönen. Jede Kombination ist einzigartig. Deine Kombination – basierend auf deinem Geburtsdatum – ist dein kosmischer Fingerabdruck.</p>
-          <p>Sie zeigt dir:</p>
+          <p>Die Maya haben keinen Kalender entwickelt, um Zeit zu messen. Sie haben ein System entwickelt, um Bewusstsein zu beschreiben.</p>
+          <p>Der Maya Tzolkin ist ein 260-tägiger Zyklus aus 20 Sonnensiegeln und 13 galaktischen Tönen. Deine Kombination – berechnet aus deinem Geburtsdatum – ist einzigartig. Sie zeigt dir:</p>
           <ul style={{ listStyle: 'none', padding: 0, margin: '16px 0' }}>
             {[
-              'Dein Leitsiegel: Wer du im Kern bist',
-              'Deinen galaktischen Ton: Wie du in der Welt wirkst',
-              'Dein persönliches Orakel: Deine Stärken, Herausforderungen und verborgenen Kräfte',
-              'Dein Lebensthema: Das übergreifende Thema dieser Inkarnation',
+              'Dein Leitsiegel: Was dich im Kern antreibt',
+              'Deinen galaktischen Ton: Wie du auf andere wirkst und was dich herausfordert',
+              'Dein persönliches Orakel: Deine natürlichen Stärken und blinden Flecken',
+              'Dein Lebensthema: Was sich durch dein Leben zieht – oft ohne dass du es bisher benennen konntest',
             ].map((item, i) => (
               <li key={i} style={{ color: 'var(--color-text-primary)', fontWeight: 300, marginBottom: '8px', paddingLeft: '16px', borderLeft: '2px solid var(--color-gold-muted)' }}>
                 {item}
               </li>
             ))}
           </ul>
-          <p>Mit unserem System bekommst du jeden Tag, jeden Monat und bei Bedarf für spezifische Lebensbereiche eine tiefe, KI-gestützte Analyse – basierend auf der vollständigen Maya Kalender Deutungstiefe.</p>
+          <p>Täglich. Monatlich. Und für die Lebensbereiche, die gerade wirklich relevant sind.</p>
         </BodyText>
       </Section>
 
@@ -329,22 +327,22 @@ export default function Salespage() {
       {/* SECTION 6 – TESTIMONIALS */}
       <Section bg="var(--color-bg-section)">
         <Eyebrow>Was andere sagen</Eyebrow>
-        <Headline size="section">Was es verändert</Headline>
+        <Headline size="section">Was andere erlebt haben</Headline>
         <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginTop: '32px' }}>
           <TestimonialCard
             name="Sarah M., 34"
             description="Unternehmerin, Hamburg"
-            quote="Ich wusste intellektuell vieles über mich. Aber die Maya Analyse hat mir gezeigt, warum. Das ist ein Unterschied wie Tag und Nacht."
+            quote="Ich habe vieles über mich gewusst. Die Maya Analyse hat mir gezeigt, warum es trotzdem immer wieder gleich läuft. Das hat etwas in mir geöffnet."
           />
           <TestimonialCard
             name="Thomas K., 41"
             description="Führungskraft, München"
-            quote="Ich war skeptisch. Dann habe ich meine erste Analyse gelesen und zum ersten Mal das Gefühl gehabt, dass jemand wirklich versteht, wie ich funktioniere."
+            quote="Ich war skeptisch. Dann habe ich die erste Analyse gelesen und zum ersten Mal das Gefühl gehabt, dass jemand beschreibt, wie ich wirklich funktioniere – nicht wie ich sein sollte."
           />
           <TestimonialCard
             name="Julia R., 29"
             description="Coach, Berlin"
-            quote="Die monatliche Analyse ist für mich wie ein Kompass geworden. Ich schaue jeden Monat rein, bevor ich große Entscheidungen treffe."
+            quote="Die monatliche Analyse ist für mich ein Orientierungspunkt geworden. Bevor ich größere Entscheidungen treffe, schaue ich rein. Es hilft."
           />
         </div>
       </Section>
@@ -353,9 +351,11 @@ export default function Salespage() {
 
       {/* SECTION 7 – FINALER CTA */}
       <Section bg="var(--color-bg-deep)">
-        <Headline size="section">Du bist nicht zufällig hier.</Headline>
+        <Headline size="section">Du weißt wahrscheinlich längst, was du verstehen möchtest.</Headline>
         <BodyText>
-          <p>Wenn du bis hierher gelesen hast, spricht etwas in dir an, was du vielleicht schon lange weißt: Du bist bereit, dich wirklich zu sehen. 27 € im Monat. Keine Mindestlaufzeit. Jederzeit kündbar.</p>
+          <p>Die spannendere Frage ist, welches Muster heute noch dafür sorgt, dass bestimmte Situationen immer wieder ähnlich verlaufen.</p>
+          <p>Genau dort beginnt dein nächster Schritt.</p>
+          <p style={{ marginTop: '16px', color: 'var(--color-text-muted)', fontSize: '0.88rem' }}>27 € im Monat. Keine Mindestlaufzeit. Jederzeit kündbar.</p>
         </BodyText>
         <div style={{ marginTop: '32px' }}>
           <PrimaryButton to="/registrieren">Jetzt starten</PrimaryButton>
@@ -371,23 +371,23 @@ export default function Salespage() {
         <div style={{ marginTop: '32px' }}>
           <FaqItem
             question="Was genau ist der Maya Kalender?"
-            answer="Der Maya Tzolkin ist ein 260-tägiger Bewusstseinskalender aus 20 Sonnensiegeln und 13 galaktischen Tönen. Er beschreibt keine Zukunft – er beschreibt dein inneres Muster."
+            answer="Der Maya Tzolkin ist ein 260-tägiger Zyklus aus 20 Sonnensiegeln und 13 galaktischen Tönen. Er beschreibt keine Zukunft – er beschreibt Muster. Dein Geburtsdatum ergibt eine einzigartige Kombination, die zeigt, wie du in der Welt wirkst und welche Themen dich begleiten."
           />
           <FaqItem
             question="Wie wird meine Analyse erstellt?"
-            answer="Auf Basis deines Geburtsdatums berechnen wir dein persönliches Kin – deinen kosmischen Fingerabdruck. Eine KI, die mit jahrelang aufgebautem Maya Wissen trainiert wurde, erstellt daraus deine persönliche Analyse."
+            answer="Auf Basis deines Geburtsdatums berechnen wir dein persönliches Kin. Eine KI, die mit einem umfangreichen Maya-Wissenssystem arbeitet, erstellt daraus deine Analyse – täglich neu, monatlich vertieft."
           />
           <FaqItem
             question="Ist das Esoterik?"
-            answer="Der Maya Kalender ist ein über 5.000 Jahre altes Wissens- und Bewusstseinssystem. Ob du es als Spiritualität, Psychologie oder Selbstreflexionswerkzeug nutzt, bleibt dir überlassen. Viele unserer Mitglieder sind Menschen, die keine Esoterik-Affinität haben."
+            answer="Der Maya Kalender ist ein über 5.000 Jahre altes System. Ob du es als spirituelles Werkzeug nutzt oder einfach als Spiegel für dein Verhalten – das entscheidest du. Viele Mitglieder haben keinen esoterischen Hintergrund."
           />
           <FaqItem
             question="Wie oft kann ich Analysen erstellen?"
-            answer="Die Tagesenergie kannst du jeden Morgen neu erstellen. Die Monatsanalyse erscheint am 1. jeden Monats. Zusatzanalysen kannst du nach einmaliger Buchung jederzeit abrufen."
+            answer="Die Tagesenergie kannst du jeden Morgen neu abrufen. Die Monatsanalyse steht dir am 1. jeden Monats zur Verfügung. Zusatzanalysen für spezifische Lebensbereiche kannst du nach einmaliger Buchung jederzeit aufrufen."
           />
           <FaqItem
             question="Wie kann ich kündigen?"
-            answer="Jederzeit mit einem Klick in deinem Profil. Keine Fristen, keine versteckten Klauseln."
+            answer="Jederzeit mit einem Klick in deinem Profil. Keine Fristen, keine Hürden."
           />
         </div>
       </Section>
