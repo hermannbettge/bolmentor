@@ -621,6 +621,105 @@ SPECIAL_TYPES.forEach(type => {
   })
 })
 
+// Domain-specific daily energy analyses
+const DOMAIN_LABELS = {
+  business: 'Business & Unternehmertum',
+  health: 'Gesundheit & Körper',
+  family: 'Familie & Beziehungen',
+  selfexpression: 'Selbstausdruck & Kreativität',
+  finance: 'Finanzen & Wohlstand',
+  career: 'Karriere & Beruf',
+  lifephases: 'Lebensphasen & Entwicklung',
+  partnership: 'Partnerschaft & Liebe',
+}
+
+function buildDomainDailyPrompt(type, profile, kinData, todayKin, todayStr) {
+  const domainLabel = DOMAIN_LABELS[type] || type
+  return `Du bist ein Maya Kalender Experte. Erstelle eine fokussierte Tagesenergie-Analyse speziell für den Bereich "${domainLabel}" auf Deutsch.
+
+NUTZERDATEN:
+Name: ${profile.name}
+Geburtsdatum: ${profile.birth_date}
+Geburts-Kin: Kin ${kinData.kin} – ${kinData.tone} ${kinData.seal}
+Lebensthema: ${kinData.lifeTheme}
+Galaktischer Ton: ${kinData.toneNumber} – ${kinData.tone} (Kraft: ${kinData.tonePower})
+
+HEUTIGE ENERGIE:
+Datum: ${todayStr}
+Heutiges Kin: Kin ${todayKin.kin} – ${todayKin.tone} ${todayKin.seal}
+Heutiger Ton: ${todayKin.toneNumber} – ${todayKin.tone} (Kraft: ${todayKin.tonePower})
+Lebensthema des Tages: ${todayKin.lifeTheme}
+
+FOKUSBEREICH: ${domainLabel}
+
+Erstelle eine präzise, bereichsspezifische Tagesanalyse mit diesen Abschnitten:
+
+## ENERGIE DES TAGES FÜR ${domainLabel.toUpperCase()}
+Wie wirkt die heutige Kin-Energie konkret auf diesen Lebensbereich?
+
+## DEINE PERSÖNLICHE RESONANZ
+Wie verbindet sich deine Geburtsenergie mit der heutigen Energie in Bezug auf ${domainLabel}?
+
+## KONKRETER FOKUS HEUTE
+3 spezifische, praktische Impulse für ${domainLabel} heute.
+
+## TIMING & EMPFEHLUNG
+Wann und wie sollte ${profile.name} heute im Bereich ${domainLabel} aktiv werden oder Pause machen?
+
+## AFFIRMATION
+Eine kraftvolle Affirmation speziell für ${domainLabel}.
+
+Ton: Direkt, konkret, praxisnah. Kein Allgemeinplatz. Sprich ${profile.name} direkt an.
+Länge: 300–380 Wörter gesamt.`
+}
+
+const DAILY_DOMAIN_TYPES = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership']
+
+DAILY_DOMAIN_TYPES.forEach(type => {
+  // GET: check if today's domain daily exists
+  router.get(`/${type}/daily`, requireAuth, async (req, res) => {
+    try {
+      const today = new Date().toISOString().split('T')[0]
+      const { data } = await supabase
+        .from('analyses')
+        .select('content, created_at')
+        .eq('user_id', req.user.id)
+        .eq('type', `${type}_daily_${today}`)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+      if (data) return res.json({ content: data.content })
+      res.json({ content: null })
+    } catch {
+      res.json({ content: null })
+    }
+  })
+
+  // POST: generate today's domain daily
+  router.post(`/${type}/daily`, requireAuth, async (req, res) => {
+    try {
+      const profile = await getProfile(req.user.id)
+      checkMembership(profile)
+      checkPurchased(profile, type)
+
+      const today = new Date()
+      const todayStr = today.toISOString().split('T')[0]
+      const kinData = calculateKinFromDate(profile.birth_date)
+      const todayKin = calculateKinFromDate(todayStr)
+      const monthName = GERMAN_MONTHS[today.getMonth()]
+      const dateLabel = `${today.getDate()}. ${monthName} ${today.getFullYear()}`
+
+      const prompt = buildDomainDailyPrompt(type, profile, kinData, todayKin, dateLabel)
+      const content = await callClaude(prompt, 4000)
+
+      await saveAnalysis(req.user.id, `${type}_daily_${todayStr}`, content, todayStr)
+      res.json({ content })
+    } catch (err) {
+      res.status(400).json({ error: err.message })
+    }
+  })
+})
+
 // Yearly analyses
 const YEARLY_TYPES = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership']
 

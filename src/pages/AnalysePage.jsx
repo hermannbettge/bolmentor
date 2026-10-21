@@ -27,6 +27,9 @@ export default function AnalysePage() {
   const [yearlyAnalysis, setYearlyAnalysis] = useState(null)
   const [yearlyLoading, setYearlyLoading] = useState(false)
   const [yearlyChecking, setYearlyChecking] = useState(true)
+  const [dailyAnalysis, setDailyAnalysis] = useState(null)
+  const [dailyLoading, setDailyLoading] = useState(false)
+  const [dailyChecking, setDailyChecking] = useState(true)
   // Use next year in Q4 (Oct–Dec) so analysis is forward-looking
   const now = new Date()
   const currentYear = now.getMonth() >= 9 ? now.getFullYear() + 1 : now.getFullYear()
@@ -44,9 +47,11 @@ export default function AnalysePage() {
   useEffect(() => {
     setAnalysis(null)
     setYearlyAnalysis(null)
+    setDailyAnalysis(null)
     setError('')
     setChecking(true)
     setYearlyChecking(true)
+    setDailyChecking(true)
   }, [type])
 
   useEffect(() => {
@@ -56,6 +61,42 @@ export default function AnalysePage() {
   useEffect(() => {
     if (yearlyChecking && hasYearly) checkYearly()
   }, [user, type, yearlyChecking])
+
+  useEffect(() => {
+    if (dailyChecking) checkDaily()
+  }, [user, type, dailyChecking])
+
+  async function checkDaily() {
+    if (!user) return
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch(`/api/analysis/${type}/daily`, {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+      const data = await res.json()
+      if (data.content) setDailyAnalysis(data.content)
+    } catch {}
+    finally { setDailyChecking(false) }
+  }
+
+  async function createDaily() {
+    setDailyLoading(true)
+    setError('')
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch(`/api/analysis/${type}/daily`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+      })
+      if (!res.ok) { const e = await res.json(); throw new Error(e.error) }
+      const data = await res.json()
+      setDailyAnalysis(data.content)
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setDailyLoading(false)
+    }
+  }
 
   async function checkExisting() {
     if (!user) return
@@ -149,6 +190,47 @@ export default function AnalysePage() {
         {error && (
           <div style={{ backgroundColor: 'rgba(192,57,43,0.08)', border: '1px solid rgba(192,57,43,0.25)', borderRadius: '3px', padding: '12px 16px', marginBottom: '20px', color: '#c0392b', fontSize: '0.88rem' }}>
             {error}
+          </div>
+        )}
+
+        {/* Daily Domain Energy Section */}
+        {!checking && (
+          <div style={{ marginBottom: '48px', paddingBottom: '40px', borderBottom: '1px solid var(--border)' }}>
+            <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '8px' }}>
+              Tagesenergie
+            </div>
+            <h2 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: '1.6rem', color: TEXT, margin: '0 0 20px' }}>
+              {label} — Energie für heute
+            </h2>
+
+            {dailyChecking ? (
+              <div style={{ color: TEXT_LIGHT, fontSize: '0.88rem' }}>Wird geladen…</div>
+            ) : dailyAnalysis ? (
+              <>
+                <AnalysisDisplay content={dailyAnalysis} />
+                <div style={{ display: 'flex', gap: '16px', marginTop: '20px', flexWrap: 'wrap', alignItems: 'center' }}>
+                  <button
+                    onClick={() => { setDailyAnalysis(null); createDaily() }}
+                    style={{ border: '1px solid var(--border)', color: TEXT_MID, background: 'transparent', borderRadius: '40px', padding: '10px 24px', fontSize: '0.82rem', cursor: 'pointer' }}
+                  >
+                    Neu erstellen
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div>
+                <p style={{ color: TEXT_LIGHT, fontSize: '0.9rem', marginBottom: '20px', lineHeight: 1.7 }}>
+                  Wie wirkt die heutige Maya-Energie konkret auf deinen {label.toLowerCase()}? Erhalte jetzt eine tagesaktuelle Einschätzung — automatisch auf heute zugeschnitten.
+                </p>
+                <button
+                  onClick={createDaily}
+                  disabled={dailyLoading}
+                  style={{ backgroundColor: 'transparent', border: '1px solid var(--accent)', color: COPPER, borderRadius: '40px', padding: '13px 32px', fontWeight: 500, fontSize: '0.85rem', cursor: dailyLoading ? 'not-allowed' : 'pointer', opacity: dailyLoading ? 0.7 : 1 }}
+                >
+                  {dailyLoading ? 'Tagesenergie wird erstellt…' : 'Tagesenergie für heute erstellen'}
+                </button>
+              </div>
+            )}
           </div>
         )}
 
