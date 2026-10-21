@@ -531,9 +531,20 @@ Erstelle zunächst eine Jahresübersicht, dann für JEDEN der 12 Monate einen ei
 ## JAHRESRESÜMEE ${year} – GESAMTBEWERTUNG & EMPFEHLUNGEN
 (Gesamtfazit des Jahres: die 3 wichtigsten Chancen, die 3 größten Herausforderungen, die kraftvollsten Monate, die ruhigsten Monate, konkrete Empfehlungen für ${name} für den Bereich ${label})
 
-Für jeden Monat: Energiequalität, was günstig ist, was zu beachten ist, konkrete Handlungsempfehlungen für den Bereich ${label}. Jeder Monatsabschnitt mindestens 200 Wörter.
+Für jeden der 12 Monate verwende EXAKT diese Struktur:
+
+**Gesamtenergie des Monats:** (2–3 Sätze zur übergeordneten Energiequalität)
+
+**Woche 1** (1.–7.): Energiebeschreibung, was jetzt ideal ist, was du besser lassen solltest
+**Woche 2** (8.–14.): Energiebeschreibung, was jetzt ideal ist, was du besser lassen solltest
+**Woche 3** (15.–21.): Energiebeschreibung, was jetzt ideal ist, was du besser lassen solltest
+**Woche 4** (22.–Monatsende): Energiebeschreibung, was jetzt ideal ist, was du besser lassen solltest
+
+**Fazit ${label}:** Konkrete Handlungsempfehlung für den Monat im Bereich ${label}
+
+Jeder Monatsabschnitt mindestens 300 Wörter.
 Das Jahresresümee am Ende mindestens 400 Wörter.
-Gesamtlänge: mindestens 4500 Wörter.`
+Gesamtlänge: mindestens 6000 Wörter.`
 }
 
 // --- ROUTES ---
