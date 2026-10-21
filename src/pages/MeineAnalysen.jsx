@@ -45,43 +45,6 @@ function LifephasesModal({ onClose, onSubmit }) {
   )
 }
 
-function CompatibilityModal({ onClose, onSubmit }) {
-  const [birthDate, setBirthDate] = useState('')
-
-  function formatDate(val) {
-    const digits = val.replace(/\D/g, '')
-    if (digits.length <= 2) return digits
-    if (digits.length <= 4) return `${digits.slice(0,2)}.${digits.slice(2)}`
-    return `${digits.slice(0,2)}.${digits.slice(2,4)}.${digits.slice(4,8)}`
-  }
-
-  return (
-    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: '24px' }}>
-      <div style={{ backgroundColor: 'var(--color-bg-card)', borderRadius: '4px', padding: '32px', maxWidth: '400px', width: '100%', border: '1px solid rgba(139,110,62,0.3)' }}>
-        <h3 style={{ color: 'var(--color-gold)', fontWeight: 400, fontSize: '1.2rem', marginBottom: '12px' }}>Partner-Kompatibilität</h3>
-        <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', marginBottom: '20px' }}>
-          Gib das Geburtsdatum deines Partners / deiner Partnerin ein:
-        </p>
-        <input
-          type="text"
-          value={birthDate}
-          onChange={e => setBirthDate(formatDate(e.target.value))}
-          placeholder="TT.MM.JJJJ"
-          maxLength={10}
-          style={{ width: '100%', backgroundColor: 'var(--color-bg-light)', border: '1px solid rgba(139,110,62,0.3)', borderRadius: '4px', padding: '10px 14px', color: 'var(--color-text-primary)', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box', marginBottom: '20px' }}
-        />
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button onClick={() => onSubmit(birthDate)} style={{ flex: 1, backgroundColor: 'var(--color-gold)', color: '#000', border: 'none', borderRadius: '4px', padding: '12px', fontWeight: 500, cursor: 'pointer', fontSize: '0.9rem' }}>
-            Analyse erstellen
-          </button>
-          <button onClick={onClose} style={{ flex: 1, border: '1px solid rgba(139,110,62,0.3)', color: 'var(--color-text-muted)', backgroundColor: 'transparent', borderRadius: '4px', padding: '12px', cursor: 'pointer', fontSize: '0.9rem' }}>
-            Abbrechen
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 export default function MeineAnalysen() {
   const { user, profile } = useAuth()
@@ -124,8 +87,6 @@ export default function MeineAnalysen() {
   function handleCreate(item) {
     if (item.key === 'lifephases') {
       setModal({ type: 'lifephases', key: item.key })
-    } else if (item.key === 'compatibility') {
-      setModal({ type: 'compatibility', key: item.key })
     } else {
       runAnalysis(item.key)
     }
@@ -227,12 +188,6 @@ export default function MeineAnalysen() {
         <LifephasesModal
           onClose={() => setModal(null)}
           onSubmit={years => { setModal(null); runAnalysis('lifephases', { years }) }}
-        />
-      )}
-      {modal?.type === 'compatibility' && (
-        <CompatibilityModal
-          onClose={() => setModal(null)}
-          onSubmit={birthDate => { setModal(null); runAnalysis('compatibility', { birthDate }) }}
         />
       )}
     </div>

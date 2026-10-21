@@ -403,7 +403,6 @@ export default function Salespage() {
                   'Karriere-Analyse',
                   'Lebensphasen-Analyse',
                   'Partnerschaftsanalyse',
-                  'Partner-Kompatibilität',
                 ].map((item, i) => (
                   <div key={i} style={{ color: TEXT_MID, fontWeight: 300, fontSize: '0.9rem', marginBottom: '10px', display: 'flex', gap: '12px' }}>
                     <span style={{ color: COPPER, flexShrink: 0, fontSize: '0.6rem', marginTop: '5px' }}>◆</span> {item}

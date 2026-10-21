@@ -24,14 +24,13 @@ export default function AnalysePage() {
   const [loading, setLoading] = useState(false)
   const [checking, setChecking] = useState(true)
   const [error, setError] = useState('')
-  const [extraInput, setExtraInput] = useState('')
   const [yearlyAnalysis, setYearlyAnalysis] = useState(null)
   const [yearlyLoading, setYearlyLoading] = useState(false)
   const [yearlyChecking, setYearlyChecking] = useState(true)
   // Use next year in Q4 (Oct–Dec) so analysis is forward-looking
   const now = new Date()
   const currentYear = now.getMonth() >= 9 ? now.getFullYear() + 1 : now.getFullYear()
-  const hasYearly = type !== 'compatibility'
+  const hasYearly = true
 
   const label = LABELS[type] || type
   const hasPurchased = profile?.is_admin || profile?.purchased_analyses?.includes(type)
@@ -166,7 +165,7 @@ export default function AnalysePage() {
     setError('')
     try {
       const { data: { session } } = await supabase.auth.getSession()
-      const body = type === 'compatibility' ? { extraData: { birthDate: extraInput } } : {}
+      const body = {}
       const res = await fetch(`/api/analysis/${type}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
@@ -301,24 +300,9 @@ export default function AnalysePage() {
 
         {!analysis ? (
           <div>
-            {type === 'compatibility' && (
-              <div style={{ marginBottom: '24px' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: TEXT_LIGHT, marginBottom: '8px' }}>
-                  Geburtsdatum deines Partners (TT.MM.JJJJ)
-                </label>
-                <input
-                  type="text"
-                  value={extraInput}
-                  onChange={e => setExtraInput(e.target.value)}
-                  placeholder="26.07.1990"
-                  maxLength={10}
-                  style={{ backgroundColor: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '3px', padding: '11px 14px', color: TEXT, fontSize: '0.92rem', width: '200px', outline: 'none' }}
-                />
-              </div>
-            )}
             <button
               onClick={createAnalysis}
-              disabled={loading || (type === 'compatibility' && !extraInput)}
+              disabled={loading}
               style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-deep)', border: 'none', borderRadius: '40px', padding: '13px 32px', fontWeight: 500, fontSize: '0.85rem', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}
             >
               {loading ? `${label} wird erstellt…` : `${label} jetzt erstellen`}
