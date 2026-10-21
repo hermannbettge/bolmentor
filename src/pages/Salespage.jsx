@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-const CREAM = '#F2EDE4'
+const CREAM = '#F5F0E8'
 const NAVY = '#0d1b2a'
-const GOLD = '#8B7A52'
-const TEXT_DARK = '#1a1a1a'
-const TEXT_MID = '#3a3a3a'
-const TEXT_LIGHT = '#6b6b6b'
+const GOLD = '#B8975A'
+const TEXT_DARK = '#1C1C1C'
+const TEXT_MID = '#444444'
+const TEXT_LIGHT = '#777777'
 
 function Eyebrow({ children, light = false }) {
   return (
@@ -269,7 +269,7 @@ export default function Salespage() {
   return (
     <div style={{ fontFamily: 'Inter, sans-serif' }}>
 
-      {/* HERO – creme, zweispaltig */}
+      {/* HERO */}
       <section style={{ backgroundColor: CREAM }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '100px 40px 80px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
@@ -282,7 +282,7 @@ export default function Salespage() {
                 <p style={{ marginTop: 0 }}>Dein Geburtsdatum ergibt ein Muster, das beschreibt, wie du in der Welt wirkst, welche Themen dich begleiten und warum bestimmte Situationen in deinem Leben immer wieder auftauchen.</p>
               </Body>
               <div style={{ marginTop: '40px', display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap' }}>
-                <DarkButton to="/registrieren">Jetzt starten – 27 € / Monat →</DarkButton>
+                <DarkButton to="/registrieren">Jetzt starten für 27 € im Monat →</DarkButton>
               </div>
               <p style={{ color: TEXT_LIGHT, fontSize: '0.8rem', marginTop: '16px' }}>
                 Keine Mindestlaufzeit. Jederzeit kündbar.
@@ -318,7 +318,7 @@ export default function Salespage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 40px 80px' }}>
           <NumberedItem
             number="01"
-            text="Du weißt einiges über dich, du hast vielleicht gelesen, Seminare besucht oder dich auf andere Weise intensiv mit dir auseinandergesetzt – und trotzdem gibt es diese Situationen, die immer wieder auftauchen."
+            text="Du weißt einiges über dich, du hast vielleicht gelesen, Seminare besucht oder dich auf andere Weise intensiv mit dir auseinandergesetzt. Und trotzdem gibt es diese Situationen, die immer wieder auftauchen."
           />
           <NumberedItem
             number="02"
@@ -338,24 +338,24 @@ export default function Salespage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 40px 0' }}>
           <Eyebrow light>Das Muster</Eyebrow>
           <SectionHeadline light>
-            Das ist kein Zufall und kein Fehler in dir. Es ist ein Muster – und Muster kann man lesen.
+            Das ist kein Zufall und kein Fehler in dir. Es ist ein Muster. Und Muster kann man lesen.
           </SectionHeadline>
         </div>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 40px' }}>
           <Body light>
-            <p>Die Maya haben vor über 5.000 Jahren kein Zeitsystem entwickelt, sondern ein Bewusstseinssystem. Der Maya Tzolkin ist ein 260-tägiger Zyklus aus 20 Sonnensiegeln und 13 galaktischen Tönen. Deine Kombination – berechnet aus deinem Geburtsdatum – ist einzigartig.</p>
-            <p>Sie zeigt dir, was dich im Kern antreibt, wie du auf andere wirkst, wo deine natürlichen Stärken liegen und welches Thema sich wie ein roter Faden durch dein Leben zieht – auch wenn du es bisher noch nicht so benennen konntest.</p>
+            <p>Die Maya haben vor über 5.000 Jahren kein Zeitsystem entwickelt, sondern ein Bewusstseinssystem. Der Maya Tzolkin ist ein 260-tägiger Zyklus aus 20 Sonnensiegeln und 13 galaktischen Tönen. Deine Kombination, berechnet aus deinem Geburtsdatum, ist einzigartig.</p>
+            <p>Sie zeigt dir, was dich im Kern antreibt, wie du auf andere wirkst, wo deine natürlichen Stärken liegen und welches Thema sich wie ein roter Faden durch dein Leben zieht. Auch wenn du es bisher noch nicht so benennen konntest.</p>
           </Body>
         </div>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 40px 0' }}>
           <NumberedItem number="01" title="Dein Leitsiegel" text="Was dich im Kern antreibt und wie du die Welt grundsätzlich wahrnimmst." light />
           <NumberedItem number="02" title="Dein galaktischer Ton" text="Wie du auf andere wirkst, was dich herausfordert und wo deine besondere Kraft liegt." light />
-          <NumberedItem number="03" title="Dein persönliches Orakel" text="Die vier Energien, die dich begleiten – Stärken, Herausforderungen und verborgene Ressourcen." light />
+          <NumberedItem number="03" title="Dein persönliches Orakel" text="Die vier Energien, die dich begleiten: Stärken, Herausforderungen und verborgene Ressourcen." light />
           <NumberedItem number="04" title="Dein Lebensthema" text="Was sich wie ein roter Faden durch dein Leben zieht, oft ohne dass du es bisher so benennen konntest." light />
           <Divider light />
         </div>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '60px 40px 80px', textAlign: 'center' }}>
-          <GoldButton to="/registrieren">Jetzt starten – 27 € / Monat →</GoldButton>
+          <GoldButton to="/registrieren">Jetzt starten für 27 € im Monat →</GoldButton>
           <p style={{ color: 'rgba(242,237,228,0.4)', fontSize: '0.78rem', marginTop: '16px' }}>Keine Mindestlaufzeit. Jederzeit kündbar.</p>
         </div>
       </section>
@@ -461,7 +461,7 @@ export default function Salespage() {
             <TestimonialCard
               name="Thomas K., 41"
               role="Führungskraft, München"
-              quote="Ich war skeptisch. Dann habe ich die erste Analyse gelesen und zum ersten Mal das Gefühl gehabt, dass jemand beschreibt, wie ich wirklich funktioniere – nicht wie ich sein sollte."
+              quote="Ich war skeptisch. Dann habe ich die erste Analyse gelesen und zum ersten Mal das Gefühl gehabt, dass jemand beschreibt, wie ich wirklich funktioniere. Nicht wie ich sein sollte."
             />
             <TestimonialCard
               name="Julia R., 29"
@@ -479,7 +479,7 @@ export default function Salespage() {
             Du weißt wahrscheinlich längst, was du in deinem Leben besser verstehen möchtest.
           </SectionHeadline>
           <Body centered>
-            <p>Die spannendere Frage ist, welches Muster heute noch dafür sorgt, dass bestimmte Situationen immer wieder ähnlich verlaufen – und genau dort beginnt dein nächster Schritt.</p>
+            <p>Die spannendere Frage ist, welches Muster heute noch dafür sorgt, dass bestimmte Situationen immer wieder ähnlich verlaufen. Genau dort beginnt dein nächster Schritt.</p>
           </Body>
           <div style={{ marginTop: '48px' }}>
             <DarkButton to="/registrieren">Jetzt starten – 27 € / Monat →</DarkButton>
@@ -495,15 +495,15 @@ export default function Salespage() {
           <SectionHeadline>Vielleicht fragst du dich gerade:</SectionHeadline>
           <FaqItem
             question="Was genau ist der Maya Kalender?"
-            answer="Der Maya Tzolkin ist ein 260-tägiger Zyklus aus 20 Sonnensiegeln und 13 galaktischen Tönen. Er beschreibt keine Zukunft – er beschreibt Muster. Dein Geburtsdatum ergibt eine einzigartige Kombination, die zeigt, wie du in der Welt wirkst und welche Themen dich begleiten."
+            answer="Der Maya Tzolkin ist ein 260-tägiger Zyklus aus 20 Sonnensiegeln und 13 galaktischen Tönen. Er beschreibt keine Zukunft, er beschreibt Muster. Dein Geburtsdatum ergibt eine einzigartige Kombination, die zeigt, wie du in der Welt wirkst und welche Themen dich begleiten."
           />
           <FaqItem
             question="Wie wird meine Analyse erstellt?"
-            answer="Auf Basis deines Geburtsdatums berechnen wir dein persönliches Kin. Eine KI, die mit einem umfangreichen Maya-Wissenssystem arbeitet, erstellt daraus deine Analyse – täglich neu, monatlich vertieft."
+            answer="Auf Basis deines Geburtsdatums berechnen wir dein persönliches Kin. Eine KI, die mit einem umfangreichen Maya-Wissenssystem arbeitet, erstellt daraus deine Analyse. Täglich neu, monatlich vertieft."
           />
           <FaqItem
             question="Ist das Esoterik?"
-            answer="Der Maya Kalender ist ein über 5.000 Jahre altes System. Ob du es als spirituelles Werkzeug nutzt oder einfach als Spiegel für dein Verhalten – das entscheidest du. Viele Mitglieder haben keinen esoterischen Hintergrund."
+            answer="Der Maya Kalender ist ein über 5.000 Jahre altes System. Ob du es als spirituelles Werkzeug nutzt oder einfach als Spiegel für dein Verhalten, das entscheidest du. Viele Mitglieder haben keinen esoterischen Hintergrund."
           />
           <FaqItem
             question="Wie oft kann ich Analysen erstellen?"
