@@ -16,6 +16,9 @@ export default function PartnerschaftsanalysePage() {
   const [loading, setLoading] = useState(false)
   const [checking, setChecking] = useState(true)
   const [error, setError] = useState('')
+  const [dailyAnalysis, setDailyAnalysis] = useState(null)
+  const [dailyLoading, setDailyLoading] = useState(false)
+  const [dailyChecking, setDailyChecking] = useState(true)
 
   const hasPurchased = profile?.is_admin || profile?.purchased_analyses?.includes('partnership')
   const hasPartnerData = !!profile?.partner_birth_date
@@ -42,6 +45,40 @@ export default function PartnerschaftsanalysePage() {
     }
     check()
   }, [user])
+
+  useEffect(() => {
+    if (!user || !hasPartnerData) { setDailyChecking(false); return }
+    async function checkDaily() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        const res = await fetch('/api/analysis/partnership/daily', {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        })
+        const data = await res.json()
+        if (data.content) setDailyAnalysis(data.content)
+      } catch {}
+      finally { setDailyChecking(false) }
+    }
+    checkDaily()
+  }, [user])
+
+  async function createDaily() {
+    setDailyLoading(true); setError('')
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch('/api/analysis/partnership/daily', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+      })
+      if (!res.ok) { const e = await res.json(); throw new Error(e.error) }
+      const data = await res.json()
+      setDailyAnalysis(data.content)
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setDailyLoading(false)
+    }
+  }
 
   async function handleCreate() {
     setLoading(true); setError('')
@@ -83,6 +120,47 @@ export default function PartnerschaftsanalysePage() {
         {error && (
           <div style={{ backgroundColor: 'rgba(192,57,43,0.08)', border: '1px solid rgba(192,57,43,0.25)', borderRadius: '3px', padding: '12px 16px', marginBottom: '20px', color: '#c0392b', fontSize: '0.88rem' }}>
             {error}
+          </div>
+        )}
+
+        {/* Daily partnership energy */}
+        {hasPartnerData && (
+          <div style={{ marginBottom: '48px', paddingBottom: '40px', borderBottom: '1px solid var(--border)' }}>
+            <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '8px' }}>
+              Tagesenergie
+            </div>
+            <h2 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: '1.6rem', color: TEXT, margin: '0 0 20px' }}>
+              Partnerschaftsenergie — heute
+            </h2>
+
+            {dailyChecking ? (
+              <div style={{ color: TEXT_LIGHT, fontSize: '0.88rem' }}>Wird geladen…</div>
+            ) : dailyAnalysis ? (
+              <>
+                <AnalysisDisplay content={dailyAnalysis} />
+                <div style={{ marginTop: '20px' }}>
+                  <button
+                    onClick={() => { setDailyAnalysis(null); createDaily() }}
+                    style={{ border: '1px solid var(--border)', color: TEXT_LIGHT, background: 'transparent', borderRadius: '40px', padding: '10px 24px', fontSize: '0.82rem', cursor: 'pointer' }}
+                  >
+                    Neu erstellen
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div>
+                <p style={{ color: TEXT_LIGHT, fontSize: '0.9rem', marginBottom: '20px', lineHeight: 1.7 }}>
+                  Wie wirkt die heutige Maya-Energie auf deine Partnerschaft? Erhalte eine tagesaktuelle Einschätzung für euch als Paar.
+                </p>
+                <button
+                  onClick={createDaily}
+                  disabled={dailyLoading}
+                  style={{ backgroundColor: 'transparent', border: '1px solid var(--accent)', color: COPPER, borderRadius: '40px', padding: '13px 32px', fontWeight: 500, fontSize: '0.85rem', cursor: dailyLoading ? 'not-allowed' : 'pointer', opacity: dailyLoading ? 0.7 : 1 }}
+                >
+                  {dailyLoading ? 'Tagesenergie wird erstellt…' : 'Tagesenergie für heute erstellen'}
+                </button>
+              </div>
+            )}
           </div>
         )}
 
