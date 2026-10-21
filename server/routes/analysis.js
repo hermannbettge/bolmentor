@@ -207,7 +207,9 @@ ABSOLUT VERBOTENE STILMITTEL (streng einhalten):
 - KEINE Gedankenstriche oder Bindestriche als Satzzeichen (– oder —). Nur normale Satzzeichen.
 - KEINE Doppelpunkte am Ende eines Satzes oder Absatzes
 - Kein Satzanfang mit "Und"
-- Schreibe fehlerfreies, korrektes Deutsch
+- Schreibe fehlerfreies, korrektes Deutsch mit korrekter Groß- und Kleinschreibung
+- Alle Substantive MÜSSEN großgeschrieben sein (z.B. Partnerschaftsanalyse, Energie, Analyse, Krieger, Ton)
+- Eigennamen, Titel und Analysebezeichnungen immer mit Großbuchstaben beginnen
 STIL:
 - Sprich die Person immer direkt mit Vornamen an
 - Jeder Abschnitt mindestens 4-6 ausführliche Absätze
