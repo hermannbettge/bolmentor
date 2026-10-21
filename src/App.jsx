@@ -14,6 +14,7 @@ import Datenschutz from './pages/Datenschutz.jsx'
 import Admin from './pages/Admin.jsx'
 import AnalysePage from './pages/AnalysePage.jsx'
 import AnalyseEvent from './pages/AnalyseEvent.jsx'
+import PartnerschaftsanalysePage from './pages/PartnerschaftsanalysePage.jsx'
 
 function ProtectedRoute({ children }) {
   const { user, profile, loading } = useAuth()
@@ -51,6 +52,7 @@ function AppRoutes() {
         <Route path="/profil" element={<ProtectedRoute><Profil /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
         <Route path="/analyse/event/:eventId" element={<ProtectedRoute><AnalyseEvent /></ProtectedRoute>} />
+        <Route path="/analyse/partnerschaft" element={<ProtectedRoute><PartnerschaftsanalysePage /></ProtectedRoute>} />
         <Route path="/analyse/:type" element={<ProtectedRoute><AnalysePage /></ProtectedRoute>} />
 
         <Route path="*" element={<Navigate to="/" replace />} />

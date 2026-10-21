@@ -93,14 +93,17 @@ export default function Sidebar() {
         <NavItem to="/tagesenergie" label="Tagesenergie" />
         <NavItem to="/monatsanalyse" label="Monatsanalyse" />
 
-        {purchased.length > 0 && (
+        {purchased.filter(k => k !== 'compatibility' && ANALYSE_LABELS[k]).length > 0 && (
           <>
             <div style={{ padding: '14px 24px 4px', fontSize: '0.63rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: 'var(--accent-dim)' }}>
               Meine Analysen
             </div>
-            {purchased.map(key => (
-              <NavItem key={key} to={`/analyse/${key}`} label={ANALYSE_LABELS[key] || key} indent />
+            {purchased.filter(k => k !== 'compatibility' && ANALYSE_LABELS[k]).map(key => (
+              <NavItem key={key} to={`/analyse/${key}`} label={ANALYSE_LABELS[key]} indent />
             ))}
+            {purchased.includes('partnership') && profile?.partner_birth_date && (
+              <NavItem to="/analyse/partnerschaft" label="Partnerschaftsanalyse" indent />
+            )}
           </>
         )}
 
