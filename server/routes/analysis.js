@@ -664,4 +664,94 @@ Mindestens 3500 Wörter. Sei außergewöhnlich konkret und nenne beide Partner b
   }
 })
 
+// Event analysis — analyse any entity by its "birth date" (country, job, relationship, etc.)
+router.post('/event/:eventId', requireAuth, async (req, res) => {
+  try {
+    const profile = await getProfile(req.user.id)
+    checkMembership(profile)
+
+    const { eventId } = req.params
+    const { data: event, error: evErr } = await supabase
+      .from('user_events')
+      .select('*')
+      .eq('id', eventId)
+      .eq('user_id', req.user.id)
+      .single()
+    if (evErr || !event) return res.status(404).json({ error: 'Ereignis nicht gefunden' })
+
+    const userKin = calculateKinFromDate(profile.birth_date)
+    const eventKin = calculateKinFromDate(event.event_date)
+
+    const categoryLabels = {
+      land: 'Land / Nation',
+      job: 'Job / Karriere',
+      beziehung: 'Beziehung / Partnerschaft',
+      unternehmen: 'Unternehmen / Projekt',
+      kauf: 'Kauf / Besitz',
+      sonstiges: 'Ereignis',
+    }
+    const catLabel = categoryLabels[event.category] || 'Ereignis'
+
+    const prompt = `Du bist ein weltklasse Maya-Kalender-Experte. Erstelle eine vollständige Energie-Analyse für ein ${catLabel} auf Deutsch.
+${SYSTEM_RULES}
+
+PERSON: ${profile.name}
+Kin: Kin ${userKin.kin} – ${userKin.tone} ${userKin.seal}
+Galaktischer Ton ${userKin.toneNumber}: ${userKin.tone} – Kraft: ${userKin.tonePower}
+Lebensthema: ${userKin.lifeTheme}
+Antipode: ${userKin.antipode}
+Geburtsdatum: ${profile.birth_date}
+
+EREIGNIS: "${event.name}"
+Kategorie: ${catLabel}
+Gründungs-/Startdatum: ${event.event_date}
+Ereignis-Kin: Kin ${eventKin.kin} – ${eventKin.tone} ${eventKin.seal}
+Galaktischer Ton des Ereignisses: ${eventKin.toneNumber} – ${eventKin.tone} (Kraft: ${eventKin.tonePower})
+Lebensthema des Ereignisses: ${eventKin.lifeTheme}
+${event.description ? `Kontext: ${event.description}` : ''}
+
+Erstelle eine tiefe Analyse der Energie dieses Ereignisses und wie es mit ${profile.name} resoniert. Jeder Abschnitt 4–6 ausführliche Absätze:
+
+## DIE GRUNDENERGIE VON "${event.name.toUpperCase()}"
+## WAS DIESES KIN ÜBER ${catLabel === 'Ereignis' ? 'DAS EREIGNIS' : catLabel.toUpperCase()} AUSSAGT
+## DIE KRAFT UND DAS POTENZIAL
+## HERAUSFORDERUNGEN UND WACHSTUMSBEREICHE
+## RESONANZ ZWISCHEN ${profile.name.toUpperCase()} UND "${event.name.toUpperCase()}"
+## HARMONIEN UND SYNERGIEPUNKTE
+## SPANNUNGSFELDER UND LERNBEREICHE
+## TIMING UND ZYKLEN
+## PRAKTISCHE EMPFEHLUNGEN FÜR ${profile.name.toUpperCase()}
+## DAS LANGZEITPOTENZIAL
+## AFFIRMATION
+
+Mindestens 2500 Wörter. Sei außergewöhnlich konkret. Sprich ${profile.name} direkt an.`
+
+    const content = await callClaude(prompt, 8000)
+    const today = new Date().toISOString().split('T')[0]
+    await saveAnalysis(req.user.id, `event_${eventId}`, content, today)
+    res.json({ content })
+  } catch (err) {
+    res.status(400).json({ error: err.message })
+  }
+})
+
+// Get existing event analysis
+router.get('/event/:eventId', requireAuth, async (req, res) => {
+  try {
+    const { eventId } = req.params
+    const { data } = await supabase
+      .from('analyses')
+      .select('content, analysis_date')
+      .eq('user_id', req.user.id)
+      .eq('type', `event_${eventId}`)
+      .order('analysis_date', { ascending: false })
+      .limit(1)
+      .single()
+    if (!data) return res.status(404).json({ error: 'Keine Analyse gefunden' })
+    res.json(data)
+  } catch {
+    res.status(404).json({ error: 'Keine Analyse gefunden' })
+  }
+})
+
 export default router
