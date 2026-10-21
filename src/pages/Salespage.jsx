@@ -1,194 +1,179 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-const CREAM = '#F5F0E8'
-const NAVY = '#0d1b2a'
-const GOLD = '#B8975A'
-const TEXT_DARK = '#1C1C1C'
-const TEXT_MID = '#444444'
-const TEXT_LIGHT = '#777777'
+const CREAM = '#F4EFE6'
+const SAND = '#E8E0D0'
+const DEEP = '#1A1410'
+const WARM = '#2C1F14'
+const COPPER = '#A0522D'
+const COPPER_LIGHT = '#C4784A'
+const TEXT = '#2A2018'
+const TEXT_MID = '#5A4E42'
+const TEXT_LIGHT = '#8C7E72'
 
-function Eyebrow({ children, light = false }) {
+function Tag({ children, dark = false }) {
   return (
-    <div style={{
-      fontSize: '0.72rem',
-      fontWeight: 500,
+    <span style={{
+      display: 'inline-block',
+      fontSize: '0.68rem',
+      fontWeight: 600,
       textTransform: 'uppercase',
-      letterSpacing: '0.18em',
-      color: light ? 'rgba(184,151,90,0.8)' : GOLD,
-      marginBottom: '20px',
+      letterSpacing: '0.2em',
+      color: dark ? COPPER_LIGHT : COPPER,
+      border: `1px solid ${dark ? 'rgba(196,120,74,0.4)' : 'rgba(160,82,45,0.3)'}`,
+      padding: '6px 14px',
+      borderRadius: '2px',
+      marginBottom: '32px',
     }}>
       {children}
-    </div>
+    </span>
   )
 }
 
-function DisplayHeadline({ children, light = false }) {
+function Hero({ children }) {
   return (
     <h1 style={{
-      fontFamily: '"Playfair Display", serif',
+      fontFamily: '"Playfair Display", Georgia, serif',
       fontWeight: 400,
-      fontSize: 'clamp(2.8rem, 6vw, 5rem)',
-      lineHeight: 1.1,
-      letterSpacing: '-0.01em',
-      color: light ? '#F2EDE4' : TEXT_DARK,
-      marginBottom: '32px',
-      marginTop: 0,
+      fontStyle: 'italic',
+      fontSize: 'clamp(2.4rem, 5.5vw, 4.2rem)',
+      lineHeight: 1.15,
+      color: TEXT,
+      margin: '0 0 28px',
     }}>
       {children}
     </h1>
   )
 }
 
-function SectionHeadline({ children, light = false }) {
+function H2({ children, dark = false }) {
   return (
     <h2 style={{
-      fontFamily: '"Playfair Display", serif',
+      fontFamily: '"Playfair Display", Georgia, serif',
       fontWeight: 400,
-      fontSize: 'clamp(2.2rem, 5vw, 3.8rem)',
-      lineHeight: 1.12,
-      letterSpacing: '-0.01em',
-      color: light ? '#F2EDE4' : TEXT_DARK,
-      marginBottom: '40px',
-      marginTop: 0,
+      fontSize: 'clamp(1.9rem, 4vw, 3rem)',
+      lineHeight: 1.2,
+      color: dark ? '#F4EFE6' : TEXT,
+      margin: '0 0 32px',
     }}>
       {children}
     </h2>
   )
 }
 
-function Body({ children, light = false, centered = false }) {
+function P({ children, dark = false, small = false }) {
   return (
-    <div style={{
-      color: light ? 'rgba(242,237,228,0.75)' : TEXT_MID,
+    <p style={{
+      fontFamily: 'Inter, sans-serif',
+      fontSize: small ? '0.88rem' : '1rem',
       fontWeight: 300,
-      fontSize: '1rem',
-      lineHeight: 1.9,
-      textAlign: centered ? 'center' : 'left',
+      lineHeight: 1.85,
+      color: dark ? 'rgba(244,239,230,0.72)' : TEXT_MID,
+      margin: '0 0 18px',
     }}>
       {children}
-    </div>
+    </p>
   )
 }
 
-function DarkButton({ to, href, children }) {
-  const style = {
-    display: 'inline-block',
-    backgroundColor: NAVY,
-    color: CREAM,
-    padding: '16px 36px',
-    fontSize: '0.75rem',
-    fontWeight: 500,
-    letterSpacing: '0.15em',
-    textTransform: 'uppercase',
-    textDecoration: 'none',
-    border: 'none',
-    cursor: 'pointer',
+function PillButton({ to, children, variant = 'dark' }) {
+  const styles = {
+    dark: { bg: DEEP, color: CREAM, border: 'none' },
+    outline: { bg: 'transparent', color: CREAM, border: `1px solid rgba(244,239,230,0.4)` },
+    copper: { bg: COPPER, color: '#FFF8F2', border: 'none' },
   }
-  if (to) return <Link to={to} style={style}>{children}</Link>
-  return <a href={href || '#'} style={style}>{children}</a>
+  const s = styles[variant]
+  return (
+    <Link to={to} style={{
+      display: 'inline-block',
+      backgroundColor: s.bg,
+      color: s.color,
+      border: s.border,
+      padding: '14px 32px',
+      borderRadius: '40px',
+      fontSize: '0.82rem',
+      fontWeight: 500,
+      letterSpacing: '0.06em',
+      textDecoration: 'none',
+      transition: 'opacity 0.2s',
+    }}>
+      {children}
+    </Link>
+  )
 }
 
-function GoldButton({ to, href, children }) {
-  const style = {
-    display: 'inline-block',
-    backgroundColor: 'transparent',
-    color: CREAM,
-    padding: '14px 34px',
-    fontSize: '0.75rem',
-    fontWeight: 500,
-    letterSpacing: '0.15em',
-    textTransform: 'uppercase',
-    textDecoration: 'none',
-    border: `1px solid rgba(184,151,90,0.6)`,
-    cursor: 'pointer',
-  }
-  if (to) return <Link to={to} style={style}>{children}</Link>
-  return <a href={href || '#'} style={style}>{children}</a>
+function Line({ dark = false }) {
+  return <div style={{ height: '1px', backgroundColor: dark ? 'rgba(244,239,230,0.12)' : 'rgba(42,32,24,0.1)', margin: '0' }} />
 }
 
-function Divider({ light = false }) {
-  return <hr style={{ border: 'none', borderTop: `1px solid ${light ? 'rgba(242,237,228,0.15)' : 'rgba(139,122,82,0.25)'}`, margin: 0 }} />
-}
-
-function NumberedItem({ number, title, text, light = false, large = false }) {
+function FeatureRow({ num, title, text, dark = false }) {
   return (
     <>
-      <Divider light={light} />
+      <Line dark={dark} />
       <div style={{
         display: 'grid',
-        gridTemplateColumns: large ? '80px 1fr' : '80px 1fr',
+        gridTemplateColumns: '56px 1fr',
         gap: '24px',
-        padding: '36px 0',
-        alignItems: large ? 'start' : 'center',
+        padding: '28px 0',
+        alignItems: 'start',
       }}>
         <div style={{
           fontFamily: '"Playfair Display", serif',
-          fontSize: large ? '2rem' : '1.4rem',
-          fontWeight: 400,
-          color: GOLD,
-          opacity: 0.9,
-          lineHeight: 1,
-          paddingTop: large ? '6px' : '0',
+          fontStyle: 'italic',
+          fontSize: '1.4rem',
+          color: dark ? 'rgba(196,120,74,0.5)' : 'rgba(160,82,45,0.4)',
+          paddingTop: '2px',
         }}>
-          {number}
+          {num}
         </div>
         <div>
           {title && (
             <div style={{
-              fontFamily: '"Playfair Display", serif',
-              fontSize: '1.3rem',
-              fontWeight: 400,
-              color: light ? CREAM : TEXT_DARK,
-              marginBottom: '8px',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '0.78rem',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.14em',
+              color: dark ? COPPER_LIGHT : COPPER,
+              marginBottom: '6px',
             }}>
               {title}
             </div>
           )}
-          {large ? (
-            <div style={{
-              fontFamily: '"Playfair Display", serif',
-              fontStyle: 'italic',
-              fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)',
-              fontWeight: 400,
-              color: light ? CREAM : TEXT_DARK,
-              lineHeight: 1.5,
-            }}>
-              „{text}"
-            </div>
-          ) : (
-            <div style={{
-              color: light ? 'rgba(242,237,228,0.7)' : TEXT_LIGHT,
-              fontWeight: 300,
-              fontSize: '0.95rem',
-              lineHeight: 1.8,
-            }}>
-              {text}
-            </div>
-          )}
+          <p style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '1rem',
+            fontWeight: 300,
+            lineHeight: 1.8,
+            color: dark ? 'rgba(244,239,230,0.75)' : TEXT_MID,
+            margin: 0,
+          }}>
+            {text}
+          </p>
         </div>
       </div>
     </>
   )
 }
 
-function QuoteCallout({ children, highlight }) {
+function BlockQuote({ children }) {
   return (
-    <div style={{ textAlign: 'center', padding: '80px 24px' }}>
-      <div style={{
+    <div style={{
+      borderLeft: `3px solid ${COPPER}`,
+      paddingLeft: '32px',
+      margin: '0',
+    }}>
+      <p style={{
         fontFamily: '"Playfair Display", serif',
         fontStyle: 'italic',
-        fontSize: 'clamp(1.6rem, 3.5vw, 2.6rem)',
+        fontSize: 'clamp(1.3rem, 3vw, 1.9rem)',
         fontWeight: 400,
-        color: TEXT_DARK,
-        lineHeight: 1.45,
-        maxWidth: '800px',
-        margin: '0 auto',
+        lineHeight: 1.5,
+        color: TEXT,
+        margin: 0,
       }}>
-        „{children.split(highlight)[0]}
-        <span style={{ color: '#9B7B7B' }}>{highlight}</span>
-        {children.split(highlight)[1]}"
-      </div>
+        {children}
+      </p>
     </div>
   )
 }
@@ -197,235 +182,218 @@ function FaqItem({ question, answer }) {
   const [open, setOpen] = useState(false)
   return (
     <>
-      <Divider />
-      <button
+      <Line />
+      <div
         onClick={() => setOpen(!open)}
-        style={{
-          width: '100%',
-          background: 'none',
-          border: 'none',
-          padding: '24px 0',
-          cursor: 'pointer',
+        style={{ padding: '22px 0', cursor: 'pointer' }}
+      >
+        <div style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          textAlign: 'left',
-          color: TEXT_DARK,
-          fontFamily: '"Playfair Display", serif',
-          fontSize: '1.1rem',
-          fontWeight: 400,
-        }}
-      >
-        {question}
-        <span style={{ color: GOLD, fontSize: '1.4rem', transition: 'transform 0.2s', transform: open ? 'rotate(45deg)' : 'rotate(0deg)', marginLeft: '24px', flexShrink: 0 }}>+</span>
-      </button>
-      {open && (
-        <div style={{
-          paddingBottom: '28px',
-          color: TEXT_MID,
-          fontWeight: 300,
-          lineHeight: 1.9,
-          fontSize: '0.95rem',
-          maxWidth: '680px',
+          gap: '24px',
         }}>
-          {answer}
+          <span style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '0.96rem',
+            fontWeight: 400,
+            color: TEXT,
+            lineHeight: 1.5,
+          }}>
+            {question}
+          </span>
+          <span style={{
+            color: COPPER,
+            fontSize: '1.2rem',
+            flexShrink: 0,
+            transform: open ? 'rotate(45deg)' : 'rotate(0)',
+            transition: 'transform 0.2s',
+            display: 'inline-block',
+          }}>
+            +
+          </span>
         </div>
-      )}
-    </>
-  )
-}
-
-function TestimonialCard({ name, role, quote }) {
-  return (
-    <div style={{
-      backgroundColor: CREAM,
-      padding: '36px 32px',
-      flex: '1',
-      minWidth: '260px',
-    }}>
-      <div style={{ marginBottom: '20px' }}>
-        {[...Array(5)].map((_, i) => (
-          <span key={i} style={{ color: GOLD, fontSize: '0.85rem' }}>★</span>
-        ))}
+        {open && (
+          <p style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '0.92rem',
+            fontWeight: 300,
+            lineHeight: 1.85,
+            color: TEXT_MID,
+            margin: '16px 0 0',
+            maxWidth: '640px',
+          }}>
+            {answer}
+          </p>
+        )}
       </div>
-      <p style={{
-        fontFamily: '"Playfair Display", serif',
-        fontStyle: 'italic',
-        fontSize: '1rem',
-        fontWeight: 400,
-        color: TEXT_DARK,
-        lineHeight: 1.75,
-        margin: '0 0 20px',
-      }}>
-        „{quote}"
-      </p>
-      <div style={{ color: TEXT_DARK, fontWeight: 500, fontSize: '0.85rem' }}>{name}</div>
-      <div style={{ color: TEXT_LIGHT, fontSize: '0.8rem', marginTop: '2px' }}>{role}</div>
-    </div>
+    </>
   )
 }
 
 export default function Salespage() {
   return (
-    <div style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ fontFamily: 'Inter, sans-serif', backgroundColor: CREAM }}>
 
-      {/* HERO */}
-      <section style={{ backgroundColor: CREAM }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '100px 40px 80px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
-            <div>
-              <Eyebrow>Maya Kalender Analyse</Eyebrow>
-              <DisplayHeadline>
-                Du weißt, dass da mehr ist, aber du weißt noch nicht genau, was.
-              </DisplayHeadline>
-              <Body>
-                <p style={{ marginTop: 0 }}>Dein Geburtsdatum ergibt ein Muster, das beschreibt, wie du in der Welt wirkst, welche Themen dich begleiten und warum bestimmte Situationen in deinem Leben immer wieder auftauchen.</p>
-              </Body>
-              <div style={{ marginTop: '40px', display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap' }}>
-                <DarkButton to="/registrieren">Jetzt starten für 27 € im Monat →</DarkButton>
-              </div>
-              <p style={{ color: TEXT_LIGHT, fontSize: '0.8rem', marginTop: '16px' }}>
-                Keine Mindestlaufzeit. Jederzeit kündbar.
-              </p>
-            </div>
+      {/* HERO — zentriert, mit dekorativem Kin-Symbol */}
+      <section style={{ backgroundColor: CREAM, borderBottom: `1px solid rgba(42,32,24,0.08)` }}>
+        <div style={{
+          maxWidth: '860px',
+          margin: '0 auto',
+          padding: '100px 40px 80px',
+          textAlign: 'center',
+        }}>
+          <Tag>Maya Tzolkin Analyse</Tag>
+
+          {/* Maya Kin Ornament */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '20px',
+            marginBottom: '40px',
+          }}>
+            <div style={{ height: '1px', width: '60px', backgroundColor: 'rgba(160,82,45,0.25)' }} />
             <div style={{
-              backgroundColor: '#1a2a3a',
-              aspectRatio: '4/5',
+              width: '52px',
+              height: '52px',
+              border: `1px solid rgba(160,82,45,0.3)`,
+              borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              fontSize: '1.3rem',
+              color: COPPER,
             }}>
-              <div style={{
-                textAlign: 'center',
-                padding: '40px',
-              }}>
-                <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '3.5rem', fontWeight: 400, color: 'rgba(184,151,90,0.6)', lineHeight: 1, marginBottom: '8px' }}>☽</div>
-                <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.2rem', color: 'rgba(242,237,228,0.5)', letterSpacing: '0.1em' }}>MAYA TZOLKIN</div>
-              </div>
+              ☽
+            </div>
+            <div style={{ height: '1px', width: '60px', backgroundColor: 'rgba(160,82,45,0.25)' }} />
+          </div>
+
+          <Hero>
+            Du weißt, dass da mehr ist, aber du weißt noch nicht genau, was.
+          </Hero>
+
+          <div style={{ maxWidth: '580px', margin: '0 auto 40px' }}>
+            <P>
+              Dein Geburtsdatum ergibt ein Muster. Es beschreibt, wie du in der Welt wirkst, welche Themen dich begleiten und warum bestimmte Situationen immer wieder auftauchen.
+            </P>
+          </div>
+
+          <PillButton to="/registrieren" variant="copper">Jetzt starten für 27 € im Monat →</PillButton>
+          <p style={{ color: TEXT_LIGHT, fontSize: '0.78rem', marginTop: '14px' }}>
+            Keine Mindestlaufzeit. Jederzeit kündbar.
+          </p>
+        </div>
+      </section>
+
+      {/* WIEDERERKENNUNG — zweispaltig */}
+      <section style={{ backgroundColor: SAND }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '80px 40px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'start' }}>
+            <div>
+              <Tag>Das kennst du vielleicht</Tag>
+              <H2>Du hast dich mit dir beschäftigt. Und trotzdem wiederholen sich Dinge.</H2>
+            </div>
+            <div style={{ paddingTop: '8px' }}>
+              <FeatureRow
+                num="1"
+                text="Du weißt einiges über dich, du hast gelesen, vielleicht Seminare besucht oder dich intensiv mit dir auseinandergesetzt. Und trotzdem gibt es Situationen, die immer wiederkehren."
+              />
+              <FeatureRow
+                num="2"
+                text="Manche Lebensphasen laufen wie von selbst. Andere fühlen sich zäh an, egal was du tust."
+              />
+              <FeatureRow
+                num="3"
+                text="Du weißt, was du ändern möchtest. Die Frage ist, warum es im entscheidenden Moment trotzdem nicht so läuft."
+              />
+              <Line />
             </div>
           </div>
         </div>
       </section>
 
-      {/* WIEDERERKENNUNG – creme */}
-      <section style={{ backgroundColor: CREAM }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 40px 0' }}>
-          <Eyebrow>Wiedererkennung</Eyebrow>
-          <SectionHeadline>
-            Du hast dich mit dir beschäftigt und trotzdem wiederholen sich bestimmte Dinge.
-          </SectionHeadline>
-        </div>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 40px 80px' }}>
-          <NumberedItem
-            number="01"
-            text="Du weißt einiges über dich, du hast vielleicht gelesen, Seminare besucht oder dich auf andere Weise intensiv mit dir auseinandergesetzt. Und trotzdem gibt es diese Situationen, die immer wieder auftauchen."
-          />
-          <NumberedItem
-            number="02"
-            text="Manche Lebensphasen laufen wie von selbst, andere fühlen sich zäh an, egal was du tust. Manche Entscheidungen fallen leicht, andere kosten dich unverhältnismäßig viel Kraft."
-          />
-          <NumberedItem
-            number="03"
-            large={true}
-            text="Du weißt längst, was du anders machen möchtest. Die Frage ist, warum es im entscheidenden Moment trotzdem nicht so läuft."
-          />
-          <Divider />
+      {/* DARK — Das System */}
+      <section style={{ backgroundColor: WARM }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '80px 40px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'start' }}>
+            <div>
+              <Tag dark>Das Muster</Tag>
+              <H2 dark>Das ist kein Zufall und kein Fehler in dir. Es ist ein Muster. Und Muster kann man lesen.</H2>
+              <P dark>Die Maya haben vor über 5.000 Jahren kein Zeitsystem entwickelt, sondern ein Bewusstseinssystem. Dein Geburtsdatum ergibt eine einzigartige Kombination aus Sonnensigel und galaktischem Ton, die zeigt, was dich antreibt und welches Thema sich durch dein Leben zieht.</P>
+              <div style={{ marginTop: '32px' }}>
+                <PillButton to="/registrieren" variant="outline">Analyse starten →</PillButton>
+              </div>
+            </div>
+            <div>
+              <FeatureRow num="01" title="Dein Leitsiegel" text="Was dich im Kern antreibt und wie du die Welt grundsätzlich wahrnimmst." dark />
+              <FeatureRow num="02" title="Dein galaktischer Ton" text="Wie du auf andere wirkst, was dich herausfordert und wo deine besondere Kraft liegt." dark />
+              <FeatureRow num="03" title="Dein persönliches Orakel" text="Die vier Energien, die dich begleiten: Stärken, Herausforderungen und verborgene Ressourcen." dark />
+              <FeatureRow num="04" title="Dein Lebensthema" text="Was sich wie ein roter Faden durch dein Leben zieht, auch wenn du es bisher noch nicht so benennen konntest." dark />
+              <Line dark />
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* DARK – Was es kostet */}
-      <section style={{ backgroundColor: NAVY }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 40px 0' }}>
-          <Eyebrow light>Das Muster</Eyebrow>
-          <SectionHeadline light>
-            Das ist kein Zufall und kein Fehler in dir. Es ist ein Muster. Und Muster kann man lesen.
-          </SectionHeadline>
-        </div>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 40px' }}>
-          <Body light>
-            <p>Die Maya haben vor über 5.000 Jahren kein Zeitsystem entwickelt, sondern ein Bewusstseinssystem. Der Maya Tzolkin ist ein 260-tägiger Zyklus aus 20 Sonnensiegeln und 13 galaktischen Tönen. Deine Kombination, berechnet aus deinem Geburtsdatum, ist einzigartig.</p>
-            <p>Sie zeigt dir, was dich im Kern antreibt, wie du auf andere wirkst, wo deine natürlichen Stärken liegen und welches Thema sich wie ein roter Faden durch dein Leben zieht. Auch wenn du es bisher noch nicht so benennen konntest.</p>
-          </Body>
-        </div>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 40px 0' }}>
-          <NumberedItem number="01" title="Dein Leitsiegel" text="Was dich im Kern antreibt und wie du die Welt grundsätzlich wahrnimmst." light />
-          <NumberedItem number="02" title="Dein galaktischer Ton" text="Wie du auf andere wirkst, was dich herausfordert und wo deine besondere Kraft liegt." light />
-          <NumberedItem number="03" title="Dein persönliches Orakel" text="Die vier Energien, die dich begleiten: Stärken, Herausforderungen und verborgene Ressourcen." light />
-          <NumberedItem number="04" title="Dein Lebensthema" text="Was sich wie ein roter Faden durch dein Leben zieht, oft ohne dass du es bisher so benennen konntest." light />
-          <Divider light />
-        </div>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '60px 40px 80px', textAlign: 'center' }}>
-          <GoldButton to="/registrieren">Jetzt starten für 27 € im Monat →</GoldButton>
-          <p style={{ color: 'rgba(242,237,228,0.4)', fontSize: '0.78rem', marginTop: '16px' }}>Keine Mindestlaufzeit. Jederzeit kündbar.</p>
-        </div>
-      </section>
-
-      {/* QUOTE CALLOUT */}
+      {/* BLOCKQUOTE */}
       <section style={{ backgroundColor: CREAM }}>
-        <QuoteCallout highlight="jeden Morgen">
-          Stell dir vor, du weißt jeden Morgen, welche Energie dieser Tag trägt, bevor er überhaupt begonnen hat.
-        </QuoteCallout>
+        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '80px 40px' }}>
+          <BlockQuote>
+            Stell dir vor, du weißt jeden Morgen, welche Energie dieser Tag trägt, bevor er begonnen hat.
+          </BlockQuote>
+        </div>
       </section>
 
       {/* ANGEBOT */}
-      <section style={{ backgroundColor: CREAM }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 40px 80px' }}>
-          <Eyebrow>Dein Zugang</Eyebrow>
-          <SectionHeadline>Wähle deinen Weg.</SectionHeadline>
+      <section style={{ backgroundColor: SAND }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '80px 40px' }}>
+          <Tag>Dein Zugang</Tag>
+          <H2>Wähle deinen Weg.</H2>
 
-          <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px', marginTop: '40px' }}>
             {/* Basis */}
-            <div style={{ flex: '1', minWidth: '280px', backgroundColor: NAVY, padding: '40px 36px' }}>
-              <div style={{ fontSize: '0.72rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(184,151,90,0.8)', marginBottom: '12px' }}>
-                Basis Mitgliedschaft
+            <div style={{ backgroundColor: DEEP, padding: '48px 40px' }}>
+              <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: COPPER_LIGHT, marginBottom: '24px' }}>
+                Mitgliedschaft
               </div>
-              <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '2.8rem', fontWeight: 400, color: CREAM, marginBottom: '8px' }}>
+              <div style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontSize: '3.2rem', fontWeight: 400, color: CREAM, lineHeight: 1 }}>
                 27 €
               </div>
-              <div style={{ color: 'rgba(242,237,228,0.5)', fontSize: '0.85rem', marginBottom: '36px' }}>pro Monat</div>
-              <div style={{ borderTop: '1px solid rgba(242,237,228,0.1)', paddingTop: '28px' }}>
+              <div style={{ color: 'rgba(244,239,230,0.4)', fontSize: '0.82rem', marginBottom: '40px', marginTop: '4px' }}>pro Monat</div>
+              <Line dark />
+              <div style={{ paddingTop: '28px' }}>
                 {[
                   'Tägliche Energieanalyse',
-                  'Monatliche Tiefenanalyse am 1. jeden Monats',
+                  'Monatliche Tiefenanalyse',
                   'PDF-Download jeder Analyse',
                   'Dein persönliches Maya Profil',
                   'Jederzeit kündbar',
                 ].map((item, i) => (
-                  <div key={i} style={{ color: 'rgba(242,237,228,0.75)', fontWeight: 300, fontSize: '0.9rem', marginBottom: '12px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                    <span style={{ color: GOLD, marginTop: '2px', flexShrink: 0 }}>→</span> {item}
+                  <div key={i} style={{ color: 'rgba(244,239,230,0.7)', fontWeight: 300, fontSize: '0.9rem', marginBottom: '12px', display: 'flex', gap: '12px' }}>
+                    <span style={{ color: COPPER_LIGHT, flexShrink: 0 }}>—</span> {item}
                   </div>
                 ))}
               </div>
-              <div style={{ marginTop: '36px' }}>
-                <Link to="/registrieren" style={{
-                  display: 'block',
-                  backgroundColor: CREAM,
-                  color: NAVY,
-                  padding: '14px 24px',
-                  fontSize: '0.72rem',
-                  fontWeight: 600,
-                  letterSpacing: '0.15em',
-                  textTransform: 'uppercase',
-                  textDecoration: 'none',
-                  textAlign: 'center',
-                }}>
-                  Jetzt Mitglied werden →
-                </Link>
+              <div style={{ marginTop: '40px' }}>
+                <PillButton to="/registrieren" variant="copper">Jetzt Mitglied werden →</PillButton>
               </div>
             </div>
 
-            {/* Zusatzanalysen */}
-            <div style={{ flex: '1', minWidth: '280px', backgroundColor: '#EAE4D8', padding: '40px 36px' }}>
-              <div style={{ fontSize: '0.72rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.15em', color: GOLD, marginBottom: '12px' }}>
+            {/* Zusatz */}
+            <div style={{ backgroundColor: '#DDD5C2', padding: '48px 40px' }}>
+              <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: COPPER, marginBottom: '24px' }}>
                 Zusatzanalysen
               </div>
-              <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.3rem', fontWeight: 400, color: TEXT_DARK, marginBottom: '8px' }}>
-                Einzeln buchbar, einmalig.
+              <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.4rem', fontWeight: 400, color: TEXT, marginBottom: '8px' }}>
+                Einzeln buchbar. Einmalig.
               </div>
-              <div style={{ color: TEXT_LIGHT, fontSize: '0.85rem', marginBottom: '36px' }}>
-                Für die Lebensbereiche, die gerade relevant sind.
+              <div style={{ color: TEXT_LIGHT, fontSize: '0.88rem', marginBottom: '40px' }}>
+                Für die Bereiche, die gerade relevant sind.
               </div>
-              <div style={{ borderTop: '1px solid rgba(139,122,82,0.2)', paddingTop: '28px' }}>
+              <Line />
+              <div style={{ paddingTop: '28px' }}>
                 {[
                   'Business-Analyse',
                   'Gesundheitsanalyse',
@@ -437,8 +405,8 @@ export default function Salespage() {
                   'Partnerschaftsanalyse',
                   'Partner-Kompatibilität',
                 ].map((item, i) => (
-                  <div key={i} style={{ color: TEXT_MID, fontWeight: 300, fontSize: '0.9rem', marginBottom: '10px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    <span style={{ color: GOLD, fontSize: '0.5rem' }}>●</span> {item}
+                  <div key={i} style={{ color: TEXT_MID, fontWeight: 300, fontSize: '0.9rem', marginBottom: '10px', display: 'flex', gap: '12px' }}>
+                    <span style={{ color: COPPER, flexShrink: 0, fontSize: '0.6rem', marginTop: '5px' }}>◆</span> {item}
                   </div>
                 ))}
               </div>
@@ -447,52 +415,59 @@ export default function Salespage() {
         </div>
       </section>
 
-      {/* TESTIMONIALS – dark */}
-      <section style={{ backgroundColor: NAVY }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 40px' }}>
-          <Eyebrow light>Was andere erlebt haben</Eyebrow>
-          <SectionHeadline light>Stimmen.</SectionHeadline>
-          <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-            <TestimonialCard
-              name="Sarah M., 34"
-              role="Unternehmerin, Hamburg"
-              quote="Ich habe vieles über mich gewusst. Die Maya Analyse hat mir gezeigt, warum es trotzdem immer wieder gleich läuft. Das hat etwas in mir geöffnet."
-            />
-            <TestimonialCard
-              name="Thomas K., 41"
-              role="Führungskraft, München"
-              quote="Ich war skeptisch. Dann habe ich die erste Analyse gelesen und zum ersten Mal das Gefühl gehabt, dass jemand beschreibt, wie ich wirklich funktioniere. Nicht wie ich sein sollte."
-            />
-            <TestimonialCard
-              name="Julia R., 29"
-              role="Coach, Berlin"
-              quote="Die monatliche Analyse ist für mich ein Orientierungspunkt geworden. Bevor ich größere Entscheidungen treffe, schaue ich rein. Es hilft."
-            />
+      {/* TESTIMONIALS */}
+      <section style={{ backgroundColor: WARM }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '80px 40px' }}>
+          <Tag dark>Stimmen</Tag>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
+            {[
+              { name: 'Sarah M., 34', role: 'Unternehmerin, Hamburg', quote: 'Ich habe vieles über mich gewusst. Die Maya Analyse hat mir gezeigt, warum es trotzdem immer wieder gleich läuft. Das hat etwas in mir geöffnet.' },
+              { name: 'Thomas K., 41', role: 'Führungskraft, München', quote: 'Ich war skeptisch. Dann habe ich die erste Analyse gelesen und das Gefühl gehabt, dass jemand beschreibt, wie ich wirklich funktioniere. Nicht wie ich sein sollte.' },
+              { name: 'Julia R., 29', role: 'Coach, Berlin', quote: 'Die monatliche Analyse ist ein Orientierungspunkt geworden. Bevor ich größere Entscheidungen treffe, schaue ich rein. Es hilft.' },
+            ].map((t, i) => (
+              <div key={i} style={{ backgroundColor: 'rgba(244,239,230,0.05)', padding: '36px 28px', borderLeft: i > 0 ? '1px solid rgba(244,239,230,0.08)' : 'none' }}>
+                <p style={{
+                  fontFamily: '"Playfair Display", serif',
+                  fontStyle: 'italic',
+                  fontSize: '1rem',
+                  color: 'rgba(244,239,230,0.8)',
+                  lineHeight: 1.75,
+                  margin: '0 0 24px',
+                }}>
+                  „{t.quote}"
+                </p>
+                <div style={{ color: 'rgba(244,239,230,0.5)', fontSize: '0.8rem', fontWeight: 500 }}>{t.name}</div>
+                <div style={{ color: 'rgba(244,239,230,0.3)', fontSize: '0.75rem', marginTop: '2px' }}>{t.role}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* FINALER CTA – creme */}
+      {/* FINALER CTA */}
       <section style={{ backgroundColor: CREAM }}>
-        <div style={{ maxWidth: '720px', margin: '0 auto', padding: '100px 40px', textAlign: 'center' }}>
-          <SectionHeadline>
-            Du weißt wahrscheinlich längst, was du in deinem Leben besser verstehen möchtest.
-          </SectionHeadline>
-          <Body centered>
-            <p>Die spannendere Frage ist, welches Muster heute noch dafür sorgt, dass bestimmte Situationen immer wieder ähnlich verlaufen. Genau dort beginnt dein nächster Schritt.</p>
-          </Body>
-          <div style={{ marginTop: '48px' }}>
-            <DarkButton to="/registrieren">Jetzt starten – 27 € / Monat →</DarkButton>
+        <div style={{ maxWidth: '680px', margin: '0 auto', padding: '100px 40px', textAlign: 'center' }}>
+          <div style={{
+            width: '1px',
+            height: '60px',
+            backgroundColor: 'rgba(160,82,45,0.3)',
+            margin: '0 auto 48px',
+          }} />
+          <H2>Du weißt wahrscheinlich längst, was du in deinem Leben besser verstehen möchtest.</H2>
+          <P>
+            Die spannendere Frage ist, welches Muster heute noch dafür sorgt, dass bestimmte Situationen immer wieder ähnlich verlaufen. Genau dort beginnt der nächste Schritt.
+          </P>
+          <div style={{ marginTop: '40px' }}>
+            <PillButton to="/registrieren" variant="copper">Jetzt starten für 27 € im Monat →</PillButton>
           </div>
-          <p style={{ color: TEXT_LIGHT, fontSize: '0.78rem', marginTop: '16px' }}>Keine Mindestlaufzeit. Jederzeit kündbar.</p>
+          <p style={{ color: TEXT_LIGHT, fontSize: '0.78rem', marginTop: '14px' }}>Keine Mindestlaufzeit. Jederzeit kündbar.</p>
         </div>
       </section>
 
       {/* FAQ */}
-      <section style={{ backgroundColor: '#EAE4D8' }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '80px 40px' }}>
-          <Eyebrow>Häufige Fragen</Eyebrow>
-          <SectionHeadline>Vielleicht fragst du dich gerade:</SectionHeadline>
+      <section style={{ backgroundColor: SAND }}>
+        <div style={{ maxWidth: '720px', margin: '0 auto', padding: '80px 40px' }}>
+          <Tag>Häufige Fragen</Tag>
           <FaqItem
             question="Was genau ist der Maya Kalender?"
             answer="Der Maya Tzolkin ist ein 260-tägiger Zyklus aus 20 Sonnensiegeln und 13 galaktischen Tönen. Er beschreibt keine Zukunft, er beschreibt Muster. Dein Geburtsdatum ergibt eine einzigartige Kombination, die zeigt, wie du in der Welt wirkst und welche Themen dich begleiten."
@@ -507,13 +482,13 @@ export default function Salespage() {
           />
           <FaqItem
             question="Wie oft kann ich Analysen erstellen?"
-            answer="Die Tagesenergie kannst du jeden Morgen neu abrufen. Die Monatsanalyse steht dir am 1. jeden Monats zur Verfügung. Zusatzanalysen für spezifische Lebensbereiche kannst du nach einmaliger Buchung jederzeit aufrufen."
+            answer="Die Tagesenergie kannst du jeden Morgen neu abrufen. Die Monatsanalyse steht dir am 1. jeden Monats zur Verfügung. Zusatzanalysen für spezifische Lebensbereiche buchst du einmalig und kannst sie danach jederzeit aufrufen."
           />
           <FaqItem
             question="Wie kann ich kündigen?"
             answer="Jederzeit mit einem Klick in deinem Profil. Keine Fristen, keine Hürden."
           />
-          <Divider />
+          <Line />
         </div>
       </section>
 
