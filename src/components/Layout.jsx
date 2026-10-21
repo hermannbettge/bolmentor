@@ -3,6 +3,7 @@ import Navbar from './Navbar.jsx'
 import Sidebar from './Sidebar.jsx'
 import Footer from './Footer.jsx'
 import BottomNav from './BottomNav.jsx'
+import MayaChat from './MayaChat.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { useState, useEffect } from 'react'
 
@@ -29,6 +30,7 @@ export default function Layout({ children }) {
         <main style={{ marginLeft: '220px', flex: 1, minHeight: '100vh', backgroundColor: 'var(--bg-deep)', transition: 'background-color 0.25s ease' }}>
           {children}
         </main>
+        <MayaChat />
       </div>
     )
   }
@@ -38,6 +40,7 @@ export default function Layout({ children }) {
       <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg-deep)', paddingBottom: '70px' }}>
         {children}
         <BottomNav />
+        <MayaChat />
       </div>
     )
   }
