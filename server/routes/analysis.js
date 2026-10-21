@@ -210,6 +210,10 @@ ABSOLUT VERBOTENE STILMITTEL (streng einhalten):
 - Schreibe fehlerfreies, korrektes Deutsch mit korrekter Groß- und Kleinschreibung
 - Alle Substantive MÜSSEN großgeschrieben sein (z.B. Partnerschaftsanalyse, Energie, Analyse, Krieger, Ton)
 - Eigennamen, Titel und Analysebezeichnungen immer mit Großbuchstaben beginnen
+- Verwende AUSSCHLIESSLICH korrekte deutsche Rechtschreibung: "intellektuell" (NICHT "intellectuell"), "Qualität" (NICHT "Qualitaet"), etc.
+- Keine eingedeutschten Anglizismen in der Schreibweise
+- Jeder Satz MUSS mit einem Satzzeichen enden (Punkt, Ausrufezeichen oder Fragezeichen)
+- Kein Satz darf nahtlos in den nächsten übergehen ohne Satzzeichen dazwischen
 STIL:
 - Sprich die Person immer direkt mit Vornamen an
 - Jeder Abschnitt mindestens 4-6 ausführliche Absätze
