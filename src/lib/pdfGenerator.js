@@ -2,12 +2,13 @@ import jsPDF from 'jspdf'
 import { getGermanDate } from './mayanCalendar.js'
 
 const COLORS = {
-  bgDeep: [13, 27, 42],
-  gold: [184, 151, 90],
-  goldMuted: [139, 110, 62],
-  textPrimary: [232, 232, 232],
-  textMuted: [136, 153, 170],
-  white: [255, 255, 255],
+  bg: [255, 255, 255],
+  bgAccent: [244, 239, 230],   // warm cream for header strip
+  copper: [160, 82, 45],
+  copperMuted: [192, 130, 90],
+  textPrimary: [42, 32, 24],
+  textMuted: [90, 78, 66],
+  border: [200, 185, 165],
 }
 
 function hexToRgb(hex) {
@@ -71,42 +72,40 @@ export async function generateAnalysisPDF({ content, analysisType, userName, dat
   const typeLabel = typeLabels[analysisType] || 'Analyse'
   const dateObj = getGermanDate()
 
-  // --- Background ---
-  doc.setFillColor(...COLORS.bgDeep)
+  // --- White background ---
+  doc.setFillColor(...COLORS.bg)
   doc.rect(0, 0, pageWidth, pageHeight, 'F')
 
-  let y = margin
+  // --- Cream header strip ---
+  const headerH = 32
+  doc.setFillColor(...COLORS.bgAccent)
+  doc.rect(0, 0, pageWidth, headerH, 'F')
 
   // --- Logo ---
   doc.setFont('helvetica', 'bold')
-  doc.setFontSize(9)
-  doc.setTextColor(...COLORS.gold)
+  doc.setFontSize(8)
+  doc.setTextColor(...COLORS.copper)
   doc.setCharSpace(2)
-  doc.text('BEWUSSTSEIN.OHNE.LIMIT.', margin, y)
+  doc.text('BEWUSSTSEIN.OHNE.LIMIT', margin, 10)
   doc.setCharSpace(0)
 
-  y += 8
-
-  // --- Analysis type + Name + Date ---
+  // --- Analysis type + Name ---
   doc.setFont('helvetica', 'normal')
-  doc.setFontSize(11)
+  doc.setFontSize(13)
   doc.setTextColor(...COLORS.textPrimary)
-  doc.text(`${typeLabel} für ${userName}`, margin, y)
+  doc.text(`${typeLabel} für ${userName}`, margin, 20)
 
-  y += 6
-
+  // --- Date (right-aligned) ---
   doc.setFontSize(8)
   doc.setTextColor(...COLORS.textMuted)
-  doc.text(date || dateObj.shortFormatted, margin, y)
+  doc.text(date || dateObj.shortFormatted, pageWidth - margin, 20, { align: 'right' })
 
-  y += 8
+  // --- Bottom border of header ---
+  doc.setDrawColor(...COLORS.copper)
+  doc.setLineWidth(0.4)
+  doc.line(0, headerH, pageWidth, headerH)
 
-  // --- Gold divider ---
-  doc.setDrawColor(...COLORS.goldMuted)
-  doc.setLineWidth(0.3)
-  doc.line(margin, y, pageWidth - margin, y)
-
-  y += 10
+  let y = headerH + 10
 
   // --- Parse and render content ---
   const lines = content.split('\n')
@@ -117,42 +116,44 @@ export async function generateAnalysisPDF({ content, analysisType, userName, dat
   for (const line of lines) {
     if (y > pageHeight - 25) {
       doc.addPage()
-      doc.setFillColor(...COLORS.bgDeep)
+      doc.setFillColor(...COLORS.bg)
       doc.rect(0, 0, pageWidth, pageHeight, 'F')
       y = margin
     }
 
     if (line.startsWith('## ')) {
-      y += 4
+      y += 5
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(8)
-      doc.setTextColor(...COLORS.gold)
+      doc.setTextColor(...COLORS.copper)
       doc.setCharSpace(1)
       doc.text(line.replace('## ', '').toUpperCase(), margin, y)
       doc.setCharSpace(0)
       y += 3
-      doc.setDrawColor(...COLORS.goldMuted)
+      doc.setDrawColor(...COLORS.border)
       doc.setLineWidth(0.2)
       doc.line(margin, y, pageWidth - margin, y)
       y += 5
       doc.setFont('helvetica', 'normal')
-      doc.setFontSize(9)
+      doc.setFontSize(9.5)
     } else if (line.trim() === '') {
-      y += 3
+      y += 2
     } else {
       doc.setTextColor(...COLORS.textPrimary)
       doc.setFont('helvetica', 'normal')
-      doc.setFontSize(9)
-      const splitLines = doc.splitTextToSize(line, contentWidth)
+      doc.setFontSize(9.5)
+      // Strip ** bold markers for PDF
+      const cleanLine = line.replace(/\*\*/g, '')
+      const splitLines = doc.splitTextToSize(cleanLine, contentWidth)
       for (const splitLine of splitLines) {
         if (y > pageHeight - 25) {
           doc.addPage()
-          doc.setFillColor(...COLORS.bgDeep)
+          doc.setFillColor(...COLORS.bg)
           doc.rect(0, 0, pageWidth, pageHeight, 'F')
           y = margin
         }
         doc.text(splitLine, margin, y)
-        y += 5
+        y += 5.5
       }
     }
   }
@@ -161,20 +162,20 @@ export async function generateAnalysisPDF({ content, analysisType, userName, dat
   const totalPages = doc.internal.getNumberOfPages()
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i)
-    doc.setFillColor(...COLORS.bgDeep)
-    doc.rect(0, pageHeight - 15, pageWidth, 15, 'F')
-    doc.setDrawColor(...COLORS.goldMuted)
-    doc.setLineWidth(0.2)
-    doc.line(margin, pageHeight - 14, pageWidth - margin, pageHeight - 14)
+    doc.setFillColor(...COLORS.bgAccent)
+    doc.rect(0, pageHeight - 12, pageWidth, 12, 'F')
+    doc.setDrawColor(...COLORS.copper)
+    doc.setLineWidth(0.3)
+    doc.line(0, pageHeight - 12, pageWidth, pageHeight - 12)
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(7)
     doc.setTextColor(...COLORS.textMuted)
     doc.text(
-      `bewusstsein.ohne.limit  |  Maya Kalender Analyse  |  ${dateObj.shortFormatted}`,
+      `bewusstsein.ohne.limit  ·  Maya Kalender Analyse  ·  ${dateObj.shortFormatted}`,
       margin,
-      pageHeight - 8
+      pageHeight - 5
     )
-    doc.text(`Seite ${i} von ${totalPages}`, pageWidth - margin, pageHeight - 8, { align: 'right' })
+    doc.text(`${i} / ${totalPages}`, pageWidth - margin, pageHeight - 5, { align: 'right' })
   }
 
   // --- Save ---
