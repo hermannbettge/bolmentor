@@ -695,43 +695,43 @@ Länge: 300–380 Wörter gesamt.`
 const DAILY_DOMAIN_TYPES = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership']
 
 DAILY_DOMAIN_TYPES.forEach(type => {
-  // GET: check if today's domain daily exists
+  // GET: check if a domain daily exists for a given date (default: today)
   router.get(`/${type}/daily`, requireAuth, async (req, res) => {
     try {
-      const today = new Date().toISOString().split('T')[0]
+      const dateStr = req.query.date || new Date().toISOString().split('T')[0]
       const { data } = await supabase
         .from('analyses')
         .select('content, created_at')
         .eq('user_id', req.user.id)
-        .eq('type', `${type}_daily_${today}`)
+        .eq('type', `${type}_daily_${dateStr}`)
         .order('created_at', { ascending: false })
         .limit(1)
         .single()
-      if (data) return res.json({ content: data.content })
-      res.json({ content: null })
+      res.json({ content: data?.content || null })
     } catch {
       res.json({ content: null })
     }
   })
 
-  // POST: generate today's domain daily
+  // POST: generate domain daily for a given date (default: today)
   router.post(`/${type}/daily`, requireAuth, async (req, res) => {
     try {
       const profile = await getProfile(req.user.id)
       checkMembership(profile)
       checkPurchased(profile, type)
 
-      const today = new Date()
-      const todayStr = today.toISOString().split('T')[0]
-      const kinData = calculateKinFromDate(profile.birth_date)
-      const todayKin = calculateKinFromDate(todayStr)
-      const monthName = GERMAN_MONTHS[today.getMonth()]
-      const dateLabel = `${today.getDate()}. ${monthName} ${today.getFullYear()}`
+      const dateStr = req.body.date || new Date().toISOString().split('T')[0]
+      const dateObj = new Date(dateStr + 'T00:00:00')
+      const monthName = GERMAN_MONTHS[dateObj.getMonth()]
+      const dateLabel = `${dateObj.getDate()}. ${monthName} ${dateObj.getFullYear()}`
 
-      const prompt = buildDomainDailyPrompt(type, profile, kinData, todayKin, dateLabel)
+      const kinData = calculateKinFromDate(profile.birth_date)
+      const dayKin = calculateKinFromDate(dateStr)
+
+      const prompt = buildDomainDailyPrompt(type, profile, kinData, dayKin, dateLabel)
       const content = await callClaude(prompt, 4000)
 
-      await saveAnalysis(req.user.id, `${type}_daily_${todayStr}`, content, todayStr)
+      await saveAnalysis(req.user.id, `${type}_daily_${dateStr}`, content, dateStr)
       res.json({ content })
     } catch (err) {
       res.status(400).json({ error: err.message })

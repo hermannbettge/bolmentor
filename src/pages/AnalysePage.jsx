@@ -5,6 +5,8 @@ import { supabase } from '../lib/supabase.js'
 import AnalysisDisplay from '../components/AnalysisDisplay.jsx'
 import PDFDownloadButton from '../components/PDFDownloadButton.jsx'
 
+function todayStr() { return new Date().toISOString().split('T')[0] }
+
 const COPPER = 'var(--accent)'
 const TEXT = 'var(--text-1)'
 const TEXT_MID = 'var(--text-2)'
@@ -30,6 +32,7 @@ export default function AnalysePage() {
   const [dailyAnalysis, setDailyAnalysis] = useState(null)
   const [dailyLoading, setDailyLoading] = useState(false)
   const [dailyChecking, setDailyChecking] = useState(true)
+  const [dailyDate, setDailyDate] = useState(todayStr())
   // Use next year in Q4 (Oct–Dec) so analysis is forward-looking
   const now = new Date()
   const currentYear = now.getMonth() >= 9 ? now.getFullYear() + 1 : now.getFullYear()
@@ -48,6 +51,7 @@ export default function AnalysePage() {
     setAnalysis(null)
     setYearlyAnalysis(null)
     setDailyAnalysis(null)
+    setDailyDate(todayStr())
     setError('')
     setChecking(true)
     setYearlyChecking(true)
@@ -63,20 +67,34 @@ export default function AnalysePage() {
   }, [user, type, yearlyChecking])
 
   useEffect(() => {
-    if (dailyChecking) checkDaily()
+    if (dailyChecking) checkDaily(dailyDate)
   }, [user, type, dailyChecking])
 
-  async function checkDaily() {
+  async function checkDaily(date) {
     if (!user) return
     try {
       const { data: { session } } = await supabase.auth.getSession()
-      const res = await fetch(`/api/analysis/${type}/daily`, {
+      const res = await fetch(`/api/analysis/${type}/daily?date=${date}`, {
         headers: { Authorization: `Bearer ${session.access_token}` },
       })
       const data = await res.json()
-      if (data.content) setDailyAnalysis(data.content)
+      setDailyAnalysis(data.content || null)
     } catch {}
     finally { setDailyChecking(false) }
+  }
+
+  async function handleDateChange(newDate) {
+    setDailyDate(newDate)
+    setDailyAnalysis(null)
+    if (!newDate) return
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch(`/api/analysis/${type}/daily?date=${newDate}`, {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+      const data = await res.json()
+      setDailyAnalysis(data.content || null)
+    } catch {}
   }
 
   async function createDaily() {
@@ -87,6 +105,7 @@ export default function AnalysePage() {
       const res = await fetch(`/api/analysis/${type}/daily`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ date: dailyDate }),
       })
       if (!res.ok) { const e = await res.json(); throw new Error(e.error) }
       const data = await res.json()
@@ -200,8 +219,26 @@ export default function AnalysePage() {
               Tagesenergie
             </div>
             <h2 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: '1.6rem', color: TEXT, margin: '0 0 20px' }}>
-              {label} — Energie für heute
+              {label} — Tagesenergie
             </h2>
+
+            {/* Date picker */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
+              <input
+                type="date"
+                value={dailyDate}
+                onChange={e => handleDateChange(e.target.value)}
+                style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '10px 14px', color: 'var(--text-1)', fontSize: '0.88rem', fontFamily: 'Inter, sans-serif', cursor: 'pointer' }}
+              />
+              {dailyDate !== todayStr() && (
+                <button
+                  onClick={() => handleDateChange(todayStr())}
+                  style={{ background: 'none', border: 'none', color: COPPER, fontSize: '0.82rem', cursor: 'pointer', padding: 0 }}
+                >
+                  Heute
+                </button>
+              )}
+            </div>
 
             {dailyChecking ? (
               <div style={{ color: TEXT_LIGHT, fontSize: '0.88rem' }}>Wird geladen…</div>
@@ -209,8 +246,14 @@ export default function AnalysePage() {
               <>
                 <AnalysisDisplay content={dailyAnalysis} />
                 <div style={{ display: 'flex', gap: '16px', marginTop: '20px', flexWrap: 'wrap', alignItems: 'center' }}>
+                  <PDFDownloadButton
+                    content={dailyAnalysis}
+                    analysisType={`${type}_daily`}
+                    userName={profile?.name || ''}
+                    date={dailyDate ? new Date(dailyDate + 'T00:00:00').toLocaleDateString('de-DE') : new Date().toLocaleDateString('de-DE')}
+                  />
                   <button
-                    onClick={() => { setDailyAnalysis(null); createDaily() }}
+                    onClick={() => { setDailyAnalysis(null) }}
                     style={{ border: '1px solid var(--border)', color: TEXT_MID, background: 'transparent', borderRadius: '40px', padding: '10px 24px', fontSize: '0.82rem', cursor: 'pointer' }}
                   >
                     Neu erstellen
@@ -220,14 +263,16 @@ export default function AnalysePage() {
             ) : (
               <div>
                 <p style={{ color: TEXT_LIGHT, fontSize: '0.9rem', marginBottom: '20px', lineHeight: 1.7 }}>
-                  Wie wirkt die heutige Maya-Energie konkret auf deinen {label.toLowerCase()}? Erhalte jetzt eine tagesaktuelle Einschätzung — automatisch auf heute zugeschnitten.
+                  Wie wirkt die Maya-Energie des gewählten Datums auf deinen {label.toLowerCase()}? Einmal erstellt wird die Analyse gespeichert und ist jederzeit wieder abrufbar.
                 </p>
                 <button
                   onClick={createDaily}
-                  disabled={dailyLoading}
+                  disabled={dailyLoading || !dailyDate}
                   style={{ backgroundColor: 'transparent', border: '1px solid var(--accent)', color: COPPER, borderRadius: '40px', padding: '13px 32px', fontWeight: 500, fontSize: '0.85rem', cursor: dailyLoading ? 'not-allowed' : 'pointer', opacity: dailyLoading ? 0.7 : 1 }}
                 >
-                  {dailyLoading ? 'Tagesenergie wird erstellt…' : 'Tagesenergie für heute erstellen'}
+                  {dailyLoading
+                    ? 'Tagesenergie wird erstellt…'
+                    : `Tagesenergie für ${dailyDate ? new Date(dailyDate + 'T00:00:00').toLocaleDateString('de-DE') : '…'} erstellen`}
                 </button>
               </div>
             )}
