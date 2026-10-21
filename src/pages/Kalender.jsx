@@ -223,7 +223,7 @@ function ListView({ days, todayStr, selected, setSelected }) {
             </div>
             <div style={{ textAlign: 'right' }}>
               <div style={{ fontSize: '0.72rem', color: e.color, fontWeight: 500 }}>{e.label}</div>
-              {day.resonance !== 'none' && <div style={{ fontSize: '0.65rem', color: '#FFD700', marginTop: '2px' }}>{res.label}</div>}
+              {day.resonance !== 'none' && <div style={{ fontSize: '0.65rem', color: 'var(--accent)', marginTop: '2px' }}>{res.label}</div>}
             </div>
           </div>
         )
@@ -242,18 +242,20 @@ function DayDetail({ day, onClose, navigate }) {
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 200,
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+      backgroundColor: 'rgba(0,0,0,0.55)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: '24px',
     }} onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{
         backgroundColor: 'var(--bg-deep)',
         border: '1px solid var(--border)',
-        borderRadius: '16px 16px 0 0',
-        padding: '28px 28px 36px',
+        borderRadius: '16px',
+        padding: '28px 28px 32px',
         width: '100%', maxWidth: '520px',
-        animation: 'slideUp 0.2s ease',
+        maxHeight: '90vh', overflowY: 'auto',
+        animation: 'fadeIn 0.2s ease',
       }}>
-        <style>{`@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }`}</style>
+        <style>{`@keyframes fadeIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }`}</style>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
           <div>
@@ -290,8 +292,9 @@ function DayDetail({ day, onClose, navigate }) {
         </div>
 
         {day.resonance !== 'none' && (
-          <div style={{ padding: '12px 16px', borderRadius: '8px', backgroundColor: 'rgba(255,215,0,0.08)', border: '1px solid rgba(255,215,0,0.3)', marginBottom: '16px' }}>
-            <div style={{ fontSize: '0.82rem', color: '#FFD700' }}>{res.label} — dieser Tag resoniert besonders mit deiner Geburtsenergie.</div>
+          <div style={{ padding: '12px 16px', borderRadius: '8px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', marginBottom: '16px' }}>
+            <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--accent)', marginBottom: '2px' }}>{res.label}</div>
+            <div style={{ fontSize: '0.82rem', color: 'var(--text-1)' }}>Dieser Tag resoniert besonders mit deiner Geburtsenergie.</div>
           </div>
         )}
 
