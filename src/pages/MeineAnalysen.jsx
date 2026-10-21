@@ -11,7 +11,7 @@ const ANALYSES = [
   { key: 'finance', icon: '💰', title: 'Finanzanalyse', description: 'Dein Verhältnis zu Geld und Überfluss', tcLink: '#tc-finance' },
   { key: 'career', icon: '🎯', title: 'Karriere-Analyse', description: 'Dein beruflicher Weg und deine Berufung', tcLink: '#tc-career' },
   { key: 'lifephases', icon: '📅', title: 'Lebensphasen', description: 'Die wichtigsten Jahre deines Lebens', tcLink: '#tc-lifephases', hasModal: true },
-  { key: 'partnership', icon: '💫', title: 'Partnerschaftsanalyse', description: 'Du in Beziehungen', tcLink: '#tc-partnership' },
+  { key: 'partnership', icon: '💫', title: 'Beziehungsanalyse', description: 'Du in Beziehungen', tcLink: '#tc-partnership' },
 ]
 
 
@@ -26,8 +26,8 @@ export default function MeineAnalysen() {
   useEffect(() => {
     if (!user || !profile) return
     async function checkExisting() {
-      const types = purchased
-      if (!types.length) { setChecked(true); return }
+      const types = [...purchased, 'partnership_compatibility']
+      if (!purchased.length) { setChecked(true); return }
       const { data } = await supabase
         .from('analyses')
         .select('type')
@@ -94,6 +94,32 @@ export default function MeineAnalysen() {
             </div>
           )
         })}
+
+        {/* Partner compatibility card — only when partnership is purchased AND partner birth date is set */}
+        {(profile?.is_admin || purchased.includes('partnership')) && profile?.partner_birth_date && (
+          <div style={{
+            backgroundColor: 'var(--color-bg-card)',
+            border: '1px solid rgba(139,110,62,0.2)',
+            borderRadius: '4px',
+            padding: '24px',
+            display: 'flex',
+            flexDirection: 'column',
+          }}>
+            <div style={{ fontSize: '1.8rem', marginBottom: '12px' }}>💑</div>
+            <h3 style={{ color: 'var(--color-text-primary)', fontWeight: 400, fontSize: '0.95rem', marginBottom: '6px' }}>
+              Partnerschaftsanalyse
+            </h3>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', lineHeight: 1.6, marginBottom: '16px', flex: 1 }}>
+              Du und {profile.partner_first_name || 'dein Partner'} als Paar
+            </p>
+            <button
+              onClick={() => navigate('/analyse/partnership')}
+              style={{ backgroundColor: 'var(--color-gold)', color: '#000', border: 'none', borderRadius: '4px', padding: '8px 16px', fontSize: '0.82rem', fontWeight: 500, cursor: 'pointer' }}
+            >
+              {!checked ? '…' : existingTypes.has('partnership_compatibility') ? 'Analyse anzeigen' : 'Analyse erstellen'}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
