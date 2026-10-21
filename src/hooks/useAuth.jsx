@@ -43,19 +43,17 @@ export function AuthProvider({ children }) {
   }
 
   async function signUp(email, password, name, birthDate) {
-    const { data, error } = await supabase.auth.signUp({ email, password })
-    if (error) throw error
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, name, birthDate }),
+    })
+    const json = await res.json()
+    if (!res.ok) throw new Error(json.error || 'Registrierung fehlgeschlagen.')
 
-    if (data.user) {
-      const { error: profileError } = await supabase.from('profiles').insert({
-        id: data.user.id,
-        name,
-        birth_date: birthDate,
-        membership_active: false,
-        purchased_analyses: [],
-      })
-      if (profileError) throw profileError
-    }
+    // Direkt einloggen nach erfolgreicher Registrierung
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) throw error
     return data
   }
 
