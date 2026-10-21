@@ -75,8 +75,32 @@ export default function Profil() {
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
   const [showCancel, setShowCancel] = useState(false)
+  const [recalcMsg, setRecalcMsg] = useState('')
+  const [recalcing, setRecalcing] = useState(false)
 
   const kinData = profile?.birth_date ? (() => { try { return calculateKin(profile.birth_date) } catch { return null } })() : null
+
+  async function handleRecalculate() {
+    if (!profile?.birth_date) return
+    setRecalcing(true)
+    setRecalcMsg('')
+    try {
+      const { createClient } = await import('@supabase/supabase-js')
+      const sb = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY)
+      const { data: { session } } = await sb.auth.getSession()
+      if (!session) throw new Error('Nicht angemeldet')
+      // Delete cached Tagesenergie and Monatsanalyse so they regenerate with correct Kin
+      await sb.from('analyses')
+        .delete()
+        .eq('user_id', session.user.id)
+        .in('analysis_type', ['tagesenergie', 'monatsanalyse'])
+      setRecalcMsg('Maya-Profil aktualisiert. Deine Analysen werden beim nächsten Aufruf neu erstellt.')
+    } catch (err) {
+      setRecalcMsg('Fehler: ' + err.message)
+    } finally {
+      setRecalcing(false)
+    }
+  }
 
   function formatBirthDate(val) {
     const d = val.replace(/\D/g, '')
@@ -158,7 +182,7 @@ export default function Profil() {
         {/* Maya Profil */}
         {kinData && (
           <Section title="Mein Maya Profil">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '20px' }}>
               {[
                 { label: 'Kin-Nummer', value: `Kin ${kinData.kin}` },
                 { label: 'Leitsiegel', value: `${kinData.tone} ${kinData.seal}` },
@@ -173,6 +197,22 @@ export default function Profil() {
                 </div>
               ))}
             </div>
+            <button
+              onClick={handleRecalculate}
+              disabled={recalcing}
+              style={{
+                border: `1px solid ${COPPER}`, color: COPPER, backgroundColor: 'transparent',
+                borderRadius: '40px', padding: '10px 22px', fontSize: '0.82rem',
+                cursor: recalcing ? 'not-allowed' : 'pointer', opacity: recalcing ? 0.6 : 1,
+              }}
+            >
+              {recalcing ? 'Wird aktualisiert…' : 'Maya-Profil neu berechnen'}
+            </button>
+            {recalcMsg && (
+              <p style={{ fontSize: '0.83rem', color: recalcMsg.includes('Fehler') ? '#c0392b' : COPPER, marginTop: '10px' }}>
+                {recalcMsg}
+              </p>
+            )}
           </Section>
         )}
 
