@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { supabase } from '../lib/supabase.js'
 import AnalysisDisplay from '../components/AnalysisDisplay.jsx'
-import { generatePDF } from '../lib/pdfGenerator.js'
+import { generateAnalysisPDF } from '../lib/pdfGenerator.js'
 
 const CATEGORY_LABELS = {
   land: 'Land / Nation',
@@ -68,7 +68,7 @@ export default function AnalyseEvent() {
 
   async function handlePDF() {
     if (!event || !content) return
-    await generatePDF(content, `Ereignis-Analyse: ${event.name}`, 'event')
+    await generateAnalysisPDF({ content, analysisType: 'event', userName: event.name, date: analysisDate })
   }
 
   if (loading) return (
