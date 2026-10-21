@@ -25,9 +25,20 @@ export default function AnalysisDisplay({ content }) {
               {headline}
             </h2>
             <div style={{ color: 'var(--text-1)', fontWeight: 300, lineHeight: 1.85, fontSize: '0.95rem' }}>
-              {body.split('\n').map((line, i) => (
-                line.trim() ? <p key={i} style={{ margin: '0 0 12px' }}>{line}</p> : null
-              ))}
+              {body.split('\n').map((line, i) => {
+                if (!line.trim()) return null
+                // Render **bold** markdown
+                const parts = line.split(/(\*\*[^*]+\*\*)/)
+                return (
+                  <p key={i} style={{ margin: '0 0 12px' }}>
+                    {parts.map((part, j) =>
+                      part.startsWith('**') && part.endsWith('**')
+                        ? <strong key={j} style={{ fontWeight: 500, color: 'var(--accent)' }}>{part.slice(2, -2)}</strong>
+                        : part
+                    )}
+                  </p>
+                )
+              })}
             </div>
           </div>
         )
