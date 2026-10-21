@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
+import { useTheme } from '../hooks/useTheme.jsx'
 
 const ANALYSE_LABELS = {
   business: 'Business', health: 'Gesundheit', family: 'Familie',
@@ -7,26 +8,21 @@ const ANALYSE_LABELS = {
   lifephases: 'Lebensphasen', partnership: 'Partnerschaft', compatibility: 'Kompatibilität',
 }
 
-const CREAM = '#F4EFE6'
-const DEEP = '#1A1410'
-const COPPER = '#A0522D'
-const TEXT_MID = '#5A4E42'
-const TEXT_LIGHT = '#8C7E72'
-
 function NavItem({ to, label, indent = false }) {
   return (
     <NavLink
       to={to}
       style={({ isActive }) => ({
         display: 'block',
-        padding: indent ? '8px 24px 8px 36px' : '11px 24px',
+        padding: indent ? '7px 24px 7px 36px' : '10px 24px',
         textDecoration: 'none',
-        fontSize: indent ? '0.82rem' : '0.88rem',
-        color: isActive ? COPPER : indent ? TEXT_LIGHT : TEXT_MID,
-        backgroundColor: isActive ? 'rgba(160,82,45,0.07)' : 'transparent',
-        borderRight: isActive ? `2px solid ${COPPER}` : '2px solid transparent',
+        fontSize: indent ? '0.81rem' : '0.87rem',
+        color: isActive ? 'var(--accent)' : indent ? 'var(--text-2)' : 'var(--text-2)',
+        backgroundColor: isActive ? 'rgba(var(--accent-rgb, 184,151,90),0.07)' : 'transparent',
+        borderRight: isActive ? '2px solid var(--accent)' : '2px solid transparent',
         fontWeight: isActive ? 500 : 300,
         transition: 'color 0.15s',
+        fontFamily: 'Inter, sans-serif',
       })}
     >
       {label}
@@ -36,6 +32,7 @@ function NavItem({ to, label, indent = false }) {
 
 export default function Sidebar() {
   const { profile, signOut } = useAuth()
+  const { theme, toggle } = useTheme()
   const navigate = useNavigate()
   const purchased = profile?.purchased_analyses || []
 
@@ -48,32 +45,57 @@ export default function Sidebar() {
     <aside style={{
       width: '220px',
       minHeight: '100vh',
-      backgroundColor: '#F0E9DC',
-      borderRight: '1px solid rgba(42,32,24,0.1)',
+      backgroundColor: 'var(--sidebar-bg)',
+      borderRight: '1px solid var(--sidebar-border)',
       display: 'flex',
       flexDirection: 'column',
       position: 'fixed',
       top: 0, left: 0,
       zIndex: 40,
       fontFamily: 'Inter, sans-serif',
+      transition: 'background-color 0.25s ease, border-color 0.25s ease',
     }}>
-      <div style={{ padding: '28px 24px 24px' }}>
+      {/* Logo + Theme Toggle */}
+      <div style={{ padding: '24px 24px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <NavLink to="/dashboard" style={{ textDecoration: 'none' }}>
-          <span style={{ color: COPPER, fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.18em', lineHeight: 1.6 }}>
+          <span style={{ color: 'var(--accent)', fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.18em', lineHeight: 1.7 }}>
             BEWUSSTSEIN.<br />OHNE.LIMIT
           </span>
         </NavLink>
+
+        {/* Mond / Sonne Toggle */}
+        <button
+          onClick={toggle}
+          title={theme === 'dark' ? 'Helles Design' : 'Dunkles Design'}
+          style={{
+            background: 'none',
+            border: '1px solid var(--border)',
+            borderRadius: '20px',
+            padding: '4px 10px',
+            cursor: 'pointer',
+            fontSize: '0.85rem',
+            color: 'var(--text-2)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            transition: 'border-color 0.2s, color 0.2s',
+            marginTop: '2px',
+            flexShrink: 0,
+          }}
+        >
+          {theme === 'dark' ? '☀' : '☾'}
+        </button>
       </div>
 
-      <div style={{ height: '1px', backgroundColor: 'rgba(42,32,24,0.1)', margin: '0 24px' }} />
+      <div style={{ height: '1px', backgroundColor: 'var(--sidebar-border)', margin: '0 24px' }} />
 
-      <nav style={{ flex: 1, paddingTop: '12px' }}>
+      <nav style={{ flex: 1, paddingTop: '10px' }}>
         <NavItem to="/tagesenergie" label="Tagesenergie" />
         <NavItem to="/monatsanalyse" label="Monatsanalyse" />
 
         {purchased.length > 0 && (
           <>
-            <div style={{ padding: '16px 24px 6px', fontSize: '0.65rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: TEXT_LIGHT }}>
+            <div style={{ padding: '14px 24px 4px', fontSize: '0.63rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: 'var(--accent-dim)' }}>
               Meine Analysen
             </div>
             {purchased.map(key => (
@@ -82,14 +104,14 @@ export default function Sidebar() {
           </>
         )}
 
-        <div style={{ height: '1px', backgroundColor: 'rgba(42,32,24,0.08)', margin: '12px 24px' }} />
+        <div style={{ height: '1px', backgroundColor: 'var(--sidebar-border)', margin: '10px 24px' }} />
         <NavItem to="/analysen" label="Alle Analysen" />
         <NavItem to="/profil" label="Profil & Konto" />
         {profile?.is_admin && <NavItem to="/admin" label="Admin" />}
       </nav>
 
-      <div style={{ padding: '20px 24px', borderTop: '1px solid rgba(42,32,24,0.08)' }}>
-        <button onClick={handleSignOut} style={{ background: 'none', border: 'none', color: TEXT_LIGHT, fontSize: '0.82rem', cursor: 'pointer', padding: 0 }}>
+      <div style={{ padding: '16px 24px', borderTop: '1px solid var(--sidebar-border)' }}>
+        <button onClick={handleSignOut} style={{ background: 'none', border: 'none', color: 'var(--text-2)', fontSize: '0.82rem', cursor: 'pointer', padding: 0 }}>
           Abmelden
         </button>
       </div>

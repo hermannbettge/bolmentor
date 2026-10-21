@@ -26,7 +26,7 @@ export default function Layout({ children }) {
     return (
       <div style={{ display: 'flex', minHeight: '100vh' }}>
         <Sidebar />
-        <main style={{ marginLeft: '240px', flex: 1, minHeight: '100vh', backgroundColor: 'var(--color-bg-deep)' }}>
+        <main style={{ marginLeft: '220px', flex: 1, minHeight: '100vh', backgroundColor: 'var(--bg-deep)', transition: 'background-color 0.25s ease' }}>
           {children}
         </main>
       </div>
