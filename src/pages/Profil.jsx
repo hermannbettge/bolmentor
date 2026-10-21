@@ -72,6 +72,13 @@ export default function Profil() {
   const [city, setCity] = useState(profile?.city || '')
   const [phone, setPhone] = useState(profile?.phone || '')
   const [birthDate, setBirthDate] = useState(initBirthDate)
+  const [partnerFirstName, setPartnerFirstName] = useState(profile?.partner_first_name || '')
+  const [partnerLastName, setPartnerLastName] = useState(profile?.partner_last_name || '')
+  const [partnerBirthDate, setPartnerBirthDate] = useState(() => {
+    if (!profile?.partner_birth_date) return ''
+    const d = new Date(profile.partner_birth_date)
+    return `${String(d.getUTCDate()).padStart(2,'0')}.${String(d.getUTCMonth()+1).padStart(2,'0')}.${d.getUTCFullYear()}`
+  })
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
   const [showCancel, setShowCancel] = useState(false)
@@ -122,7 +129,16 @@ export default function Profil() {
       const isoDate = parts.length === 3
         ? `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`
         : profile.birth_date
-      await updateProfile({ name: firstName, last_name: lastName, birth_date: isoDate, address, zip, city, phone })
+      const partnerParts = partnerBirthDate.split('.')
+      const isoPartnerDate = partnerParts.length === 3 && partnerBirthDate
+        ? `${partnerParts[2]}-${partnerParts[1].padStart(2,'0')}-${partnerParts[0].padStart(2,'0')}`
+        : null
+      await updateProfile({
+        name: firstName, last_name: lastName, birth_date: isoDate, address, zip, city, phone,
+        partner_first_name: partnerFirstName || null,
+        partner_last_name: partnerLastName || null,
+        partner_birth_date: isoPartnerDate,
+      })
       setMsg('Gespeichert.')
     } catch {
       setMsg('Fehler beim Speichern.')
@@ -149,6 +165,14 @@ export default function Profil() {
             </div>
             <Field label="Geburtsdatum" value={birthDate} onChange={v => setBirthDate(formatBirthDate(v))} required placeholder="TT.MM.JJJJ" />
             <Field label="Mobilnummer" value={phone} onChange={setPhone} placeholder="+49 170 1234567" />
+          </Section>
+
+          <Section title="Partnerdaten (für Partnerschaftsanalyse)">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
+              <Field label="Vorname Partner/in" value={partnerFirstName} onChange={setPartnerFirstName} placeholder="Anna" />
+              <Field label="Nachname Partner/in" value={partnerLastName} onChange={setPartnerLastName} placeholder="Musterfrau" />
+            </div>
+            <Field label="Geburtsdatum Partner/in" value={partnerBirthDate} onChange={v => setPartnerBirthDate(formatBirthDate(v))} placeholder="TT.MM.JJJJ" />
           </Section>
 
           <Section title="Adresse">

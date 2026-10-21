@@ -1,7 +1,12 @@
 export default function AnalysisDisplay({ content }) {
   if (!content) return null
 
-  const sections = content.split(/(?=## )/).filter(Boolean)
+  // Strip leading # title lines and --- separators before parsing sections
+  const cleaned = content
+    .split('\n')
+    .filter(l => !l.match(/^#[^#]/) && !l.match(/^-{2,}$/) && !l.match(/^\*{2,}$/))
+    .join('\n')
+  const sections = cleaned.split(/(?=## )/).filter(Boolean)
 
   return (
     <div className="analysis-content" style={{ marginTop: '32px' }}>

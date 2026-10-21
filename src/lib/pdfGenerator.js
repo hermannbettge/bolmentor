@@ -108,7 +108,12 @@ export async function generateAnalysisPDF({ content, analysisType, userName, dat
   let y = headerH + 10
 
   // --- Parse and render content ---
-  const lines = content.split('\n')
+  // Strip emojis and --- separators for PDF compatibility
+  const cleanContent = content
+    .replace(/[\u{1F000}-\u{1FFFF}]|[\u{2600}-\u{27FF}]|[\u{FE00}-\u{FEFF}]/gu, '')
+    .replace(/^-{2,}$/gm, '')
+    .replace(/^#{1}(?!#).+$/gm, '') // remove single # title lines
+  const lines = cleanContent.split('\n')
 
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(9)

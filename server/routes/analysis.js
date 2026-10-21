@@ -130,10 +130,10 @@ async function saveAnalysis(userId, type, content, analysisDate, monthYear = nul
 }
 
 // Call Claude
-async function callClaude(prompt) {
+async function callClaude(prompt, maxTokens = 8000) {
   const message = await anthropic.messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 2000,
+    max_tokens: maxTokens,
     messages: [{ role: 'user', content: prompt }],
   })
   return message.content[0].text
@@ -198,107 +198,238 @@ Ton: Tiefgründig, weitsichtig, persönlich. Keine generischen Aussagen.
 Länge: 500–650 Wörter gesamt.`
 }
 
+const SYSTEM_RULES = `
+WICHTIGE REGELN:
+- Schreibe KEIN Meta-Kommentar ("Hier ist deine Analyse...", "Ich hoffe das hilft...", etc.)
+- Beginne SOFORT mit dem ersten ## Abschnitt
+- Keine horizontalen Trennlinien (---)
+- Keine einzelne # Überschrift am Anfang
+- Sprich die Person immer direkt mit Vornamen an
+- Jeder Abschnitt soll mindestens 3-5 ausführliche Absätze haben
+- Konkret, tiefgründig, persönlich - kein generisches Horoskop-Deutsch
+- Nutze das Maya-System als Tiefenpsychologie, nicht als Wahrsagerei
+`
+
 function buildSpecialPrompt(type, profile, kinData, extraData) {
   const name = profile.name
   const kin = `Kin ${kinData.kin} – ${kinData.tone} ${kinData.seal}`
+  const tone = kinData.tone
+  const seal = kinData.seal
   const theme = kinData.lifeTheme
+  const antipode = kinData.antipode
+  const guide = kinData.guide || ''
+  const toneNumber = kinData.toneNumber
+  const tonePower = kinData.tonePower
+
+  const base = `PROFIL VON ${name.toUpperCase()}:
+Kin: ${kin}
+Galaktischer Ton ${toneNumber}: ${tone} – Kraft: ${tonePower}
+Siegel: ${seal}
+Lebensthema: ${theme}
+Antipode (Herausforderung): ${antipode}
+Geburtsdatum: ${profile.birth_date}
+`
 
   const prompts = {
-    business: `Du bist ein Maya Kalender Experte. Erstelle eine tiefe Business-Analyse auf Deutsch für ${name} (${kin}, Lebensthema: ${theme}).
+    business: `Du bist ein weltklasse Maya-Kalender-Experte und Business-Coach. Erstelle eine vollständige, tiefe Business-Analyse auf Deutsch für ${name}.
+${base}
+${SYSTEM_RULES}
+
+Erstelle eine umfassende Business-Analyse mit diesen Abschnitten. Jeder Abschnitt soll 4–6 Absätze haben und konkrete, handlungsorientierte Erkenntnisse liefern:
 
 ## DEIN KOSMISCHER BUSINESS-AUFTRAG
-## DEINE NATÜRLICHEN STÄRKEN IM BUSINESS
-## HERAUSFORDERUNGEN & BLINDE FLECKEN
-## DEIN FÜHRUNGSSTIL
-## GELDENERGIE & ÜBERFLUSS
-## EMPFOHLENE GESCHÄFTSMODELLE & ROLLEN
+## DEINE NATÜRLICHEN STÄRKEN & SUPERKRÄFTE IM BUSINESS
+## DEIN EINZIGARTIGER WERTBEITRAG FÜR KUNDEN
+## DEIN FÜHRUNGSSTIL & TEAMDYNAMIK
+## IDEALE GESCHÄFTSMODELLE & ANGEBOTSSTRUKTUR
+## MARKETING & SICHTBARKEIT AUS DEINER ENERGIE
+## VERKAUF & ÜBERZEUGUNGSKRAFT
+## GELDENERGIE & FINANZIELLE ÜBERZEUGUNGEN
+## DEINE TYPISCHEN SABOTAGE-MUSTER IM BUSINESS
+## IDEALE KUNDEN & ZIELGRUPPE
+## PARTNERSHIP & KOOPERATIONEN
+## WACHSTUM & SKALIERUNG
+## TIMING: WANN ANGREIFEN, WANN ZURÜCKHALTEN
+## DEINE 5-JAHRES-BUSINESS-VISION
+## TÄGLICHE BUSINESS-PRAXIS & RITUALE
 ## DEIN BUSINESS-MANTRA
 
-Persönlich, konkret, direkt. 450–550 Wörter.`,
+Gesamtlänge: mindestens 3000 Wörter. Sei außergewöhnlich konkret und tiefgründig.`,
 
-    health: `Du bist ein Maya Kalender Experte. Erstelle eine Gesundheitsanalyse auf Deutsch für ${name} (${kin}).
+    health: `Du bist ein weltklasse Maya-Kalender-Experte und Gesundheitsberater. Erstelle eine vollständige Gesundheitsanalyse auf Deutsch für ${name}.
+${base}
+${SYSTEM_RULES}
+
+Erstelle eine tiefe Gesundheitsanalyse. Jeder Abschnitt 4–6 Absätze:
 
 ## DEINE KÖRPERENERGIE-SIGNATUR
-## ENERGIESYSTEME & SCHWACHSTELLEN
-## REGENERATION & ERHOLUNG
-## ERNÄHRUNG & KÖRPERPFLEGE
-## BEWEGUNG & SPORT
-## STRESSQUELLEN & HEILUNGSWEGE
-## AFFIRMATION FÜR DEINE GESUNDHEIT
+## DEINE ENERGIESYSTEME & ORGANE IM FOKUS
+## SCHWACHSTELLEN & ANFÄLLIGKEITEN
+## WIE DU ENERGIE VERLIERST UND GEWINNST
+## SCHLAF, REGENERATION & ERHOLUNG
+## ERNÄHRUNG AUS DEINER MAYA-ENERGIE
+## BEWEGUNG, SPORT & KÖRPERPRAKTIKEN
+## CHRONISCHE MUSTER & KÖRPERSIGNALE
+## STRESSQUELLEN & WIE DU DAMIT UMGEHST
+## EMOTIONEN & KÖRPER – DIE VERBINDUNG
+## HEILUNGSWEG & TIEFE TRANSFORMATION
+## DEIN IMMUNSYSTEM & SCHUTZENERGIE
+## ZYKLUS, RHYTHMUS & NATURVERBINDUNG
+## HEILSAME UMGEBUNGEN & ORTE
+## TÄGLICHE GESUNDHEITSPRAXIS
+## DEINE GESUNDHEITS-AFFIRMATION
 
-Sanft, heilend, konkret. 400–500 Wörter.`,
+Mindestens 3000 Wörter.`,
 
-    family: `Du bist ein Maya Kalender Experte. Erstelle eine Familienanalyse auf Deutsch für ${name} (${kin}).
+    family: `Du bist ein weltklasse Maya-Kalender-Experte und Familientherapeut. Erstelle eine vollständige Familienanalyse auf Deutsch für ${name}.
+${base}
+${SYSTEM_RULES}
 
-## DEINE ROLLE IN DER FAMILIE
-## URSPRUNGSFAMILIE & PRÄGUNGEN
-## ELTERNSCHAFT & FÜRSORGE
-## GESCHWISTER & GLEICHRANGIGE
-## FAMILIENTHEMEN & HEILUNG
-## DEINE FAMILIE ERSCHAFFEN
-## AFFIRMATION FÜR DEINE FAMILIE
+Tiefe Familienanalyse, jeder Abschnitt 4–6 Absätze:
 
-400–500 Wörter.`,
+## DEINE ENERGETISCHE ROLLE IN DER FAMILIE
+## DEINE URSPRUNGSFAMILIE & TIEFE PRÄGUNGEN
+## DIE WUNDEN, DIE DU TRÄGST
+## DIE GESCHENKE DEINER HERKUNFT
+## DEIN BEZIEHUNGSMUSTER ZU MUTTER & VATER
+## GESCHWISTERDYNAMIK & GLEICHRANGIGE
+## ELTERNSCHAFT & WIE DU FÜHRST & PFLEGST
+## GENERATIONENMUSTER & ERBSCHAFTEN
+## KONFLIKTE IN DER FAMILIE – DEIN MUSTER
+## DEINE SEELENFAMILIE & WAHLVERWANDTSCHAFT
+## HEILUNG DER FAMILIENSYSTEM
+## WIE DU EINE NEUE FAMILIENKULTUR ERSCHAFFST
+## DEIN ZUHAUSE ALS ENERGETISCHER RAUM
+## FAMILIENRITUALE & VERBINDUNG
+## GRENZEN SETZEN IN DER FAMILIE
+## DEINE FAMILIEN-AFFIRMATION
 
-    selfexpression: `Du bist ein Maya Kalender Experte. Erstelle eine Selbstausdruck-Analyse auf Deutsch für ${name} (${kin}, Lebensthema: ${theme}).
+Mindestens 3000 Wörter.`,
 
-## DEINE KREATIVE ESSENZ
+    selfexpression: `Du bist ein weltklasse Maya-Kalender-Experte und Kreativcoach. Erstelle eine vollständige Selbstausdruck-Analyse auf Deutsch für ${name}.
+${base}
+${SYSTEM_RULES}
+
+Umfassende Selbstausdruck-Analyse, jeder Abschnitt 4–6 Absätze:
+
+## DEINE KREATIVE ESSENZ & EINZIGARTIGKEIT
 ## DEINE STIMME IN DER WELT
-## KREATIVE MEDIEN & FORMEN
-## BLOCKADEN DES AUSDRUCKS
-## DEIN PUBLIKUM & DEINE WIRKUNG
-## ENTFALTUNG DEINES AUSDRUCKS
-## AFFIRMATION DEINES AUSDRUCKS
+## WIE DU WIRKLICH KOMMUNIZIERST
+## DEINE KREATIVMEDIEN & AUSDRUCKSFORMEN
+## DEIN KREATIVPROZESS – WIE DU ARBEITEST
+## BLOCKADEN & INNERE ZENSUR
+## ANGST VOR SICHTBARKEIT & URTEILEN
+## DEIN PUBLIKUM & DEINE NATURLICHE WIRKUNG
+## BÜHNE, SCHREIBEN, SPRECHEN – WAS PASST
+## DEINE PERSÖNLICHE MARKE & AUFTRITT
+## KREATIVE FÜLLE & INSPIRATION
+## KOLLABORATION & CO-KREATION
+## MONETARISIERUNG DEINES AUSDRUCKS
+## VON DER IDEE ZUR MANIFESTATION
+## DEIN EINZIGARTIGER BEITRAG ZUR WELT
+## DEINE SELBSTAUSDRUCK-AFFIRMATION
 
-400–500 Wörter.`,
+Mindestens 3000 Wörter.`,
 
-    finance: `Du bist ein Maya Kalender Experte. Erstelle eine Finanzanalyse auf Deutsch für ${name} (${kin}).
+    finance: `Du bist ein weltklasse Maya-Kalender-Experte und Financial Coach. Erstelle eine vollständige Finanzanalyse auf Deutsch für ${name}.
+${base}
+${SYSTEM_RULES}
+
+Tiefe Finanzanalyse, jeder Abschnitt 4–6 Absätze:
 
 ## DEINE GELD-ENERGIE-SIGNATUR
-## ÜBERFLUSS-MUSTER
-## GELDBLOCKADEN & GLAUBENSSÄTZE
-## INVESTITIONEN & WACHSTUM
-## GEBEN & EMPFANGEN
-## FINANZIELLE BEFREIUNG
-## ÜBERFLUSS-AFFIRMATION
+## DEINE TIEFSTEN GLAUBENSSÄTZE ÜBER GELD
+## WIE DU GELD WIRKLICH ERLEBST
+## DEINE ÜBERFLUSS-MUSTER & BLOCKADEN
+## GELD VERDIENEN – DEIN NATÜRLICHER WEG
+## GELD AUSGEBEN – DEINE MUSTER
+## SPAREN, INVESTIEREN & VERMÖGEN AUFBAUEN
+## RISIKO & SICHERHEIT – DEINE BALANCE
+## DEINE BEZIEHUNG ZU REICHEN MENSCHEN
+## GEBEN & EMPFANGEN – DIE ENERGETIK
+## GELD ALS WERKZEUG DER FREIHEIT
+## FINANZIELLE SELBSTSABOTAGE ERKENNEN
+## DEIN WEG ZU ECHTER FINANZIELLER FREIHEIT
+## KONKRETE SCHRITTE FÜR DEINEN WOHLSTAND
+## GELD & SINN – WAS DU WIRKLICH WILLST
+## DEINE ÜBERFLUSS-AFFIRMATION
 
-400–500 Wörter.`,
+Mindestens 3000 Wörter.`,
 
-    career: `Du bist ein Maya Kalender Experte. Erstelle eine Karriere-Analyse auf Deutsch für ${name} (${kin}, Lebensthema: ${theme}).
+    career: `Du bist ein weltklasse Maya-Kalender-Experte und Karriere-Coach. Erstelle eine vollständige Karriere-Analyse auf Deutsch für ${name}.
+${base}
+${SYSTEM_RULES}
 
-## DEINE BERUFLICHE BERUFUNG
-## NATÜRLICHE TALENTE & FÄHIGKEITEN
-## IDEALE ARBEITSUMGEBUNG
-## KARRIERE-HERAUSFORDERUNGEN
-## WACHSTUMSPFADE
-## TIMING & PHASEN
-## KARRIERE-AFFIRMATION
+Umfassende Karriereanalyse, jeder Abschnitt 4–6 Absätze:
 
-450–550 Wörter.`,
+## DEINE BERUFLICHE BERUFUNG & SEELENMISSION
+## DEINE NATÜRLICHEN TALENTE & SUPERKRÄFTE
+## DEIN EINZIGARTIGER KARRIERE-FINGERABDRUCK
+## IDEALE ARBEITSUMGEBUNG & STRUKTUREN
+## DEIN FÜHRUNGSPOTENZIAL
+## KOLLEGEN & TEAMDYNAMIK
+## KARRIERE-HERAUSFORDERUNGEN & BLOCKADEN
+## SELBSTÄNDIGKEIT VS. ANSTELLUNG
+## DEINE BESTEN BRANCHEN & FELDER
+## NETWORKING & KARRIEREBEZIEHUNGEN
+## SICHTBARKEIT & REPUTATION AUFBAUEN
+## WACHSTUMSPFADE & NÄCHSTE STUFEN
+## WORK-LIFE-INTEGRATION AUS DEINER ENERGIE
+## KARRIERE-TIMING & GÜNSTIGE PHASEN
+## DEIN LANGFRISTIGES BERUFLICHES VERMÄCHTNIS
+## DEINE KARRIERE-AFFIRMATION
 
-    lifephases: `Du bist ein Maya Kalender Experte. Erstelle eine Lebensphasen-Analyse auf Deutsch für ${name} (${kin}, geboren: ${profile.birth_date}).
-${extraData?.years ? `Spezifische Jahre: ${extraData.years.join(', ')}` : ''}
+Mindestens 3000 Wörter.`,
 
-## DEIN LEBENSRHYTHMUS
-## ANALYSE DER GEWÄHLTEN JAHRE
-## VERGANGENE SCHLÜSSELPHASEN
-## AKTUELLE LEBENSPHASE
-## KOMMENDE ZYKLEN
-## DEIN LEBENS-MANTRA FÜR DIESE PHASE
+    lifephases: `Du bist ein weltklasse Maya-Kalender-Experte. Erstelle eine vollständige Lebensphasen-Analyse auf Deutsch für ${name}.
+${base}
+${SYSTEM_RULES}
 
-500–600 Wörter.`,
+Tiefe Lebensphasen-Analyse, jeder Abschnitt 4–6 Absätze:
 
-    partnership: `Du bist ein Maya Kalender Experte. Erstelle eine Partnerschaftsanalyse auf Deutsch für ${name} (${kin}).
+## DEIN KOSMISCHER LEBENSRHYTHMUS
+## DIE ERSTE LEBENSPHASE (KINDHEIT & JUGEND)
+## DIE PRÄGUNGSPHASE (20ER JAHRE)
+## DIE AUFBAUPHASE (30ER JAHRE)
+## DIE REIFEPHASE (40ER JAHRE)
+## DIE ERNTE- UND WEISHEITSPHASE (50ER+)
+## DEINE AKTUELLE LEBENSPHASE – TIEFANALYSE
+## SCHLÜSSELEREIGNISSE AUS DEINER VERGANGENHEIT
+## WAS DIESE EREIGNISSE DIR SAGEN
+## KOMMENDE ZYKLEN & ENERGIEFELDER
+## DIE NÄCHSTEN 3 JAHRE IM DETAIL
+## LANGFRISTIGE LEBENSTHEMEN
+## SEELISCHE AUFGABEN DIESER INKARNATION
+## TRANSFORMATION & WANDEL – DEIN MUSTER
+## WIE DU JEDE LEBENSPHASE NUTZT
+## DEIN LEBENSPHASEN-MANTRA
 
-## DEINE LIEBES-SIGNATUR
+Mindestens 3000 Wörter.`,
+
+    partnership: `Du bist ein weltklasse Maya-Kalender-Experte und Beziehungscoach. Erstelle eine vollständige Partnerschaftsanalyse auf Deutsch für ${name}.
+${base}
+${SYSTEM_RULES}
+
+Tiefe Partnerschaftsanalyse, jeder Abschnitt 4–6 Absätze:
+
+## DEINE LIEBES-SIGNATUR & BEZIEHUNGSENERGIE
+## WAS DU IN BEZIEHUNGEN WIRKLICH SUCHST
 ## WAS DU IN BEZIEHUNGEN BRINGST
 ## DEINE TIEFSTEN BEZIEHUNGSBEDÜRFNISSE
-## BEZIEHUNGSMUSTER & HERAUSFORDERUNGEN
+## ANZIEHUNG & CHEMIE – WER ZIEHT DICH AN
+## BINDUNGSMUSTER & ANHÄNGLICHKEIT
+## KOMMUNIKATION IN DER PARTNERSCHAFT
+## KONFLIKTE & WIE DU SIE LÖST
+## SEXUALITÄT & INTIMITÄT AUS DEINER ENERGIE
+## BEZIEHUNGSSABOTAGE – DEINE MUSTER
 ## DEIN IDEALER PARTNER AUS MAYA-SICHT
-## INTIMITÄT & VERBINDUNG
-## BEZIEHUNGS-AFFIRMATION
+## KOMPATIBLE KIN-TYPEN
+## BEZIEHUNGSREIFE & WACHSTUM
+## LIEBE, FREIHEIT & BINDUNG – DEINE BALANCE
+## DER WEG ZUR TRAUMPARTNERSCHAFT
+## DEINE BEZIEHUNGS-AFFIRMATION
 
-450–550 Wörter.`,
+Mindestens 3000 Wörter.`,
 
     compatibility: (() => {
       let partnerKin = null
@@ -309,29 +440,87 @@ ${extraData?.years ? `Spezifische Jahre: ${extraData.years.join(', ')}` : ''}
           partnerKin = calculateKinFromDate(iso)
         } catch {}
       }
-      return `Du bist ein Maya Kalender Experte. Erstelle eine Partner-Kompatibilitäts-Analyse auf Deutsch.
+      return `Du bist ein weltklasse Maya-Kalender-Experte. Erstelle eine vollständige Partner-Kompatibilitäts-Analyse auf Deutsch.
+${SYSTEM_RULES}
 
-PERSON 1:
-Name: ${name}
+PERSON 1: ${name}
 Geburts-Kin: ${kin}
+Lebensthema: ${theme}
 
 PERSON 2 (Partner):
 Geburtsdatum: ${extraData?.birthDate || 'unbekannt'}
 ${partnerKin ? `Geburts-Kin: Kin ${partnerKin.kin} – ${partnerKin.tone} ${partnerKin.seal}` : ''}
 
-## EURE KOMPATIBILITÄTS-ÜBERSICHT
-## WAS EUCH VERBINDET
-## WO IHR EUCH HERAUSFORDERT
-## ENERGETISCHE DYNAMIK
-## GEMEINSAMES THEMA ALS PAAR
-## EMPFEHLUNGEN FÜR EURE BEZIEHUNG
+Tiefe Kompatibilitätsanalyse, jeder Abschnitt 4–6 Absätze:
+
+## EURE ENERGETISCHE GRUNDKOMPATIBILITÄT
+## WAS EUCH MAGISCH ANZIEHT
+## EURE KOMMUNIKATIONSDYNAMIK
+## WO IHR EUCH GEGENSEITIG HERAUSFORDERT
+## KOMPLEMENTÄRE KRÄFTE & SYNERGIEN
+## EURE TIEFSTEN GEMEINSAMKEITEN
+## POTENZIELLE KONFLIKTZONEN
+## EURE SEXUELLE & KÖRPERLICHE CHEMIE
+## GEMEINSAME LEBENSZIELE & VISIONEN
+## WACHSTUM DURCH DIESE BEZIEHUNG
+## EURE GEMEINSAME SEELENMISSION
+## ALLTAGSKOMPATIBILITÄT & LEBENSGESTALTUNG
+## LANGZEITPOTENZIAL DER BEZIEHUNG
+## EMPFEHLUNGEN FÜR EURE PARTNERSCHAFT
+## INDIVIDUELLE RATSCHLÄGE FÜR BEIDE
 ## AFFIRMATION FÜR EUER PAAR
 
-500–600 Wörter.`
+Mindestens 3000 Wörter.`
     })(),
   }
 
   return prompts[type]
+}
+
+function buildYearlyPrompt(type, profile, kinData, year) {
+  const name = profile.name
+  const kin = `Kin ${kinData.kin} – ${kinData.tone} ${kinData.seal}`
+  const theme = kinData.lifeTheme
+
+  const typeLabels = {
+    business: 'Business', health: 'Gesundheit', family: 'Familie',
+    selfexpression: 'Selbstausdruck', finance: 'Finanzen', career: 'Karriere',
+    lifephases: 'Lebensphasen', partnership: 'Partnerschaft',
+  }
+  const label = typeLabels[type] || type
+
+  return `Du bist ein weltklasse Maya-Kalender-Experte. Erstelle eine vollständige Jahresanalyse ${year} für den Bereich ${label} auf Deutsch für ${name}.
+
+PROFIL:
+Name: ${name}
+Kin: ${kin}
+Lebensthema: ${theme}
+Jahr: ${year}
+
+${SYSTEM_RULES}
+
+Erstelle zunächst eine Jahresübersicht, dann für JEDEN der 12 Monate einen eigenen Abschnitt:
+
+## JAHRESÜBERSICHT ${year} – ${label.toUpperCase()}
+(Gesamtthema des Jahres, wichtige Energien, was ${name} erwartet)
+
+## JANUAR ${year}
+## FEBRUAR ${year}
+## MÄRZ ${year}
+## APRIL ${year}
+## MAI ${year}
+## JUNI ${year}
+## JULI ${year}
+## AUGUST ${year}
+## SEPTEMBER ${year}
+## OKTOBER ${year}
+## NOVEMBER ${year}
+## DEZEMBER ${year}
+
+## JAHRESRESÜMEE & EMPFEHLUNGEN
+
+Für jeden Monat: Energiequalität, was günstig ist, was zu beachten ist, konkrete Handlungsempfehlungen für den Bereich ${label}. Jeder Monatsabschnitt mindestens 200 Wörter.
+Gesamtlänge: mindestens 4000 Wörter.`
 }
 
 // --- ROUTES ---
@@ -400,6 +589,96 @@ SPECIAL_TYPES.forEach(type => {
       res.status(400).json({ error: err.message })
     }
   })
+})
+
+// Yearly analyses
+const YEARLY_TYPES = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership']
+
+YEARLY_TYPES.forEach(type => {
+  router.post(`/${type}/yearly`, requireAuth, async (req, res) => {
+    try {
+      const profile = await getProfile(req.user.id)
+      checkMembership(profile)
+      checkPurchased(profile, type)
+
+      const year = req.body.year || new Date().getFullYear()
+      const kinData = calculateKinFromDate(profile.birth_date)
+      const prompt = buildYearlyPrompt(type, profile, kinData, year)
+
+      const content = await callClaude(prompt, 10000)
+      const today = new Date().toISOString().split('T')[0]
+      await saveAnalysis(req.user.id, `${type}_yearly_${year}`, content, today)
+      res.json({ content })
+    } catch (err) {
+      res.status(400).json({ error: err.message })
+    }
+  })
+})
+
+// Partner compatibility analysis (uses partner data from user profile)
+router.post('/partnership/partner-compatibility', requireAuth, async (req, res) => {
+  try {
+    const profile = await getProfile(req.user.id)
+    checkMembership(profile)
+    checkPurchased(profile, 'partnership')
+
+    if (!profile.partner_birth_date) {
+      return res.status(400).json({ error: 'Bitte trage zuerst die Geburtsdaten deines Partners im Profil ein.' })
+    }
+
+    const kinData = calculateKinFromDate(profile.birth_date)
+    const partnerKin = calculateKinFromDate(profile.partner_birth_date)
+    const partnerName = [profile.partner_first_name, profile.partner_last_name].filter(Boolean).join(' ') || 'Partner/in'
+    const name = profile.name
+
+    const prompt = `Du bist ein weltklasse Maya-Kalender-Experte und Beziehungscoach. Erstelle eine vollständige Partner-Kompatibilitätsanalyse auf Deutsch.
+${SYSTEM_RULES}
+
+PERSON 1: ${name}
+Kin: Kin ${kinData.kin} – ${kinData.tone} ${kinData.seal}
+Galaktischer Ton ${kinData.toneNumber}: ${kinData.tone} – Kraft: ${kinData.tonePower}
+Lebensthema: ${kinData.lifeTheme}
+Antipode: ${kinData.antipode}
+Geburtsdatum: ${profile.birth_date}
+
+PERSON 2: ${partnerName}
+Kin: Kin ${partnerKin.kin} – ${partnerKin.tone} ${partnerKin.seal}
+Galaktischer Ton ${partnerKin.toneNumber}: ${partnerKin.tone} – Kraft: ${partnerKin.tonePower}
+Lebensthema: ${partnerKin.lifeTheme}
+Antipode: ${partnerKin.antipode}
+Geburtsdatum: ${profile.partner_birth_date}
+
+Erstelle eine tiefe Paar-Kompatibilitätsanalyse. Jeder Abschnitt 4–6 Absätze:
+
+## EURE ENERGETISCHE GRUNDKOMPATIBILITÄT
+## WAS EUCH MAGISCH ANZIEHT
+## EURE ENERGETISCHE WECHSELWIRKUNG
+## EURE KOMMUNIKATIONSDYNAMIK
+## HERAUSFORDERUNGEN & WACHSTUMSBEREICHE
+## KOMPLEMENTÄRE KRÄFTE & SYNERGIEN
+## EURE TIEFSTEN GEMEINSAMKEITEN
+## POTENZIELLE KONFLIKTMUSTER
+## SEXUALITÄT & KÖRPERLICHE INTIMITÄT
+## EMOTIONALE SICHERHEIT & BINDUNG
+## GEMEINSAME LEBENSZIELE & VISIONEN
+## WACHSTUM DURCH DIESE BEZIEHUNG
+## EURE GEMEINSAME SEELENMISSION
+## ALLTAGSKOMPATIBILITÄT & LEBENSGESTALTUNG
+## LANGZEITPOTENZIAL
+## EMPFEHLUNGEN FÜR EURE PARTNERSCHAFT
+## INDIVIDUELLE RATSCHLÄGE FÜR ${name.toUpperCase()}
+## INDIVIDUELLE RATSCHLÄGE FÜR ${partnerName.toUpperCase()}
+## AFFIRMATION FÜR EUER PAAR
+
+Mindestens 3500 Wörter. Sei außergewöhnlich konkret und nenne beide Partner bei ihren Namen.`
+
+    const content = await callClaude(prompt, 10000)
+    const today = new Date().toISOString().split('T')[0]
+    await saveAnalysis(req.user.id, 'partnership_compatibility', content, today)
+    res.json({ content })
+  } catch (err) {
+    res.status(400).json({ error: err.message })
+  }
 })
 
 export default router
