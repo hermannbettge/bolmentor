@@ -11,7 +11,7 @@ const ANALYSIS_TYPES = [
   { key: 'finance', label: 'Finanzen' },
   { key: 'career', label: 'Karriere' },
   { key: 'lifephases', label: 'Lebensphasen' },
-  { key: 'partnership', label: 'Partnerschaft' },
+  { key: 'partnership', label: 'Beziehungsanalyse' },
 ]
 
 async function apiCall(path, method = 'GET', body = null) {
@@ -108,30 +108,24 @@ export default function Admin() {
     }
   }
 
-  const dark = '#0d1b2a'
-  const mid = '#112240'
-  const gold = '#B8975A'
-  const text = '#E8E8E8'
-  const muted = '#8899AA'
-
   if (loading) return (
-    <div style={{ minHeight: '100vh', backgroundColor: dark, display: 'flex', alignItems: 'center', justifyContent: 'center', color: gold }}>
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-deep)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)' }}>
       Laden…
     </div>
   )
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: dark, color: text, fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-deep)', color: 'var(--text-1)', fontFamily: 'Inter, sans-serif' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
         <div style={{ marginBottom: '40px' }}>
-          <div style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.18em', color: gold, textTransform: 'uppercase', marginBottom: '8px' }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.18em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: '8px' }}>
             Admin
           </div>
-          <h1 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 300 }}>Nutzer & Mitgliedschaften</h1>
+          <h1 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 300, color: 'var(--text-1)' }}>Nutzer & Mitgliedschaften</h1>
         </div>
 
         {msg && (
-          <div style={{ backgroundColor: 'rgba(184,151,90,0.1)', border: '1px solid rgba(184,151,90,0.3)', borderRadius: '4px', padding: '12px 16px', marginBottom: '20px', fontSize: '0.88rem', color: gold }}
+          <div style={{ backgroundColor: 'rgba(var(--accent-rgb,184,151,90),0.1)', border: '1px solid rgba(var(--accent-rgb,184,151,90),0.3)', borderRadius: '4px', padding: '12px 16px', marginBottom: '20px', fontSize: '0.88rem', color: 'var(--accent)' }}
             onClick={() => setMsg('')}>
             {msg}
           </div>
@@ -143,21 +137,21 @@ export default function Admin() {
           </div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: selectedUser ? '1fr 380px' : '1fr', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: selectedUser ? '1fr 400px' : '1fr', gap: '24px' }}>
 
           {/* Nutzerliste */}
-          <div style={{ backgroundColor: mid, borderRadius: '4px', overflow: 'hidden' }}>
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.82rem', fontWeight: 500 }}>{users.length} Nutzer</span>
-              <button onClick={loadUsers} style={{ background: 'none', border: 'none', color: muted, cursor: 'pointer', fontSize: '0.8rem' }}>
+          <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: '4px', border: '1px solid var(--border)', overflow: 'hidden' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.82rem', fontWeight: 500, color: 'var(--text-1)' }}>{users.length} Nutzer</span>
+              <button onClick={loadUsers} style={{ background: 'none', border: 'none', color: 'var(--text-2)', cursor: 'pointer', fontSize: '0.8rem' }}>
                 Aktualisieren
               </button>
             </div>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
               <thead>
-                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                <tr style={{ borderBottom: '1px solid var(--border)' }}>
                   {['Name', 'E-Mail', 'Mitgliedschaft', 'Analysen', 'Registriert', ''].map(h => (
-                    <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: muted, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                    <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: 'var(--text-2)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                       {h}
                     </th>
                   ))}
@@ -165,27 +159,27 @@ export default function Admin() {
               </thead>
               <tbody>
                 {users.map(u => (
-                  <tr key={u.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', backgroundColor: selectedUser?.id === u.id ? 'rgba(184,151,90,0.05)' : 'transparent' }}>
-                    <td style={{ padding: '12px 16px' }}>
+                  <tr key={u.id} style={{ borderBottom: '1px solid var(--border)', backgroundColor: selectedUser?.id === u.id ? 'rgba(var(--accent-rgb,184,151,90),0.05)' : 'transparent' }}>
+                    <td style={{ padding: '12px 16px', color: 'var(--text-1)' }}>
                       {u.name || '—'}
-                      {u.is_admin && <span style={{ marginLeft: '6px', fontSize: '0.68rem', color: gold }}>ADMIN</span>}
+                      {u.is_admin && <span style={{ marginLeft: '6px', fontSize: '0.68rem', color: 'var(--accent)' }}>ADMIN</span>}
                     </td>
-                    <td style={{ padding: '12px 16px', color: muted, fontSize: '0.82rem' }}>
+                    <td style={{ padding: '12px 16px', color: 'var(--text-2)', fontSize: '0.82rem' }}>
                       {u.id.slice(0, 8)}…
                     </td>
                     <td style={{ padding: '12px 16px' }}>
                       <Badge active={u.membership_active} />
                     </td>
-                    <td style={{ padding: '12px 16px', color: muted }}>
-                      {u.purchased_analyses?.length || 0}
+                    <td style={{ padding: '12px 16px', color: 'var(--text-2)' }}>
+                      {(u.purchased_analyses?.filter(k => k !== 'compatibility') || []).length}
                     </td>
-                    <td style={{ padding: '12px 16px', color: muted, fontSize: '0.8rem' }}>
+                    <td style={{ padding: '12px 16px', color: 'var(--text-2)', fontSize: '0.8rem' }}>
                       {new Date(u.created_at).toLocaleDateString('de-DE')}
                     </td>
                     <td style={{ padding: '12px 16px' }}>
                       <button
                         onClick={() => setSelectedUser(selectedUser?.id === u.id ? null : u)}
-                        style={{ background: 'none', border: `1px solid rgba(184,151,90,0.3)`, color: gold, cursor: 'pointer', padding: '4px 12px', fontSize: '0.78rem', borderRadius: '2px' }}
+                        style={{ background: 'none', border: '1px solid rgba(var(--accent-rgb,184,151,90),0.3)', color: 'var(--accent)', cursor: 'pointer', padding: '4px 12px', fontSize: '0.78rem', borderRadius: '2px' }}
                       >
                         {selectedUser?.id === u.id ? 'Schließen' : 'Bearbeiten'}
                       </button>
@@ -198,26 +192,26 @@ export default function Admin() {
 
           {/* Detail-Panel */}
           {selectedUser && (
-            <div style={{ backgroundColor: mid, borderRadius: '4px', padding: '24px' }}>
+            <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: '4px', border: '1px solid var(--border)', padding: '24px' }}>
               <div style={{ marginBottom: '24px' }}>
-                <div style={{ fontSize: '1.1rem', fontWeight: 400, marginBottom: '4px' }}>{selectedUser.name}</div>
-                <div style={{ fontSize: '0.8rem', color: muted }}>{selectedUser.birth_date || 'Kein Geburtsdatum'}</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 400, color: 'var(--text-1)', marginBottom: '4px' }}>{selectedUser.name}</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-2)' }}>{selectedUser.birth_date || 'Kein Geburtsdatum'}</div>
               </div>
 
               <div style={{ marginBottom: '28px' }}>
-                <div style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: muted, marginBottom: '12px' }}>
+                <div style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-2)', marginBottom: '12px' }}>
                   Mitgliedschaft
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button
                     onClick={() => toggleMembership(selectedUser.id, true)}
-                    style={{ flex: 1, padding: '10px', backgroundColor: selectedUser.membership_active ? 'rgba(34,197,94,0.1)' : 'rgba(34,197,94,0.2)', border: '1px solid rgba(34,197,94,0.3)', color: '#22c55e', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem' }}
+                    style={{ flex: 1, padding: '10px', backgroundColor: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', color: '#22c55e', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem', fontWeight: selectedUser.membership_active ? 600 : 400 }}
                   >
                     Aktivieren
                   </button>
                   <button
                     onClick={() => toggleMembership(selectedUser.id, false)}
-                    style={{ flex: 1, padding: '10px', backgroundColor: !selectedUser.membership_active ? 'rgba(239,68,68,0.1)' : 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem' }}
+                    style={{ flex: 1, padding: '10px', backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem', fontWeight: !selectedUser.membership_active ? 600 : 400 }}
                   >
                     Deaktivieren
                   </button>
@@ -225,7 +219,7 @@ export default function Admin() {
               </div>
 
               <div style={{ marginBottom: '28px' }}>
-                <div style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: muted, marginBottom: '12px' }}>
+                <div style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-2)', marginBottom: '12px' }}>
                   Zusatzanalysen
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
@@ -241,9 +235,9 @@ export default function Admin() {
                           cursor: 'pointer',
                           borderRadius: '2px',
                           textAlign: 'left',
-                          backgroundColor: has ? 'rgba(184,151,90,0.1)' : 'rgba(255,255,255,0.03)',
-                          border: has ? '1px solid rgba(184,151,90,0.4)' : '1px solid rgba(255,255,255,0.1)',
-                          color: has ? gold : muted,
+                          backgroundColor: has ? 'rgba(var(--accent-rgb,184,151,90),0.1)' : 'var(--bg-deep)',
+                          border: has ? '1px solid rgba(var(--accent-rgb,184,151,90),0.4)' : '1px solid var(--border)',
+                          color: has ? 'var(--accent)' : 'var(--text-2)',
                         }}
                       >
                         {has ? '✓ ' : '+ '}{label}
@@ -251,15 +245,23 @@ export default function Admin() {
                     )
                   })}
                 </div>
+
+                {/* Ereignisse info */}
+                <div style={{ marginTop: '12px', padding: '10px 12px', backgroundColor: 'var(--bg-deep)', borderRadius: '2px', border: '1px solid var(--border)' }}>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-2)', marginBottom: '4px' }}>Ereignis-Analysen</div>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-1)' }}>
+                    Werden automatisch freigeschaltet wenn Grundmodul aktiv ist. Nutzer verwaltet Ereignisse selbst im Profil.
+                  </div>
+                </div>
               </div>
 
               <div>
-                <div style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: muted, marginBottom: '12px' }}>
+                <div style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-2)', marginBottom: '12px' }}>
                   Rechte
                 </div>
                 <button
                   onClick={() => toggleAdmin(selectedUser.id, !selectedUser.is_admin)}
-                  style={{ width: '100%', padding: '10px', backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', color: selectedUser.is_admin ? '#ef4444' : muted, cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem' }}
+                  style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-deep)', border: '1px solid var(--border)', color: selectedUser.is_admin ? '#ef4444' : 'var(--text-2)', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem' }}
                 >
                   {selectedUser.is_admin ? 'Admin-Rechte entziehen' : 'Admin-Rechte vergeben'}
                 </button>
