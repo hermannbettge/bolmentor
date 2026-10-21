@@ -195,7 +195,10 @@ export default function AnalysePage() {
         )}
 
         {!analysis ? (
-          <div>
+          <div style={{ marginTop: '48px', paddingTop: '40px', borderTop: '1px solid var(--border)' }}>
+            <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '16px' }}>
+              {label}
+            </div>
             <button
               onClick={createAnalysis}
               disabled={loading}
