@@ -96,13 +96,17 @@ export default function Profil() {
   const [eventSaving, setEventSaving] = useState(false)
   const [eventMsg, setEventMsg] = useState('')
 
-  // Progressive event unlock: +1 per month since membership start, max 12. Admins get all 12.
+  // Event unlock rules:
+  // - Admin or annual plan → 12 immediately
+  // - Monthly: base max 2 (month 1 → 1, month 2+ → 2), +1 per purchased extra module, cap 12
   function calcMaxEvents() {
     if (profile?.is_admin) return 12
+    if (profile?.subscription_plan === 'annual') return 12
     const start = profile?.membership_start || profile?.created_at
-    if (!start) return 1
-    const months = Math.floor((Date.now() - new Date(start).getTime()) / (1000 * 60 * 60 * 24 * 30.44))
-    return Math.min(12, Math.max(1, months + 1))
+    const months = start ? Math.floor((Date.now() - new Date(start).getTime()) / (1000 * 60 * 60 * 24 * 30.44)) : 0
+    const base = Math.min(2, months + 1)
+    const extraModules = (profile?.purchased_analyses || []).filter(k => k !== 'compatibility').length
+    return Math.min(12, base + extraModules)
   }
   const maxEvents = calcMaxEvents()
 
@@ -316,7 +320,9 @@ export default function Profil() {
         {/* Meine Ereignisse */}
         <Section title="Meine Ereignisse (für Ereignis-Analysen)">
           <p style={{ color: TEXT_LIGHT, fontSize: '0.83rem', lineHeight: 1.7, marginBottom: '20px' }}>
-            Analysiere alles, dem du ein Datum zuordnen kannst: ein Land, ein Job-Start, eine Beziehung, ein Kauf, ein Unternehmen. Aktuell {maxEvents} von max. 12 Ereignissen freigeschaltet — jeden Monat kommt ein neuer Slot dazu.
+            Analysiere alles, dem du ein Datum zuordnen kannst: ein Land, ein Job-Start, eine Beziehung, ein Kauf, ein Unternehmen.
+            {' '}Aktuell <strong>{maxEvents}</strong> Slot{maxEvents !== 1 ? 's' : ''} freigeschaltet
+            {profile?.subscription_plan === 'annual' || profile?.is_admin ? ' (alle 12 freigeschaltet)' : ` — Grundmodul: 2, +1 pro gebuchtem Zusatzmodul, oder Jahrestarif für sofort 12.`}
           </p>
 
           {events.map(ev => (
