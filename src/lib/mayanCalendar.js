@@ -1,7 +1,25 @@
-// Maya Tzolkin Calendar Engine
-// Anchor: 26 July 1993 = Kin 1 (Magnetic Red Dragon)
+// Maya Tzolkin Calendar Engine (Dreamspell)
+// Anchor: 26 July 1993 = Kin 144 (Yellow Crystal Seed)
+// Leap days (Feb 29) do NOT advance the Dreamspell Kin count
 
 const ANCHOR_DATE = new Date('1993-07-26T00:00:00Z')
+const ANCHOR_KIN_0 = 143 // Kin 144, zero-indexed
+
+function isLeapYear(y) {
+  return (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0
+}
+
+function countLeapDaysBetween(d1, d2) {
+  const [from, to] = d1 <= d2 ? [d1, d2] : [d2, d1]
+  let count = 0
+  for (let y = from.getUTCFullYear(); y <= to.getUTCFullYear(); y++) {
+    if (isLeapYear(y)) {
+      const feb29 = new Date(Date.UTC(y, 1, 29))
+      if (feb29 > from && feb29 <= to) count++
+    }
+  }
+  return count
+}
 
 const SEALS = [
   { name: 'Roter Drachen', color: 'rot', english: 'Red Dragon' },
@@ -19,7 +37,7 @@ const SEALS = [
   { name: 'Rotes Schilf', color: 'rot', english: 'Red Skywalker' },
   { name: 'Weißer Zauberer', color: 'weiß', english: 'White Wizard' },
   { name: 'Blauer Adler', color: 'blau', english: 'Blue Eagle' },
-  { name: 'Gelbe Eule', color: 'gelb', english: 'Yellow Warrior' },
+  { name: 'Gelber Krieger', color: 'gelb', english: 'Yellow Warrior' },
   { name: 'Rote Erde', color: 'rot', english: 'Red Earth' },
   { name: 'Weißes Spiegelmesser', color: 'weiß', english: 'White Mirror' },
   { name: 'Blauer Sturm', color: 'blau', english: 'Blue Storm' },
@@ -103,8 +121,10 @@ export function calculateKin(birthDateString) {
     birthDate = new Date(birthDateString + 'T00:00:00Z')
   }
 
-  const diffDays = Math.floor((birthDate - ANCHOR_DATE) / 86400000)
-  const kin = ((diffDays % 260) + 260) % 260
+  const rawDiff = Math.floor((birthDate - ANCHOR_DATE) / 86400000)
+  const leapDays = countLeapDaysBetween(birthDate, ANCHOR_DATE)
+  const adjustedDiff = rawDiff + (rawDiff < 0 ? leapDays : -leapDays)
+  const kin = ((ANCHOR_KIN_0 + adjustedDiff) % 260 + 260) % 260
 
   const sealIndex = kin % 20
   const toneIndex = kin % 13

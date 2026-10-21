@@ -13,14 +13,32 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 )
 
-// Maya Calendar Engine (server-side copy)
+// Maya Calendar Engine — Dreamspell
+// Anchor: 26 July 1993 = Kin 144 (Yellow Crystal Seed)
+// Feb 29 (leap day) does NOT advance the Dreamspell Kin count
 const ANCHOR_DATE = new Date('1993-07-26T00:00:00Z')
+const ANCHOR_KIN_0 = 143
+
+function isLeapYear(y) {
+  return (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0
+}
+function countLeapDaysBetween(d1, d2) {
+  const [from, to] = d1 <= d2 ? [d1, d2] : [d2, d1]
+  let count = 0
+  for (let y = from.getUTCFullYear(); y <= to.getUTCFullYear(); y++) {
+    if (isLeapYear(y)) {
+      const feb29 = new Date(Date.UTC(y, 1, 29))
+      if (feb29 > from && feb29 <= to) count++
+    }
+  }
+  return count
+}
 
 const SEALS = [
   'Roter Drachen', 'Weißer Wind', 'Blaue Nacht', 'Gelbe Saat',
   'Rote Schlange', 'Weißer Weltenwandler', 'Blaue Hand', 'Gelber Stern',
   'Roter Mond', 'Weißer Hund', 'Blauer Affe', 'Gelber Mensch',
-  'Rotes Schilf', 'Weißer Zauberer', 'Blauer Adler', 'Gelbe Eule',
+  'Rotes Schilf', 'Weißer Zauberer', 'Blauer Adler', 'Gelber Krieger',
   'Rote Erde', 'Weißes Spiegelmesser', 'Blauer Sturm', 'Gelbe Sonne',
 ]
 
@@ -48,8 +66,10 @@ const LIFE_THEMES = [
 
 function calculateKinFromDate(dateStr) {
   const d = new Date(dateStr + 'T00:00:00Z')
-  const diffDays = Math.floor((d - ANCHOR_DATE) / 86400000)
-  const kin = ((diffDays % 260) + 260) % 260
+  const rawDiff = Math.floor((d - ANCHOR_DATE) / 86400000)
+  const leapDays = countLeapDaysBetween(d, ANCHOR_DATE)
+  const adjustedDiff = rawDiff + (rawDiff < 0 ? leapDays : -leapDays)
+  const kin = ((ANCHOR_KIN_0 + adjustedDiff) % 260 + 260) % 260
   const sealIndex = kin % 20
   const toneIndex = kin % 13
   return {
