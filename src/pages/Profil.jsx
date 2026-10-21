@@ -96,14 +96,13 @@ export default function Profil() {
   const [eventSaving, setEventSaving] = useState(false)
   const [eventMsg, setEventMsg] = useState('')
 
-  // Progressive event unlock: month 1→1, month 2→2, then +1 every 2 months, max 12
+  // Progressive event unlock: +1 per month since membership start, max 12. Admins get all 12.
   function calcMaxEvents() {
+    if (profile?.is_admin) return 12
     const start = profile?.membership_start || profile?.created_at
     if (!start) return 1
-    const months = Math.max(0, Math.floor((Date.now() - new Date(start).getTime()) / (1000 * 60 * 60 * 24 * 30.44)))
-    if (months < 1) return 1
-    if (months < 2) return 2
-    return Math.min(12, 2 + Math.floor((months - 2) / 2) + 1)
+    const months = Math.floor((Date.now() - new Date(start).getTime()) / (1000 * 60 * 60 * 24 * 30.44))
+    return Math.min(12, Math.max(1, months + 1))
   }
   const maxEvents = calcMaxEvents()
 
