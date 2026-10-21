@@ -73,6 +73,34 @@ router.patch('/users/:id/admin', requireAdmin, async (req, res) => {
   res.json(data)
 })
 
+// Max Events Override
+router.patch('/users/:id/max-events', requireAdmin, async (req, res) => {
+  const { max_events_override } = req.body
+  const { data, error } = await supabase.from('profiles').update({ max_events_override, updated_at: new Date().toISOString() }).eq('id', req.params.id).select().single()
+  if (error) return res.status(500).json({ error: error.message })
+  res.json(data)
+})
+
+// E-Mail ändern
+router.patch('/users/:id/email', requireAdmin, async (req, res) => {
+  const { email } = req.body
+  if (!email) return res.status(400).json({ error: 'E-Mail fehlt' })
+  const { data, error } = await supabase.auth.admin.updateUserById(req.params.id, { email })
+  if (error) return res.status(500).json({ error: error.message })
+  res.json({ success: true })
+})
+
+// Passwort-Reset
+router.post('/users/:id/reset-password', requireAdmin, async (req, res) => {
+  const { data: profile } = await supabase.from('profiles').select('id').eq('id', req.params.id).single()
+  if (!profile) return res.status(404).json({ error: 'Nutzer nicht gefunden' })
+  const { data: authUser } = await supabase.auth.admin.getUserById(req.params.id)
+  if (!authUser?.user?.email) return res.status(404).json({ error: 'E-Mail nicht gefunden' })
+  const { error } = await supabase.auth.resetPasswordForEmail(authUser.user.email)
+  if (error) return res.status(500).json({ error: error.message })
+  res.json({ success: true })
+})
+
 // User löschen
 router.delete('/users/:id', requireAdmin, async (req, res) => {
   const { error } = await supabase.auth.admin.deleteUser(req.params.id)

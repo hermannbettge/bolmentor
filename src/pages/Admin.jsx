@@ -11,7 +11,7 @@ const ANALYSIS_TYPES = [
   { key: 'finance', label: 'Finanzen' },
   { key: 'career', label: 'Karriere' },
   { key: 'lifephases', label: 'Lebensphasen' },
-  { key: 'partnership', label: 'Beziehungsanalyse' },
+  { key: 'partnership', label: 'Partnerschaftsanalyse / Beziehung' },
 ]
 
 async function apiCall(path, method = 'GET', body = null) {
@@ -103,6 +103,39 @@ export default function Admin() {
       await apiCall(`/users/${userId}/admin`, 'PATCH', { is_admin })
       setMsg('Admin-Status geändert.')
       await loadUsers()
+    } catch (e) {
+      setError(e.message)
+    }
+  }
+
+  async function setMaxEvents(userId, value) {
+    try {
+      await apiCall(`/users/${userId}/max-events`, 'PATCH', { max_events_override: value === '' ? null : Number(value) })
+      setMsg('Max. Ereignisse gesetzt.')
+      await loadUsers()
+      if (selectedUser?.id === userId) setSelectedUser(u => ({ ...u, max_events_override: value === '' ? null : Number(value) }))
+    } catch (e) {
+      setError(e.message)
+    }
+  }
+
+  async function changeEmail(userId) {
+    const newEmail = window.prompt('Neue E-Mail-Adresse:')
+    if (!newEmail?.trim()) return
+    try {
+      await apiCall(`/users/${userId}/email`, 'PATCH', { email: newEmail.trim() })
+      setMsg('E-Mail geändert.')
+      await loadUsers()
+    } catch (e) {
+      setError(e.message)
+    }
+  }
+
+  async function resetPassword(userId) {
+    if (!window.confirm('Passwort-Reset-Link senden?')) return
+    try {
+      await apiCall(`/users/${userId}/reset-password`, 'POST')
+      setMsg('Reset-Link wurde gesendet.')
     } catch (e) {
       setError(e.message)
     }
@@ -246,12 +279,41 @@ export default function Admin() {
                   })}
                 </div>
 
-                {/* Ereignisse info */}
-                <div style={{ marginTop: '12px', padding: '10px 12px', backgroundColor: 'var(--bg-deep)', borderRadius: '2px', border: '1px solid var(--border)' }}>
-                  <div style={{ fontSize: '0.72rem', color: 'var(--text-2)', marginBottom: '4px' }}>Ereignis-Analysen</div>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-1)' }}>
-                    Werden automatisch freigeschaltet wenn Grundmodul aktiv ist. Nutzer verwaltet Ereignisse selbst im Profil.
+                {/* Max Ereignisse Override */}
+                <div style={{ marginTop: '12px', padding: '12px', backgroundColor: 'var(--bg-deep)', borderRadius: '2px', border: '1px solid var(--border)' }}>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-2)', marginBottom: '8px' }}>Max. Ereignisse (Override)</div>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <input
+                      type="number"
+                      min="1"
+                      max="100"
+                      placeholder="Auto"
+                      defaultValue={selectedUser.max_events_override ?? ''}
+                      onBlur={e => setMaxEvents(selectedUser.id, e.target.value)}
+                      style={{ flex: 1, padding: '7px 10px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '2px', color: 'var(--text-1)', fontSize: '0.82rem' }}
+                    />
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-2)' }}>leer = Auto</span>
                   </div>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '28px' }}>
+                <div style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-2)', marginBottom: '12px' }}>
+                  Konto
+                </div>
+                <div style={{ display: 'flex', gap: '8px', flexDirection: 'column' }}>
+                  <button
+                    onClick={() => changeEmail(selectedUser.id)}
+                    style={{ padding: '10px', backgroundColor: 'var(--bg-deep)', border: '1px solid var(--border)', color: 'var(--text-2)', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem', textAlign: 'left' }}
+                  >
+                    E-Mail ändern…
+                  </button>
+                  <button
+                    onClick={() => resetPassword(selectedUser.id)}
+                    style={{ padding: '10px', backgroundColor: 'var(--bg-deep)', border: '1px solid var(--border)', color: 'var(--text-2)', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem', textAlign: 'left' }}
+                  >
+                    Passwort-Reset senden
+                  </button>
                 </div>
               </div>
 

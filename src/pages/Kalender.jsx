@@ -23,7 +23,7 @@ const RESONANCE_STYLE = {
 }
 
 export default function Kalender() {
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const navigate = useNavigate()
   const now = new Date()
   const [year, setYear] = useState(now.getFullYear())
@@ -125,7 +125,7 @@ export default function Kalender() {
 
         {/* Day detail panel */}
         {selected && (
-          <DayDetail day={selected} onClose={() => setSelected(null)} navigate={navigate} />
+          <DayDetail day={selected} onClose={() => setSelected(null)} navigate={navigate} profile={profile} />
         )}
       </div>
     </div>
@@ -233,12 +233,14 @@ function ListView({ days, todayStr, selected, setSelected }) {
   )
 }
 
-function DayDetail({ day, onClose, navigate }) {
+function DayDetail({ day, onClose, navigate, profile }) {
   const en = ENERGY[day.energyType]
   const res = RESONANCE_STYLE[day.resonance]
   const dateObj = new Date(day.date + 'T00:00:00')
   const weekday = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'][dateObj.getDay()]
-  const isToday = day.date === new Date().toISOString().split('T')[0]
+  const todayDate = new Date().toISOString().split('T')[0]
+  const isToday = day.date === todayDate
+  const canCreateForDate = profile?.is_admin || profile?.subscription_plan === 'annual' || isToday
 
   const [analysis, setAnalysis] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -348,7 +350,7 @@ function DayDetail({ day, onClose, navigate }) {
                   Neu erstellen
                 </button>
               </>
-            ) : (
+            ) : canCreateForDate ? (
               <button
                 onClick={createAnalysis}
                 disabled={loading}
@@ -356,6 +358,12 @@ function DayDetail({ day, onClose, navigate }) {
               >
                 {loading ? 'Analyse wird erstellt…' : `Tagesanalyse für ${dateObj.toLocaleDateString('de-DE')} erstellen`}
               </button>
+            ) : (
+              <div style={{ padding: '14px 16px', borderRadius: '8px', backgroundColor: 'rgba(184,151,90,0.06)', border: '1px solid rgba(184,151,90,0.2)', fontSize: '0.82rem', color: 'var(--text-2)', lineHeight: 1.6 }}>
+                Tagesanalysen für vergangene und zukünftige Daten sind im{' '}
+                <strong style={{ color: 'var(--accent)' }}>Jahrestarif</strong> verfügbar.
+                Heute kannst du jederzeit eine Analyse erstellen.
+              </div>
             )}
           </div>
         )}
