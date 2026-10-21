@@ -180,8 +180,8 @@ export default function Profil() {
         </form>
 
         {/* Maya Profil */}
-        {kinData && (
-          <Section title="Mein Maya Profil">
+        <Section title="Mein Maya Profil">
+          {kinData ? (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '20px' }}>
               {[
                 { label: 'Kin-Nummer', value: `Kin ${kinData.kin}` },
@@ -197,24 +197,28 @@ export default function Profil() {
                 </div>
               ))}
             </div>
-            <button
-              onClick={handleRecalculate}
-              disabled={recalcing}
-              style={{
-                border: `1px solid ${COPPER}`, color: COPPER, backgroundColor: 'transparent',
-                borderRadius: '40px', padding: '10px 22px', fontSize: '0.82rem',
-                cursor: recalcing ? 'not-allowed' : 'pointer', opacity: recalcing ? 0.6 : 1,
-              }}
-            >
-              {recalcing ? 'Wird aktualisiert…' : 'Maya-Profil neu berechnen'}
-            </button>
-            {recalcMsg && (
-              <p style={{ fontSize: '0.83rem', color: recalcMsg.includes('Fehler') ? '#c0392b' : COPPER, marginTop: '10px' }}>
-                {recalcMsg}
-              </p>
-            )}
-          </Section>
-        )}
+          ) : (
+            <p style={{ color: TEXT_LIGHT, fontSize: '0.88rem', marginBottom: '16px' }}>
+              Trage dein Geburtsdatum ein und speichere das Profil, um dein Maya-Profil zu sehen.
+            </p>
+          )}
+          <button
+            onClick={handleRecalculate}
+            disabled={recalcing}
+            style={{
+              border: `1px solid ${COPPER}`, color: COPPER, backgroundColor: 'transparent',
+              borderRadius: '40px', padding: '10px 22px', fontSize: '0.82rem',
+              cursor: recalcing ? 'not-allowed' : 'pointer', opacity: recalcing ? 0.6 : 1,
+            }}
+          >
+            {recalcing ? 'Wird aktualisiert…' : 'Maya-Profil neu berechnen'}
+          </button>
+          {recalcMsg && (
+            <p style={{ fontSize: '0.83rem', color: recalcMsg.includes('Fehler') ? '#c0392b' : COPPER, marginTop: '10px' }}>
+              {recalcMsg}
+            </p>
+          )}
+        </Section>
 
         {/* Mitgliedschaft */}
         <Section title="Mitgliedschaft">
