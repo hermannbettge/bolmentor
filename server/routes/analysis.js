@@ -555,21 +555,40 @@ router.get('/calendar/:year/:month', requireAuth, async (req, res) => {
 
 // --- ROUTES ---
 
+router.get('/daily', requireAuth, async (req, res) => {
+  try {
+    const dateStr = req.query.date || new Date().toISOString().split('T')[0]
+    const { data } = await supabase
+      .from('analyses')
+      .select('content, created_at')
+      .eq('user_id', req.user.id)
+      .eq('type', `daily_${dateStr}`)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+    res.json({ content: data?.content || null })
+  } catch {
+    res.json({ content: null })
+  }
+})
+
 router.post('/daily', requireAuth, async (req, res) => {
   try {
     const profile = await getProfile(req.user.id)
     checkMembership(profile)
 
-    const today = new Date()
-    const todayStr = today.toISOString().split('T')[0]
-    const kinData = calculateKinFromDate(profile.birth_date)
-    const todayKin = calculateKinFromDate(todayStr)
-    const monthName = GERMAN_MONTHS[today.getMonth()]
+    const dateStr = req.body.date || new Date().toISOString().split('T')[0]
+    const dateObj = new Date(dateStr + 'T00:00:00')
+    const monthName = GERMAN_MONTHS[dateObj.getMonth()]
+    const dateLabel = `${dateObj.getDate()}. ${monthName} ${dateObj.getFullYear()}`
 
-    const prompt = buildDailyPrompt(profile, kinData, todayKin, `${today.getDate()}. ${monthName} ${today.getFullYear()}`)
+    const kinData = calculateKinFromDate(profile.birth_date)
+    const dayKin = calculateKinFromDate(dateStr)
+
+    const prompt = buildDailyPrompt(profile, kinData, dayKin, dateLabel)
     const content = await callClaude(prompt)
 
-    await saveAnalysis(req.user.id, 'daily', content, todayStr)
+    await saveAnalysis(req.user.id, `daily_${dateStr}`, content, dateStr)
     res.json({ content })
   } catch (err) {
     res.status(400).json({ error: err.message })

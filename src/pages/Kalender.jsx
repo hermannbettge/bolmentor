@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
+import { supabase } from '../lib/supabase.js'
+import AnalysisDisplay from '../components/AnalysisDisplay.jsx'
 import { supabase } from '../lib/supabase.js'
 
 const GERMAN_MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
@@ -233,11 +235,46 @@ function ListView({ days, todayStr, selected, setSelected }) {
 }
 
 function DayDetail({ day, onClose, navigate }) {
-  const e = ENERGY[day.energyType]
+  const en = ENERGY[day.energyType]
   const res = RESONANCE_STYLE[day.resonance]
   const dateObj = new Date(day.date + 'T00:00:00')
   const weekday = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'][dateObj.getDay()]
   const isToday = day.date === new Date().toISOString().split('T')[0]
+
+  const [analysis, setAnalysis] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [checked, setChecked] = useState(false)
+  const [showAnalysis, setShowAnalysis] = useState(false)
+
+  const checkExisting = useCallback(async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch(`/api/analysis/daily?date=${day.date}`, {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+      const data = await res.json()
+      if (data.content) { setAnalysis(data.content); setShowAnalysis(true) }
+    } catch {}
+    finally { setChecked(true) }
+  }, [day.date])
+
+  useEffect(() => { checkExisting() }, [checkExisting])
+
+  async function createAnalysis() {
+    setLoading(true)
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch('/api/analysis/daily', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ date: day.date }),
+      })
+      const data = await res.json()
+      setAnalysis(data.content)
+      setShowAnalysis(true)
+    } catch {}
+    finally { setLoading(false) }
+  }
 
   return (
     <div style={{
@@ -251,7 +288,7 @@ function DayDetail({ day, onClose, navigate }) {
         border: '1px solid var(--border)',
         borderRadius: '16px',
         padding: '28px 28px 32px',
-        width: '100%', maxWidth: '520px',
+        width: '100%', maxWidth: '560px',
         maxHeight: '90vh', overflowY: 'auto',
         animation: 'fadeIn 0.2s ease',
       }}>
@@ -270,7 +307,7 @@ function DayDetail({ day, onClose, navigate }) {
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-2)', cursor: 'pointer', fontSize: '1.2rem', padding: '4px' }}>✕</button>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
           {[
             ['Galaktischer Ton', `${day.toneNumber} – ${day.tone}`],
             ['Kraft', day.tonePower],
@@ -284,11 +321,9 @@ function DayDetail({ day, onClose, navigate }) {
           ))}
         </div>
 
-        <div style={{ padding: '14px 16px', borderRadius: '8px', backgroundColor: ENERGY[day.energyType].bg, border: `1px solid ${ENERGY[day.energyType].color}30`, marginBottom: '16px' }}>
-          <div style={{ fontSize: '0.78rem', fontWeight: 600, color: ENERGY[day.energyType].color, marginBottom: '4px' }}>
-            {ENERGY[day.energyType].label}energie
-          </div>
-          <div style={{ fontSize: '0.82rem', color: 'var(--text-1)' }}>{ENERGY[day.energyType].desc}</div>
+        <div style={{ padding: '14px 16px', borderRadius: '8px', backgroundColor: en.bg, border: `1px solid ${en.color}30`, marginBottom: '12px' }}>
+          <div style={{ fontSize: '0.78rem', fontWeight: 600, color: en.color, marginBottom: '4px' }}>{en.label}energie</div>
+          <div style={{ fontSize: '0.82rem', color: 'var(--text-1)' }}>{en.desc}</div>
         </div>
 
         {day.resonance !== 'none' && (
@@ -298,13 +333,32 @@ function DayDetail({ day, onClose, navigate }) {
           </div>
         )}
 
-        {isToday && (
-          <button
-            onClick={() => { onClose(); navigate('/tagesenergie') }}
-            style={{ width: '100%', backgroundColor: 'var(--accent)', color: 'var(--bg-deep)', border: 'none', borderRadius: '40px', padding: '13px', fontWeight: 500, fontSize: '0.88rem', cursor: 'pointer' }}
-          >
-            Vollständige Tagesenergie-Analyse öffnen
-          </button>
+        {/* Tagesanalyse */}
+        {checked && (
+          <div style={{ marginTop: '20px', borderTop: '1px solid var(--border)', paddingTop: '20px' }}>
+            {showAnalysis && analysis ? (
+              <>
+                <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--accent)', marginBottom: '12px' }}>
+                  Tagesanalyse
+                </div>
+                <AnalysisDisplay content={analysis} />
+                <button
+                  onClick={() => { setAnalysis(null); setShowAnalysis(false); createAnalysis() }}
+                  style={{ marginTop: '16px', border: '1px solid var(--border)', color: 'var(--text-2)', background: 'transparent', borderRadius: '40px', padding: '9px 20px', fontSize: '0.8rem', cursor: 'pointer' }}
+                >
+                  Neu erstellen
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={createAnalysis}
+                disabled={loading}
+                style={{ width: '100%', backgroundColor: 'var(--accent)', color: 'var(--bg-deep)', border: 'none', borderRadius: '40px', padding: '13px', fontWeight: 500, fontSize: '0.88rem', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}
+              >
+                {loading ? 'Analyse wird erstellt…' : `Tagesanalyse für ${dateObj.toLocaleDateString('de-DE')} erstellen`}
+              </button>
+            )}
+          </div>
         )}
       </div>
     </div>
