@@ -96,6 +96,17 @@ export default function Profil() {
   const [eventSaving, setEventSaving] = useState(false)
   const [eventMsg, setEventMsg] = useState('')
 
+  // Progressive event unlock: month 1→1, month 2→2, then +1 every 2 months, max 12
+  function calcMaxEvents() {
+    const start = profile?.membership_start || profile?.created_at
+    if (!start) return 1
+    const months = Math.max(0, Math.floor((Date.now() - new Date(start).getTime()) / (1000 * 60 * 60 * 24 * 30.44)))
+    if (months < 1) return 1
+    if (months < 2) return 2
+    return Math.min(12, 2 + Math.floor((months - 2) / 2) + 1)
+  }
+  const maxEvents = calcMaxEvents()
+
   const EVENT_CATEGORIES = [
     { value: 'land', label: 'Land / Nation' },
     { value: 'job', label: 'Job / Karriere' },
@@ -118,7 +129,7 @@ export default function Profil() {
   async function handleSaveEvent(e) {
     e.preventDefault()
     if (!eventName || !eventDate) { setEventMsg('Name und Datum sind Pflichtfelder.'); return }
-    if (events.length >= 5) { setEventMsg('Maximal 5 Ereignisse erlaubt.'); return }
+    if (events.length >= maxEvents) { setEventMsg(`Maximal ${maxEvents} Ereignisse freigeschaltet. Nächster Slot in ${30 - new Date().getDate()} Tagen.`); return }
     setEventSaving(true); setEventMsg('')
     try {
       const { data: { session } } = await supabase.auth.getSession()
@@ -306,7 +317,7 @@ export default function Profil() {
         {/* Meine Ereignisse */}
         <Section title="Meine Ereignisse (für Ereignis-Analysen)">
           <p style={{ color: TEXT_LIGHT, fontSize: '0.83rem', lineHeight: 1.7, marginBottom: '20px' }}>
-            Analysiere alles, dem du ein Datum zuordnen kannst: ein Land, ein Job-Start, eine Beziehung, ein Kauf, ein Unternehmen. Bis zu 5 Ereignisse möglich.
+            Analysiere alles, dem du ein Datum zuordnen kannst: ein Land, ein Job-Start, eine Beziehung, ein Kauf, ein Unternehmen. Aktuell {maxEvents} von max. 12 Ereignissen freigeschaltet — jeden Monat kommt ein neuer Slot dazu.
           </p>
 
           {events.map(ev => (
@@ -323,10 +334,15 @@ export default function Profil() {
             </div>
           ))}
 
-          {events.length < 5 && !showEventForm && (
+          {events.length < maxEvents && !showEventForm && (
             <button onClick={() => setShowEventForm(true)} style={{ border: `1px dashed ${COPPER}`, color: COPPER, background: 'transparent', borderRadius: '3px', padding: '10px 20px', fontSize: '0.82rem', cursor: 'pointer', width: '100%', marginTop: '8px' }}>
-              + Ereignis hinzufügen
+              + Ereignis hinzufügen ({events.length}/{maxEvents})
             </button>
+          )}
+          {events.length >= maxEvents && !showEventForm && (
+            <div style={{ fontSize: '0.8rem', color: TEXT_LIGHT, marginTop: '8px', textAlign: 'center', padding: '10px' }}>
+              Alle {maxEvents} Slots belegt — nächster Slot nächsten Monat.
+            </div>
           )}
 
           {showEventForm && (
