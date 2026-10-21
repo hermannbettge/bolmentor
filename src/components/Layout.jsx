@@ -7,7 +7,7 @@ import MayaChat from './MayaChat.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { useState, useEffect } from 'react'
 
-const PROTECTED_ROUTES = ['/dashboard', '/tagesenergie', '/monatsanalyse', '/analysen', '/profil', '/analyse/', '/admin']
+const PROTECTED_ROUTES = ['/dashboard', '/tagesenergie', '/kalender', '/monatsanalyse', '/analysen', '/profil', '/analyse/', '/admin']
 
 export default function Layout({ children }) {
   const { user } = useAuth()

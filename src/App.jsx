@@ -15,6 +15,7 @@ import Admin from './pages/Admin.jsx'
 import AnalysePage from './pages/AnalysePage.jsx'
 import AnalyseEvent from './pages/AnalyseEvent.jsx'
 import PartnerschaftsanalysePage from './pages/PartnerschaftsanalysePage.jsx'
+import Kalender from './pages/Kalender.jsx'
 
 function ProtectedRoute({ children }) {
   const { user, profile, loading } = useAuth()
@@ -47,6 +48,7 @@ function AppRoutes() {
 
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/tagesenergie" element={<ProtectedRoute><Tagesenergie /></ProtectedRoute>} />
+        <Route path="/kalender" element={<ProtectedRoute><Kalender /></ProtectedRoute>} />
         <Route path="/monatsanalyse" element={<ProtectedRoute><Monatsanalyse /></ProtectedRoute>} />
         <Route path="/analysen" element={<ProtectedRoute><MeineAnalysen /></ProtectedRoute>} />
         <Route path="/profil" element={<ProtectedRoute><Profil /></ProtectedRoute>} />

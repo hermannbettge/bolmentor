@@ -506,6 +506,53 @@ Das Jahresresümee am Ende mindestens 400 Wörter.
 Gesamtlänge: mindestens 6000 Wörter.`
 }
 
+// Energy classification by tone
+function getEnergyType(toneNumber) {
+  if ([3, 5, 9, 10].includes(toneNumber)) return 'action'    // high energy, sport, decisions
+  if ([7, 8, 12].includes(toneNumber)) return 'creative'     // ideas, creativity, social
+  if ([4, 6, 1].includes(toneNumber)) return 'balance'       // structure, routine, intention
+  return 'rest'                                               // 2, 11, 13 = reflect, release
+}
+
+// Month calendar endpoint — returns all days of a month with Kin data
+router.get('/calendar/:year/:month', requireAuth, async (req, res) => {
+  try {
+    const profile = await getProfile(req.user.id)
+    checkMembership(profile)
+
+    const year = parseInt(req.params.year)
+    const month = parseInt(req.params.month) // 1-12
+    if (isNaN(year) || isNaN(month) || month < 1 || month > 12) {
+      return res.status(400).json({ error: 'Ungültiges Datum' })
+    }
+
+    const userKin = profile.birth_date ? calculateKinFromDate(profile.birth_date) : null
+    const daysInMonth = new Date(year, month, 0).getDate()
+    const days = []
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = `${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`
+      const kin = calculateKinFromDate(dateStr)
+      const energyType = getEnergyType(kin.toneNumber)
+
+      // Personal resonance: same seal, same tone, same wavespell as birth kin
+      let resonance = 'none'
+      if (userKin) {
+        if (kin.kin === userKin.kin) resonance = 'birthday'          // exact kin = power day
+        else if (kin.seal === userKin.seal) resonance = 'seal'       // same seal = identity day
+        else if (kin.toneNumber === userKin.toneNumber) resonance = 'tone'  // same tone = rhythm day
+        else if (kin.wavespell === userKin.wavespell) resonance = 'wavespell' // same wave
+      }
+
+      days.push({ date: dateStr, day: d, ...kin, energyType, resonance })
+    }
+
+    res.json({ year, month, days, userKin })
+  } catch (err) {
+    res.status(400).json({ error: err.message })
+  }
+})
+
 // --- ROUTES ---
 
 router.post('/daily', requireAuth, async (req, res) => {
@@ -588,7 +635,7 @@ YEARLY_TYPES.forEach(type => {
       const kinData = calculateKinFromDate(profile.birth_date)
       const prompt = buildYearlyPrompt(type, profile, kinData, year)
 
-      const content = await callClaude(prompt, 10000)
+      const content = await callClaude(prompt, 16000)
       const today = new Date().toISOString().split('T')[0]
       await saveAnalysis(req.user.id, `${type}_yearly_${year}`, content, today)
       res.json({ content })

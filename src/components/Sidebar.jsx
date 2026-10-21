@@ -91,6 +91,7 @@ export default function Sidebar() {
 
       <nav style={{ flex: 1, paddingTop: '10px' }}>
         <NavItem to="/tagesenergie" label="Tagesenergie" />
+        <NavItem to="/kalender" label="Energiekalender" />
         <NavItem to="/monatsanalyse" label="Monatsanalyse" />
 
         {purchased.filter(k => k !== 'compatibility' && ANALYSE_LABELS[k]).length > 0 && (
