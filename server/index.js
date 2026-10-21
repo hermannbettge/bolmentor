@@ -4,6 +4,7 @@ import cors from 'cors'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import analysisRoutes from './routes/analysis.js'
+import chatRoutes from './routes/chat.js'
 import webhookRoutes from './routes/webhooks.js'
 import adminRoutes from './routes/admin.js'
 import authRoutes from './routes/auth.js'
@@ -20,6 +21,7 @@ app.use('/api/webhooks', express.raw({ type: 'application/json' }))
 app.use(express.json())
 
 app.use('/api/analysis', analysisRoutes)
+app.use('/api/chat', chatRoutes)
 app.use('/api/webhooks', webhookRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/auth', authRoutes)
