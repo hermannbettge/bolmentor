@@ -5,6 +5,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import analysisRoutes from './routes/analysis.js'
 import webhookRoutes from './routes/webhooks.js'
+import adminRoutes from './routes/admin.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -19,6 +20,7 @@ app.use(express.json())
 
 app.use('/api/analysis', analysisRoutes)
 app.use('/api/webhooks', webhookRoutes)
+app.use('/api/admin', adminRoutes)
 
 // Serve built frontend in production
 if (process.env.NODE_ENV === 'production') {

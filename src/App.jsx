@@ -11,6 +11,7 @@ import MeineAnalysen from './pages/MeineAnalysen.jsx'
 import Profil from './pages/Profil.jsx'
 import Impressum from './pages/Impressum.jsx'
 import Datenschutz from './pages/Datenschutz.jsx'
+import Admin from './pages/Admin.jsx'
 
 function ProtectedRoute({ children }) {
   const { user, profile, loading } = useAuth()
@@ -46,6 +47,7 @@ function AppRoutes() {
         <Route path="/monatsanalyse" element={<ProtectedRoute><Monatsanalyse /></ProtectedRoute>} />
         <Route path="/analysen" element={<ProtectedRoute><MeineAnalysen /></ProtectedRoute>} />
         <Route path="/profil" element={<ProtectedRoute><Profil /></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
