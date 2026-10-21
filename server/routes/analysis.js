@@ -199,13 +199,18 @@ Länge: 500–650 Wörter gesamt.`
 }
 
 const SYSTEM_RULES = `
-WICHTIGE REGELN:
-- Schreibe KEIN Meta-Kommentar ("Hier ist deine Analyse...", "Ich hoffe das hilft...", etc.)
-- Beginne SOFORT mit dem ersten ## Abschnitt
+ABSOLUT VERBOTENE STILMITTEL (streng einhalten):
+- KEIN Meta-Kommentar ("Hier ist deine Analyse...", "Ich hoffe das hilft...", etc.)
+- Beginne SOFORT mit dem ersten ## Abschnitt, ohne Einleitung
 - Keine horizontalen Trennlinien (---)
 - Keine einzelne # Überschrift am Anfang
+- KEINE Gedankenstriche oder Bindestriche als Satzzeichen (– oder —). Nur normale Satzzeichen.
+- KEINE Doppelpunkte am Ende eines Satzes oder Absatzes
+- Kein Satzanfang mit "Und"
+- Schreibe fehlerfreies, korrektes Deutsch
+STIL:
 - Sprich die Person immer direkt mit Vornamen an
-- Jeder Abschnitt soll mindestens 3-5 ausführliche Absätze haben
+- Jeder Abschnitt mindestens 4-6 ausführliche Absätze
 - Konkret, tiefgründig, persönlich - kein generisches Horoskop-Deutsch
 - Nutze das Maya-System als Tiefenpsychologie, nicht als Wahrsagerei
 `
@@ -517,10 +522,12 @@ Erstelle zunächst eine Jahresübersicht, dann für JEDEN der 12 Monate einen ei
 ## NOVEMBER ${year}
 ## DEZEMBER ${year}
 
-## JAHRESRESÜMEE & EMPFEHLUNGEN
+## JAHRESRESÜMEE ${year} – GESAMTBEWERTUNG & EMPFEHLUNGEN
+(Gesamtfazit des Jahres: die 3 wichtigsten Chancen, die 3 größten Herausforderungen, die kraftvollsten Monate, die ruhigsten Monate, konkrete Empfehlungen für ${name} für den Bereich ${label})
 
 Für jeden Monat: Energiequalität, was günstig ist, was zu beachten ist, konkrete Handlungsempfehlungen für den Bereich ${label}. Jeder Monatsabschnitt mindestens 200 Wörter.
-Gesamtlänge: mindestens 4000 Wörter.`
+Das Jahresresümee am Ende mindestens 400 Wörter.
+Gesamtlänge: mindestens 4500 Wörter.`
 }
 
 // --- ROUTES ---

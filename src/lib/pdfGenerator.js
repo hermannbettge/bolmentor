@@ -67,6 +67,15 @@ export async function generateAnalysisPDF({ content, analysisType, userName, dat
     lifephases: 'Lebensphasen-Analyse',
     partnership: 'Partnerschaftsanalyse',
     compatibility: 'Partner-Kompatibilität',
+    partnership_compatibility: 'Paaranalyse',
+    business_yearly: 'Business-Jahresanalyse',
+    health_yearly: 'Gesundheits-Jahresanalyse',
+    family_yearly: 'Familien-Jahresanalyse',
+    selfexpression_yearly: 'Selbstausdruck-Jahresanalyse',
+    finance_yearly: 'Finanz-Jahresanalyse',
+    career_yearly: 'Karriere-Jahresanalyse',
+    lifephases_yearly: 'Lebensphasen-Jahresanalyse',
+    partnership_yearly: 'Partnerschaft-Jahresanalyse',
   }
 
   const typeLabel = typeLabels[analysisType] || 'Analyse'
@@ -108,26 +117,38 @@ export async function generateAnalysisPDF({ content, analysisType, userName, dat
   let y = headerH + 10
 
   // --- Parse and render content ---
-  // Strip emojis and --- separators for PDF compatibility
   const cleanContent = content
     .replace(/[\u{1F000}-\u{1FFFF}]|[\u{2600}-\u{27FF}]|[\u{FE00}-\u{FEFF}]/gu, '')
     .replace(/^-{2,}$/gm, '')
-    .replace(/^#{1}(?!#).+$/gm, '') // remove single # title lines
+    .replace(/^#{1}(?!#).+$/gm, '')
+    .replace(/\*\*/g, '')
+    // strip em/en dashes used as sentence connectors (space–space), keep compound-word hyphens
+    .replace(/ [–—] /g, ' ')
+    // no colon at end of phrase before newline
+    .replace(/:\n/g, '\n')
   const lines = cleanContent.split('\n')
 
+  const footerMargin = 22 // keep clear of footer (12mm) + buffer
+  const headingMinRoom = 45 // mm needed after heading before page break
+
+  function newPage() {
+    doc.addPage()
+    doc.setFillColor(...COLORS.bg)
+    doc.rect(0, 0, pageWidth, pageHeight, 'F')
+    return margin
+  }
+
   doc.setFont('helvetica', 'normal')
-  doc.setFontSize(9)
+  doc.setFontSize(9.5)
 
   for (const line of lines) {
-    if (y > pageHeight - 25) {
-      doc.addPage()
-      doc.setFillColor(...COLORS.bg)
-      doc.rect(0, 0, pageWidth, pageHeight, 'F')
-      y = margin
-    }
-
     if (line.startsWith('## ')) {
-      y += 5
+      // Orphan prevention: if less than headingMinRoom mm left, go to next page
+      if (y > pageHeight - footerMargin - headingMinRoom) {
+        y = newPage()
+      } else {
+        y += 5
+      }
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(8)
       doc.setTextColor(...COLORS.copper)
@@ -147,15 +168,10 @@ export async function generateAnalysisPDF({ content, analysisType, userName, dat
       doc.setTextColor(...COLORS.textPrimary)
       doc.setFont('helvetica', 'normal')
       doc.setFontSize(9.5)
-      // Strip ** bold markers for PDF
-      const cleanLine = line.replace(/\*\*/g, '')
-      const splitLines = doc.splitTextToSize(cleanLine, contentWidth)
+      const splitLines = doc.splitTextToSize(line, contentWidth)
       for (const splitLine of splitLines) {
-        if (y > pageHeight - 25) {
-          doc.addPage()
-          doc.setFillColor(...COLORS.bg)
-          doc.rect(0, 0, pageWidth, pageHeight, 'F')
-          y = margin
+        if (y > pageHeight - footerMargin) {
+          y = newPage()
         }
         doc.text(splitLine, margin, y)
         y += 5.5

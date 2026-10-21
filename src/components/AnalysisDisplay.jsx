@@ -5,6 +5,11 @@ export default function AnalysisDisplay({ content }) {
   const cleaned = content
     .split('\n')
     .filter(l => !l.match(/^#[^#]/) && !l.match(/^-{2,}$/) && !l.match(/^\*{2,}$/))
+    .map(l => l
+      .replace(/ [–—] /g, ' ')   // em/en dash as connector → space
+      .replace(/^Und /g, '')      // sentence-starting "Und "
+      .replace(/:\s*$/g, '.')     // trailing colon → period
+    )
     .join('\n')
   const sections = cleaned.split(/(?=## )/).filter(Boolean)
 

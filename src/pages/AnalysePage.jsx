@@ -28,7 +28,9 @@ export default function AnalysePage() {
   const [yearlyAnalysis, setYearlyAnalysis] = useState(null)
   const [yearlyLoading, setYearlyLoading] = useState(false)
   const [yearlyChecking, setYearlyChecking] = useState(true)
-  const currentYear = new Date().getFullYear()
+  // Use next year in Q4 (Oct–Dec) so analysis is forward-looking
+  const now = new Date()
+  const currentYear = now.getMonth() >= 9 ? now.getFullYear() + 1 : now.getFullYear()
   const hasYearly = type !== 'compatibility'
 
   const label = LABELS[type] || type
@@ -217,7 +219,7 @@ export default function AnalysePage() {
             ) : partnerAnalysis ? (
               <>
                 <AnalysisDisplay content={partnerAnalysis} />
-                <div style={{ display: 'flex', gap: '12px', marginTop: '24px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '16px', marginTop: '24px', flexWrap: 'wrap', alignItems: 'center' }}>
                   <PDFDownloadButton content={partnerAnalysis} analysisType="partnership_compatibility" userName={profile?.name || ''} date={new Date().toLocaleDateString('de-DE')} />
                   <button
                     onClick={() => setPartnerAnalysis(null)}
@@ -270,7 +272,7 @@ export default function AnalysePage() {
             ) : yearlyAnalysis ? (
               <>
                 <AnalysisDisplay content={yearlyAnalysis} />
-                <div style={{ display: 'flex', gap: '12px', marginTop: '24px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '16px', marginTop: '24px', flexWrap: 'wrap', alignItems: 'center' }}>
                   <PDFDownloadButton content={yearlyAnalysis} analysisType={`${type}_yearly`} userName={profile?.name || ''} date={new Date().toLocaleDateString('de-DE')} />
                   <button
                     onClick={() => setYearlyAnalysis(null)}
@@ -325,7 +327,7 @@ export default function AnalysePage() {
         ) : (
           <>
             <AnalysisDisplay content={analysis} />
-            <div style={{ display: 'flex', gap: '12px', marginTop: '32px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '16px', marginTop: '32px', flexWrap: 'wrap', alignItems: 'center' }}>
               <PDFDownloadButton content={analysis} analysisType={type} userName={profile?.name || ''} date={new Date().toLocaleDateString('de-DE')} />
               <button
                 onClick={() => { setAnalysis(null) }}
