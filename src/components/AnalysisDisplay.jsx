@@ -13,18 +13,18 @@ export default function AnalysisDisplay({ content }) {
         return (
           <div key={idx} style={{ marginBottom: '32px' }}>
             <h2 style={{
-              color: 'var(--color-gold)',
+              color: 'var(--accent)',
               fontSize: '0.85rem',
               fontWeight: 500,
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
               marginBottom: '12px',
               paddingBottom: '8px',
-              borderBottom: '1px solid rgba(139,110,62,0.3)',
+              borderBottom: '1px solid var(--border)',
             }}>
               {headline}
             </h2>
-            <div style={{ color: 'var(--color-text-primary)', fontWeight: 300, lineHeight: 1.85, fontSize: '0.95rem' }}>
+            <div style={{ color: 'var(--text-1)', fontWeight: 300, lineHeight: 1.85, fontSize: '0.95rem' }}>
               {body.split('\n').map((line, i) => (
                 line.trim() ? <p key={i} style={{ margin: '0 0 12px' }}>{line}</p> : null
               ))}

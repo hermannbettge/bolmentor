@@ -5,11 +5,10 @@ import { supabase } from '../lib/supabase.js'
 import AnalysisDisplay from '../components/AnalysisDisplay.jsx'
 import PDFDownloadButton from '../components/PDFDownloadButton.jsx'
 
-const CREAM = '#F4EFE6'
-const COPPER = '#A0522D'
-const TEXT = '#2A2018'
-const TEXT_MID = '#5A4E42'
-const TEXT_LIGHT = '#8C7E72'
+const COPPER = 'var(--accent)'
+const TEXT = 'var(--text-1)'
+const TEXT_MID = 'var(--text-2)'
+const TEXT_LIGHT = 'var(--text-2)'
 
 const LABELS = {
   business: 'Business-Analyse', health: 'Gesundheitsanalyse', family: 'Familienanalyse',
@@ -28,10 +27,11 @@ export default function AnalysePage() {
   const [extraInput, setExtraInput] = useState('')
 
   const label = LABELS[type] || type
-  const hasPurchased = profile?.purchased_analyses?.includes(type)
+  const hasPurchased = profile?.is_admin || profile?.purchased_analyses?.includes(type)
 
   useEffect(() => {
-    if (profile && !hasPurchased) navigate('/analysen')
+    // Only redirect when profile is fully loaded (purchased_analyses is not undefined)
+    if (profile && profile.purchased_analyses !== undefined && !hasPurchased) navigate('/analysen')
   }, [profile])
 
   useEffect(() => {
@@ -76,13 +76,13 @@ export default function AnalysePage() {
   }
 
   if (checking) return (
-    <div style={{ backgroundColor: CREAM, minHeight: '100vh', padding: '48px 40px' }}>
+    <div style={{ backgroundColor: 'var(--bg-deep)', minHeight: '100vh', padding: '48px 40px' }}>
       <div style={{ color: TEXT_LIGHT }}>Wird geladen…</div>
     </div>
   )
 
   return (
-    <div style={{ backgroundColor: CREAM, minHeight: '100vh', padding: '48px 40px', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ backgroundColor: 'var(--bg-deep)', minHeight: '100vh', padding: '48px 40px', fontFamily: 'Inter, sans-serif' }}>
       <div style={{ maxWidth: '720px' }}>
         <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '8px' }}>
           Analyse
@@ -110,14 +110,14 @@ export default function AnalysePage() {
                   onChange={e => setExtraInput(e.target.value)}
                   placeholder="26.07.1990"
                   maxLength={10}
-                  style={{ backgroundColor: '#FBF8F3', border: '1px solid rgba(42,32,24,0.12)', borderRadius: '3px', padding: '11px 14px', color: TEXT, fontSize: '0.92rem', width: '200px', outline: 'none' }}
+                  style={{ backgroundColor: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '3px', padding: '11px 14px', color: TEXT, fontSize: '0.92rem', width: '200px', outline: 'none' }}
                 />
               </div>
             )}
             <button
               onClick={createAnalysis}
               disabled={loading || (type === 'compatibility' && !extraInput)}
-              style={{ backgroundColor: '#1A1410', color: CREAM, border: 'none', borderRadius: '40px', padding: '13px 32px', fontWeight: 500, fontSize: '0.85rem', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}
+              style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-deep)', border: 'none', borderRadius: '40px', padding: '13px 32px', fontWeight: 500, fontSize: '0.85rem', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}
             >
               {loading ? `${label} wird erstellt…` : `${label} jetzt erstellen`}
             </button>
@@ -129,7 +129,7 @@ export default function AnalysePage() {
               <PDFDownloadButton content={analysis} analysisType={type} userName={profile?.name || ''} date={new Date().toLocaleDateString('de-DE')} />
               <button
                 onClick={() => { setAnalysis(null) }}
-                style={{ border: '1px solid rgba(42,32,24,0.2)', color: TEXT_MID, background: 'transparent', borderRadius: '40px', padding: '10px 24px', fontSize: '0.82rem', cursor: 'pointer' }}
+                style={{ border: '1px solid var(--border)', color: TEXT_MID, background: 'transparent', borderRadius: '40px', padding: '10px 24px', fontSize: '0.82rem', cursor: 'pointer' }}
               >
                 Neu erstellen
               </button>

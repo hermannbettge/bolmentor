@@ -6,7 +6,7 @@ import BottomNav from './BottomNav.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { useState, useEffect } from 'react'
 
-const PROTECTED_ROUTES = ['/dashboard', '/tagesenergie', '/monatsanalyse', '/analysen', '/profil']
+const PROTECTED_ROUTES = ['/dashboard', '/tagesenergie', '/monatsanalyse', '/analysen', '/profil', '/analyse/', '/admin']
 
 export default function Layout({ children }) {
   const { user } = useAuth()
