@@ -158,10 +158,9 @@ export default function Salespage() {
       {/* SECTION 1 – HERO */}
       <Section bg="var(--color-bg-deep)">
         <Eyebrow>Maya Kalender Analyse</Eyebrow>
-        <Headline>Du weißt, dass da mehr ist. Der Maya Kalender zeigt dir, was.</Headline>
+        <Headline>Du weißt, dass da mehr ist, aber du weißt noch nicht genau, was – und der Maya Kalender zeigt es dir.</Headline>
         <BodyText>
-          <p>Dein Geburtsdatum enthält ein Muster. Nicht als Versprechen. Nicht als Schicksal. Als Sprache – die beschreibt, wie du in der Welt wirkst, welche Themen dich begleiten und warum bestimmte Situationen immer wieder auftauchen.</p>
-          <p>Jeden Tag. Jeden Monat. So lange du es möchtest.</p>
+          <p>Dein Geburtsdatum ergibt ein Muster, das beschreibt, wie du in der Welt wirkst, welche Themen dich begleiten und warum bestimmte Situationen in deinem Leben immer wieder auftauchen. Jeden Tag neu. Jeden Monat vertieft.</p>
         </BodyText>
         <div style={{ marginTop: '32px' }}>
           <PrimaryButton to="/registrieren">Jetzt starten – 27 € / Monat</PrimaryButton>
@@ -176,12 +175,11 @@ export default function Salespage() {
       {/* SECTION 2 – SCHMERZ */}
       <Section bg="var(--color-bg-section)">
         <Eyebrow>Kennst du das?</Eyebrow>
-        <Headline size="section">Du verstehst dich gut. Und trotzdem wiederholen sich bestimmte Dinge.</Headline>
+        <Headline size="section">Du hast dich mit dir beschäftigt und trotzdem wiederholen sich bestimmte Dinge.</Headline>
         <BodyText>
-          <p>Du hast dich mit dir beschäftigt. Du weißt einiges über dich. Und trotzdem gibt es diese Situationen, die immer wieder auftauchen – in Beziehungen, im Beruf, im Umgang mit dir selbst.</p>
-          <p>Vielleicht weißt du längst, was du anders machen möchtest. Die Frage ist, warum es im entscheidenden Moment trotzdem nicht so läuft.</p>
-          <p>Manche Phasen fühlen sich leicht an. Andere zäh. Manche Entscheidungen treffen sich wie von selbst. Andere kosten dich alles.</p>
-          <p>Das ist kein Zufall. Und es ist kein Fehler in dir. Es ist ein Muster. Und Muster kann man lesen.</p>
+          <p>Du weißt einiges über dich, du hast vielleicht gelesen, Seminare besucht oder dich auf andere Weise intensiv mit dir auseinandergesetzt – und trotzdem gibt es diese Situationen, die immer wieder auftauchen. In Beziehungen, im Beruf, im Umgang mit dir selbst.</p>
+          <p>Manche Lebensphasen laufen wie von selbst, andere fühlen sich zäh an, egal was du tust. Manche Entscheidungen fallen leicht, andere kosten dich unverhältnismäßig viel Kraft.</p>
+          <p>Das ist kein Zufall und es ist kein Fehler in dir. Es ist ein Muster, und Muster kann man lesen.</p>
         </BodyText>
       </Section>
 
@@ -190,11 +188,9 @@ export default function Salespage() {
       {/* SECTION 3 – WUNSCHZUSTAND */}
       <Section bg="var(--color-bg-deep)">
         <Eyebrow>Was möglich wird</Eyebrow>
-        <Headline size="section">Du weißt, welche Energie dieser Tag trägt. Bevor er beginnt.</Headline>
+        <Headline size="section">Stell dir vor, du weißt jeden Morgen, welche Energie dieser Tag trägt, bevor er überhaupt begonnen hat.</Headline>
         <BodyText>
-          <p>Jeden Morgen eine Analyse, die dir zeigt, was dieser Tag in sich trägt. Nicht als Horoskop. Sondern als konkreter Einblick in das, was gerade wirkt – auf dich, in dir, um dich herum.</p>
-          <p>Du verstehst, warum bestimmte Phasen sich leicht anfühlen und andere nicht. Warum Beziehungen manchmal reibungslos laufen und manchmal nicht. Was in einer Lebensphase gerade wirklich relevant ist.</p>
-          <p>Nicht weil jemand es dir gesagt hat. Sondern weil du dein eigenes Muster erkennst.</p>
+          <p>Du verstehst, warum bestimmte Phasen sich leicht anfühlen und andere nicht, warum Beziehungen manchmal reibungslos laufen und manchmal nicht, und was in deinem Leben gerade wirklich relevant ist – nicht weil jemand es dir erklärt hat, sondern weil du dein eigenes Muster erkennst.</p>
         </BodyText>
       </Section>
 
@@ -203,23 +199,10 @@ export default function Salespage() {
       {/* SECTION 4 – LÖSUNG */}
       <Section bg="var(--color-bg-section)">
         <Eyebrow>Der Maya Kalender</Eyebrow>
-        <Headline size="section">Ein über 5.000 Jahre altes System. Dein ganz persönlicher Einblick.</Headline>
+        <Headline size="section">Die Maya haben vor über 5.000 Jahren kein Zeitsystem entwickelt, sondern ein Bewusstseinssystem.</Headline>
         <BodyText>
-          <p>Die Maya haben keinen Kalender entwickelt, um Zeit zu messen. Sie haben ein System entwickelt, um Bewusstsein zu beschreiben.</p>
-          <p>Der Maya Tzolkin ist ein 260-tägiger Zyklus aus 20 Sonnensiegeln und 13 galaktischen Tönen. Deine Kombination – berechnet aus deinem Geburtsdatum – ist einzigartig. Sie zeigt dir:</p>
-          <ul style={{ listStyle: 'none', padding: 0, margin: '16px 0' }}>
-            {[
-              'Dein Leitsiegel: Was dich im Kern antreibt',
-              'Deinen galaktischen Ton: Wie du auf andere wirkst und was dich herausfordert',
-              'Dein persönliches Orakel: Deine natürlichen Stärken und blinden Flecken',
-              'Dein Lebensthema: Was sich durch dein Leben zieht – oft ohne dass du es bisher benennen konntest',
-            ].map((item, i) => (
-              <li key={i} style={{ color: 'var(--color-text-primary)', fontWeight: 300, marginBottom: '8px', paddingLeft: '16px', borderLeft: '2px solid var(--color-gold-muted)' }}>
-                {item}
-              </li>
-            ))}
-          </ul>
-          <p>Täglich. Monatlich. Und für die Lebensbereiche, die gerade wirklich relevant sind.</p>
+          <p>Der Maya Tzolkin ist ein 260-tägiger Zyklus aus 20 Sonnensiegeln und 13 galaktischen Tönen, und deine Kombination – berechnet aus deinem Geburtsdatum – ist einzigartig. Sie zeigt dir, was dich im Kern antreibt, wie du auf andere wirkst, wo deine natürlichen Stärken liegen und welches Thema sich wie ein roter Faden durch dein Leben zieht – auch wenn du es bisher noch nicht so benennen konntest.</p>
+          <p>Auf dieser Grundlage erstellen wir dir täglich, monatlich und für jeden Lebensbereich, der dich gerade beschäftigt, eine tiefgehende persönliche Analyse.</p>
         </BodyText>
       </Section>
 
@@ -351,10 +334,9 @@ export default function Salespage() {
 
       {/* SECTION 7 – FINALER CTA */}
       <Section bg="var(--color-bg-deep)">
-        <Headline size="section">Du weißt wahrscheinlich längst, was du verstehen möchtest.</Headline>
+        <Headline size="section">Du weißt wahrscheinlich längst, was du in deinem Leben besser verstehen möchtest.</Headline>
         <BodyText>
-          <p>Die spannendere Frage ist, welches Muster heute noch dafür sorgt, dass bestimmte Situationen immer wieder ähnlich verlaufen.</p>
-          <p>Genau dort beginnt dein nächster Schritt.</p>
+          <p>Die spannendere Frage ist, welches Muster heute noch dafür sorgt, dass bestimmte Situationen immer wieder ähnlich verlaufen – und genau dort beginnt dein nächster Schritt.</p>
           <p style={{ marginTop: '16px', color: 'var(--color-text-muted)', fontSize: '0.88rem' }}>27 € im Monat. Keine Mindestlaufzeit. Jederzeit kündbar.</p>
         </BodyText>
         <div style={{ marginTop: '32px' }}>
