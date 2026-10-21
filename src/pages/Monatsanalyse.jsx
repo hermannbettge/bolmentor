@@ -20,6 +20,12 @@ export default function Monatsanalyse() {
     checkExistingAnalysis()
   }, [user])
 
+  useEffect(() => {
+    if (!checkingExisting && !analysis && !loading) {
+      createAnalysis()
+    }
+  }, [checkingExisting])
+
   async function checkExistingAnalysis() {
     if (!user) return
     try {

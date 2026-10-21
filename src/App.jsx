@@ -12,6 +12,7 @@ import Profil from './pages/Profil.jsx'
 import Impressum from './pages/Impressum.jsx'
 import Datenschutz from './pages/Datenschutz.jsx'
 import Admin from './pages/Admin.jsx'
+import AnalysePage from './pages/AnalysePage.jsx'
 
 function ProtectedRoute({ children }) {
   const { user, profile, loading } = useAuth()
@@ -48,6 +49,7 @@ function AppRoutes() {
         <Route path="/analysen" element={<ProtectedRoute><MeineAnalysen /></ProtectedRoute>} />
         <Route path="/profil" element={<ProtectedRoute><Profil /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+        <Route path="/analyse/:type" element={<ProtectedRoute><AnalysePage /></ProtectedRoute>} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

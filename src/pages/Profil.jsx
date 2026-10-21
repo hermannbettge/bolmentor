@@ -2,189 +2,232 @@ import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { calculateKin } from '../lib/mayanCalendar.js'
 
-const inputStyle = {
-  width: '100%',
-  backgroundColor: 'var(--color-bg-light)',
-  border: '1px solid rgba(139,110,62,0.3)',
-  borderRadius: '4px',
-  padding: '10px 14px',
-  color: 'var(--color-text-primary)',
-  fontSize: '0.9rem',
-  outline: 'none',
-  boxSizing: 'border-box',
-}
+const CREAM = '#F4EFE6'
+const DEEP = '#1A1410'
+const COPPER = '#A0522D'
+const TEXT = '#2A2018'
+const TEXT_MID = '#5A4E42'
+const TEXT_LIGHT = '#8C7E72'
+const BORDER = 'rgba(42,32,24,0.12)'
 
 const ANALYSE_LABELS = {
-  business: 'Business-Analyse',
-  health: 'Gesundheitsanalyse',
-  family: 'Familienanalyse',
-  selfexpression: 'Selbstausdruck-Analyse',
-  finance: 'Finanzanalyse',
-  career: 'Karriere-Analyse',
-  lifephases: 'Lebensphasen-Analyse',
-  partnership: 'Partnerschaftsanalyse',
-  compatibility: 'Partner-Kompatibilität',
+  business: 'Business-Analyse', health: 'Gesundheitsanalyse', family: 'Familienanalyse',
+  selfexpression: 'Selbstausdruck-Analyse', finance: 'Finanzanalyse', career: 'Karriere-Analyse',
+  lifephases: 'Lebensphasen-Analyse', partnership: 'Partnerschaftsanalyse', compatibility: 'Partner-Kompatibilität',
+}
+
+function Field({ label, value, onChange, type = 'text', placeholder = '', required = false }) {
+  return (
+    <div style={{ marginBottom: '20px' }}>
+      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: TEXT_LIGHT, marginBottom: '8px' }}>
+        {label}{required && <span style={{ color: COPPER }}> *</span>}
+      </label>
+      <input
+        type={type}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder}
+        required={required}
+        style={{
+          width: '100%', boxSizing: 'border-box',
+          backgroundColor: '#FBF8F3',
+          border: `1px solid ${BORDER}`,
+          borderRadius: '3px',
+          padding: '11px 14px',
+          color: TEXT,
+          fontSize: '0.92rem',
+          outline: 'none',
+          fontFamily: 'Inter, sans-serif',
+        }}
+      />
+    </div>
+  )
+}
+
+function Section({ title, children }) {
+  return (
+    <div style={{ marginBottom: '40px' }}>
+      <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '20px', paddingBottom: '12px', borderBottom: `1px solid ${BORDER}` }}>
+        {title}
+      </div>
+      {children}
+    </div>
+  )
 }
 
 export default function Profil() {
   const { profile, updateProfile, signOut } = useAuth()
-  const [name, setName] = useState(profile?.name || '')
-  const [birthDate, setBirthDate] = useState(profile?.birth_date
-    ? (() => {
-        const d = new Date(profile.birth_date)
-        return `${String(d.getUTCDate()).padStart(2,'0')}.${String(d.getUTCMonth()+1).padStart(2,'0')}.${d.getUTCFullYear()}`
-      })()
-    : '')
-  const [saving, setSaving] = useState(false)
-  const [saveMsg, setSaveMsg] = useState('')
-  const [showCancelModal, setShowCancelModal] = useState(false)
 
-  const kinData = profile?.birth_date ? (() => {
-    try { return calculateKin(profile.birth_date) } catch { return null }
-  })() : null
+  function initBirthDate() {
+    if (!profile?.birth_date) return ''
+    const d = new Date(profile.birth_date)
+    return `${String(d.getUTCDate()).padStart(2,'0')}.${String(d.getUTCMonth()+1).padStart(2,'0')}.${d.getUTCFullYear()}`
+  }
+
+  const [firstName, setFirstName] = useState(profile?.name || '')
+  const [lastName, setLastName] = useState(profile?.last_name || '')
+  const [email] = useState(profile?.email || '')
+  const [address, setAddress] = useState(profile?.address || '')
+  const [zip, setZip] = useState(profile?.zip || '')
+  const [city, setCity] = useState(profile?.city || '')
+  const [phone, setPhone] = useState(profile?.phone || '')
+  const [birthDate, setBirthDate] = useState(initBirthDate)
+  const [saving, setSaving] = useState(false)
+  const [msg, setMsg] = useState('')
+  const [showCancel, setShowCancel] = useState(false)
+
+  const kinData = profile?.birth_date ? (() => { try { return calculateKin(profile.birth_date) } catch { return null } })() : null
+
+  function formatBirthDate(val) {
+    const d = val.replace(/\D/g, '')
+    if (d.length <= 2) return d
+    if (d.length <= 4) return `${d.slice(0,2)}.${d.slice(2)}`
+    return `${d.slice(0,2)}.${d.slice(2,4)}.${d.slice(4,8)}`
+  }
 
   async function handleSave(e) {
     e.preventDefault()
+    if (!firstName || !lastName || !birthDate || !address || !zip || !city) {
+      setMsg('Bitte fülle alle Pflichtfelder aus.')
+      return
+    }
     setSaving(true)
-    setSaveMsg('')
+    setMsg('')
     try {
       const parts = birthDate.split('.')
       const isoDate = parts.length === 3
         ? `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`
         : profile.birth_date
-      await updateProfile({ name, birth_date: isoDate })
-      setSaveMsg('Profil erfolgreich gespeichert.')
+      await updateProfile({ name: firstName, last_name: lastName, birth_date: isoDate, address, zip, city, phone })
+      setMsg('Gespeichert.')
     } catch {
-      setSaveMsg('Fehler beim Speichern. Bitte versuche es erneut.')
+      setMsg('Fehler beim Speichern.')
     } finally {
       setSaving(false)
     }
   }
 
-  function formatBirthDate(val) {
-    const digits = val.replace(/\D/g, '')
-    if (digits.length <= 2) return digits
-    if (digits.length <= 4) return `${digits.slice(0,2)}.${digits.slice(2)}`
-    return `${digits.slice(0,2)}.${digits.slice(2,4)}.${digits.slice(4,8)}`
-  }
-
   return (
-    <div style={{ padding: '48px 40px', maxWidth: '640px' }}>
-      <div style={{ fontSize: '0.75rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--color-gold-muted)', marginBottom: '12px' }}>
-        Konto
-      </div>
-      <h1 style={{ color: 'var(--color-gold)', fontWeight: 300, fontSize: '2rem', marginBottom: '40px' }}>
-        Dein Profil
-      </h1>
+    <div style={{ backgroundColor: CREAM, minHeight: '100vh', padding: '48px 40px', fontFamily: 'Inter, sans-serif' }}>
+      <div style={{ maxWidth: '640px' }}>
+        <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '8px' }}>
+          Konto
+        </div>
+        <h1 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: '2.2rem', color: TEXT, margin: '0 0 40px' }}>
+          Dein Profil
+        </h1>
 
-      {/* Meine Daten */}
-      <section style={{ marginBottom: '40px' }}>
-        <h2 style={{ color: 'var(--color-text-primary)', fontWeight: 400, fontSize: '1.1rem', marginBottom: '20px', paddingBottom: '12px', borderBottom: '1px solid rgba(139,110,62,0.2)' }}>
-          Meine Daten
-        </h2>
         <form onSubmit={handleSave}>
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', color: 'var(--color-text-muted)', fontSize: '0.8rem', marginBottom: '6px' }}>Vorname</label>
-            <input type="text" value={name} onChange={e => setName(e.target.value)} style={inputStyle} />
-          </div>
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', color: 'var(--color-text-muted)', fontSize: '0.8rem', marginBottom: '6px' }}>Geburtsdatum</label>
-            <input type="text" value={birthDate} onChange={e => setBirthDate(formatBirthDate(e.target.value))} maxLength={10} style={inputStyle} placeholder="TT.MM.JJJJ" />
-          </div>
-          {saveMsg && (
-            <p style={{ color: saveMsg.includes('Fehler') ? '#ff6b6b' : 'var(--color-gold)', fontSize: '0.85rem', marginBottom: '12px' }}>
-              {saveMsg}
+          <Section title="Persönliche Daten">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
+              <Field label="Vorname" value={firstName} onChange={setFirstName} required placeholder="Max" />
+              <Field label="Nachname" value={lastName} onChange={setLastName} required placeholder="Mustermann" />
+            </div>
+            <Field label="Geburtsdatum" value={birthDate} onChange={v => setBirthDate(formatBirthDate(v))} required placeholder="TT.MM.JJJJ" />
+            <Field label="Mobilnummer" value={phone} onChange={setPhone} placeholder="+49 170 1234567" />
+          </Section>
+
+          <Section title="Adresse">
+            <Field label="Straße und Hausnummer" value={address} onChange={setAddress} required placeholder="Musterstraße 1" />
+            <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '0 20px' }}>
+              <Field label="PLZ" value={zip} onChange={setZip} required placeholder="12345" />
+              <Field label="Ort" value={city} onChange={setCity} required placeholder="München" />
+            </div>
+          </Section>
+
+          {msg && (
+            <p style={{ fontSize: '0.85rem', color: msg.includes('Fehler') || msg.includes('Pflicht') ? '#c0392b' : COPPER, marginBottom: '16px' }}>
+              {msg}
             </p>
           )}
-          <button type="submit" disabled={saving} style={{ backgroundColor: 'var(--color-gold)', color: '#000', border: 'none', borderRadius: '4px', padding: '10px 24px', fontWeight: 500, fontSize: '0.9rem', cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1 }}>
-            {saving ? 'Wird gespeichert...' : 'Speichern'}
+
+          <button
+            type="submit"
+            disabled={saving}
+            style={{
+              backgroundColor: DEEP, color: CREAM, border: 'none',
+              borderRadius: '40px', padding: '13px 32px',
+              fontWeight: 500, fontSize: '0.85rem', cursor: saving ? 'not-allowed' : 'pointer',
+              opacity: saving ? 0.7 : 1, marginBottom: '40px',
+            }}
+          >
+            {saving ? 'Wird gespeichert…' : 'Profil speichern'}
           </button>
         </form>
-      </section>
 
-      {/* Maya Profil */}
-      {kinData && (
-        <section style={{ marginBottom: '40px' }}>
-          <h2 style={{ color: 'var(--color-text-primary)', fontWeight: 400, fontSize: '1.1rem', marginBottom: '20px', paddingBottom: '12px', borderBottom: '1px solid rgba(139,110,62,0.2)' }}>
-            Mein Maya Profil
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            {[
-              { label: 'Kin-Nummer', value: `Kin ${kinData.kin}` },
-              { label: 'Leitsiegel', value: `${kinData.tone} ${kinData.seal}` },
-              { label: 'Analoges Siegel', value: kinData.analog },
-              { label: 'Antipodisches Siegel', value: kinData.antipode },
-              { label: 'Okkultes Siegel', value: kinData.occult },
-              { label: 'Führungssiegel', value: kinData.guide },
-              { label: 'Lebensthema', value: kinData.lifeTheme },
-              { label: 'Galaktischer Ton', value: `${kinData.toneNumber} – ${kinData.tone}` },
-            ].map(item => (
-              <div key={item.label} style={{ padding: '12px 16px', backgroundColor: 'var(--color-bg-card)', borderRadius: '4px' }}>
-                <div style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem', marginBottom: '4px' }}>{item.label}</div>
-                <div style={{ color: 'var(--color-gold)', fontSize: '0.9rem', fontWeight: 400 }}>{item.value}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+        {/* Maya Profil */}
+        {kinData && (
+          <Section title="Mein Maya Profil">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              {[
+                { label: 'Kin-Nummer', value: `Kin ${kinData.kin}` },
+                { label: 'Leitsiegel', value: `${kinData.tone} ${kinData.seal}` },
+                { label: 'Galaktischer Ton', value: `${kinData.toneNumber} – ${kinData.tone}` },
+                { label: 'Lebensthema', value: kinData.lifeTheme },
+                { label: 'Antipode', value: kinData.antipode },
+                { label: 'Wellenform', value: `Welle ${kinData.wavespell}` },
+              ].map(item => (
+                <div key={item.label} style={{ padding: '14px 16px', backgroundColor: '#EDE7D9', borderRadius: '3px' }}>
+                  <div style={{ color: TEXT_LIGHT, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>{item.label}</div>
+                  <div style={{ color: TEXT, fontSize: '0.9rem', fontWeight: 400 }}>{item.value}</div>
+                </div>
+              ))}
+            </div>
+          </Section>
+        )}
 
-      {/* Mitgliedschaft */}
-      <section style={{ marginBottom: '40px' }}>
-        <h2 style={{ color: 'var(--color-text-primary)', fontWeight: 400, fontSize: '1.1rem', marginBottom: '20px', paddingBottom: '12px', borderBottom: '1px solid rgba(139,110,62,0.2)' }}>
-          Mitgliedschaft
-        </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>Status</span>
-            <span style={{ color: profile?.membership_active ? '#4ade80' : '#ff6b6b', fontSize: '0.85rem', fontWeight: 500 }}>
+        {/* Mitgliedschaft */}
+        <Section title="Mitgliedschaft">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderBottom: `1px solid ${BORDER}` }}>
+            <span style={{ color: TEXT_MID, fontSize: '0.9rem' }}>Status</span>
+            <span style={{ fontSize: '0.85rem', fontWeight: 500, color: profile?.membership_active ? '#2d8a4e' : '#c0392b' }}>
               {profile?.membership_active ? '● Aktiv' : '● Inaktiv'}
             </span>
           </div>
           {profile?.membership_start && (
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>Mitglied seit</span>
-              <span style={{ color: 'var(--color-text-primary)', fontSize: '0.85rem' }}>
-                {new Date(profile.membership_start).toLocaleDateString('de-DE')}
-              </span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0', borderBottom: `1px solid ${BORDER}` }}>
+              <span style={{ color: TEXT_MID, fontSize: '0.9rem' }}>Mitglied seit</span>
+              <span style={{ color: TEXT, fontSize: '0.9rem' }}>{new Date(profile.membership_start).toLocaleDateString('de-DE')}</span>
             </div>
           )}
           {profile?.purchased_analyses?.length > 0 && (
-            <div>
-              <div style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', marginBottom: '8px' }}>Gebuchte Zusatzanalysen</div>
+            <div style={{ padding: '16px 0' }}>
+              <div style={{ color: TEXT_LIGHT, fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '10px' }}>Gebuchte Zusatzanalysen</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {profile.purchased_analyses.map(key => (
-                  <span key={key} style={{ backgroundColor: 'rgba(184,151,90,0.15)', border: '1px solid rgba(184,151,90,0.3)', color: 'var(--color-gold)', padding: '4px 10px', borderRadius: '2px', fontSize: '0.78rem' }}>
+                  <span key={key} style={{ backgroundColor: 'rgba(160,82,45,0.1)', border: '1px solid rgba(160,82,45,0.3)', color: COPPER, padding: '4px 12px', borderRadius: '20px', fontSize: '0.78rem' }}>
                     {ANALYSE_LABELS[key] || key}
                   </span>
                 ))}
               </div>
             </div>
           )}
-        </div>
+          {profile?.membership_active && (
+            <button onClick={() => setShowCancel(true)} style={{ marginTop: '16px', border: '1px solid rgba(192,57,43,0.4)', color: '#c0392b', background: 'transparent', borderRadius: '40px', padding: '10px 20px', fontSize: '0.82rem', cursor: 'pointer' }}>
+              Mitgliedschaft kündigen
+            </button>
+          )}
+        </Section>
 
-        {profile?.membership_active && (
-          <button
-            onClick={() => setShowCancelModal(true)}
-            style={{ border: '1px solid rgba(220,53,69,0.5)', color: '#ff6b6b', background: 'transparent', borderRadius: '4px', padding: '10px 20px', fontSize: '0.85rem', cursor: 'pointer' }}
-          >
-            Mitgliedschaft kündigen
+        <div style={{ borderTop: `1px solid ${BORDER}`, paddingTop: '24px' }}>
+          <button onClick={signOut} style={{ background: 'none', border: 'none', color: TEXT_LIGHT, fontSize: '0.85rem', cursor: 'pointer', padding: 0 }}>
+            Abmelden
           </button>
-        )}
-      </section>
+        </div>
+      </div>
 
-      {/* Kündigen Modal */}
-      {showCancelModal && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: '24px' }}>
-          <div style={{ backgroundColor: 'var(--color-bg-card)', borderRadius: '4px', padding: '32px', maxWidth: '400px', width: '100%', border: '1px solid rgba(220,53,69,0.3)' }}>
-            <h3 style={{ color: 'var(--color-text-primary)', fontWeight: 400, fontSize: '1.1rem', marginBottom: '12px' }}>Mitgliedschaft kündigen</h3>
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', lineHeight: 1.7, marginBottom: '24px' }}>
-              Bist du sicher? Du verlierst den Zugang zu allen Analysen am Ende des aktuellen Abrechnungszeitraums.
+      {showCancel && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(26,20,16,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: '24px' }}>
+          <div style={{ backgroundColor: CREAM, borderRadius: '4px', padding: '36px', maxWidth: '400px', width: '100%' }}>
+            <h3 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: '1.4rem', color: TEXT, marginBottom: '12px' }}>Mitgliedschaft kündigen</h3>
+            <p style={{ color: TEXT_MID, fontSize: '0.88rem', lineHeight: 1.75, marginBottom: '28px' }}>
+              Du verlierst den Zugang zu allen Analysen am Ende des aktuellen Abrechnungszeitraums.
             </p>
             <div style={{ display: 'flex', gap: '12px' }}>
-              <a href="mailto:hallo@bewusstsein-ohne-limit.de?subject=Kündigung Mitgliedschaft" style={{ flex: 1, backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '4px', padding: '12px', fontWeight: 500, cursor: 'pointer', fontSize: '0.9rem', textDecoration: 'none', textAlign: 'center' }}>
+              <a href="mailto:hallo@bewusstsein-ohne-limit.de?subject=Kündigung" style={{ flex: 1, backgroundColor: '#c0392b', color: '#fff', border: 'none', borderRadius: '40px', padding: '12px', fontWeight: 500, cursor: 'pointer', fontSize: '0.88rem', textDecoration: 'none', textAlign: 'center' }}>
                 Ja, kündigen
               </a>
-              <button onClick={() => setShowCancelModal(false)} style={{ flex: 1, border: '1px solid rgba(139,110,62,0.3)', color: 'var(--color-text-muted)', backgroundColor: 'transparent', borderRadius: '4px', padding: '12px', cursor: 'pointer', fontSize: '0.9rem' }}>
+              <button onClick={() => setShowCancel(false)} style={{ flex: 1, border: `1px solid ${BORDER}`, color: TEXT_MID, backgroundColor: 'transparent', borderRadius: '40px', padding: '12px', cursor: 'pointer', fontSize: '0.88rem' }}>
                 Abbrechen
               </button>
             </div>
