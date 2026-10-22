@@ -505,7 +505,7 @@ export default function Salespage() {
           <div style={{ width: '1px', height: '60px', backgroundColor: 'rgba(160,82,45,0.3)', margin: '0 auto 48px' }} />
           <H2>Du weißt wahrscheinlich längst, was du in deinem Leben besser verstehen möchtest.</H2>
           <P>
-            Die spannendere Frage ist, welches Muster heute noch dafür sorgt, dass bestimmte Situationen immer wieder ähnlich verlaufen. Genau dort beginnt der nächste Schritt.
+            Die spannendere Frage ist, welches Muster heute noch dafür sorgt, dass bestimmte Situationen immer wieder ähnlich verlaufen.<br />Genau dort beginnt der nächste Schritt.
           </P>
           <div style={{ marginTop: '40px', display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <PillButton to="/registrieren" variant="copper">Jetzt starten — 17 € im ersten Monat →</PillButton>
