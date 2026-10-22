@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { calculateKin } from '../lib/mayanCalendar.js'
 import { supabase } from '../lib/supabase.js'
+import { redirectToCustomerPortal } from '../lib/stripe.js'
 
 const CREAM = '#F4EFE6'
 const DEEP = '#1A1410'
@@ -82,7 +83,6 @@ export default function Profil() {
   })
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
-  const [showCancel, setShowCancel] = useState(false)
   const [recalcMsg, setRecalcMsg] = useState('')
   const [recalcing, setRecalcing] = useState(false)
 
@@ -414,9 +414,21 @@ export default function Profil() {
               </div>
             </div>
           )}
+          {profile?.subscription_plan && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0', borderBottom: `1px solid ${BORDER}` }}>
+              <span style={{ color: TEXT_MID, fontSize: '0.9rem' }}>Tarif</span>
+              <span style={{ color: TEXT, fontSize: '0.9rem' }}>{profile.subscription_plan === 'annual' ? 'Jahrestarif' : 'Monatsmitgliedschaft'}</span>
+            </div>
+          )}
           {profile?.membership_active && (
-            <button onClick={() => setShowCancel(true)} style={{ marginTop: '16px', border: '1px solid rgba(192,57,43,0.4)', color: '#c0392b', background: 'transparent', borderRadius: '40px', padding: '10px 20px', fontSize: '0.82rem', cursor: 'pointer' }}>
-              Mitgliedschaft kündigen
+            <button
+              onClick={async () => {
+                try { await redirectToCustomerPortal() }
+                catch (e) { alert(e.message) }
+              }}
+              style={{ marginTop: '16px', border: `1px solid ${BORDER}`, color: TEXT_MID, background: 'transparent', borderRadius: '40px', padding: '10px 20px', fontSize: '0.82rem', cursor: 'pointer' }}
+            >
+              Abonnement verwalten / kündigen
             </button>
           )}
         </Section>
@@ -428,24 +440,6 @@ export default function Profil() {
         </div>
       </div>
 
-      {showCancel && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(26,20,16,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: '24px' }}>
-          <div style={{ backgroundColor: CREAM, borderRadius: '4px', padding: '36px', maxWidth: '400px', width: '100%' }}>
-            <h3 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: '1.4rem', color: TEXT, marginBottom: '12px' }}>Mitgliedschaft kündigen</h3>
-            <p style={{ color: TEXT_MID, fontSize: '0.88rem', lineHeight: 1.75, marginBottom: '28px' }}>
-              Du verlierst den Zugang zu allen Analysen am Ende des aktuellen Abrechnungszeitraums.
-            </p>
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <a href="mailto:hallo@bewusstsein-ohne-limit.de?subject=Kündigung" style={{ flex: 1, backgroundColor: '#c0392b', color: '#fff', border: 'none', borderRadius: '40px', padding: '12px', fontWeight: 500, cursor: 'pointer', fontSize: '0.88rem', textDecoration: 'none', textAlign: 'center' }}>
-                Ja, kündigen
-              </a>
-              <button onClick={() => setShowCancel(false)} style={{ flex: 1, border: `1px solid ${BORDER}`, color: TEXT_MID, backgroundColor: 'transparent', borderRadius: '40px', padding: '12px', cursor: 'pointer', fontSize: '0.88rem' }}>
-                Abbrechen
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

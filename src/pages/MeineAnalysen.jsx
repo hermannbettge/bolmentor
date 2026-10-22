@@ -12,14 +12,14 @@ const CATEGORY_LABELS = {
 }
 
 const ANALYSES = [
-  { key: 'business', icon: '🏢', title: 'Business-Analyse', description: 'Dein Weg im Beruf und Unternehmertum', tcLink: '#tc-business' },
-  { key: 'health', icon: '🌿', title: 'Gesundheitsanalyse', description: 'Dein Körper und seine Energiemuster', tcLink: '#tc-health' },
-  { key: 'family', icon: '👨‍👩‍👧', title: 'Familienanalyse', description: 'Deine Rolle in deiner Familie', tcLink: '#tc-family' },
-  { key: 'selfexpression', icon: '✨', title: 'Selbstausdruck', description: 'Deine kreative und authentische Stimme', tcLink: '#tc-selfexpression' },
-  { key: 'finance', icon: '💰', title: 'Finanzanalyse', description: 'Dein Verhältnis zu Geld und Überfluss', tcLink: '#tc-finance' },
-  { key: 'career', icon: '🎯', title: 'Karriere-Analyse', description: 'Dein beruflicher Weg und deine Berufung', tcLink: '#tc-career' },
-  { key: 'lifephases', icon: '📅', title: 'Lebensphasen', description: 'Die wichtigsten Jahre deines Lebens', tcLink: '#tc-lifephases', hasModal: true },
-  { key: 'partnership', icon: '💫', title: 'Beziehungsanalyse', description: 'Du in Beziehungen', tcLink: '#tc-partnership' },
+  { key: 'business', icon: '🏢', title: 'Business-Analyse', description: 'Dein Weg im Beruf und Unternehmertum' },
+  { key: 'health', icon: '🌿', title: 'Gesundheitsanalyse', description: 'Dein Körper und seine Energiemuster' },
+  { key: 'family', icon: '👨‍👩‍👧', title: 'Familienanalyse', description: 'Deine Rolle in deiner Familie' },
+  { key: 'selfexpression', icon: '✨', title: 'Selbstausdruck', description: 'Deine kreative und authentische Stimme' },
+  { key: 'finance', icon: '💰', title: 'Finanzanalyse', description: 'Dein Verhältnis zu Geld und Überfluss' },
+  { key: 'career', icon: '🎯', title: 'Karriere-Analyse', description: 'Dein beruflicher Weg und deine Berufung' },
+  { key: 'lifephases', icon: '📅', title: 'Lebensphasen', description: 'Die wichtigsten Jahre deines Lebens' },
+  { key: 'partnership', icon: '💫', title: 'Beziehungsanalyse', description: 'Du in Beziehungen' },
 ]
 
 
@@ -99,14 +99,12 @@ export default function MeineAnalysen() {
                   {!checked ? '…' : hasAnalysis ? 'Analyse anzeigen' : 'Analyse erstellen'}
                 </button>
               ) : (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    Nicht freigeschaltet
-                  </span>
-                  <a href={item.tcLink} style={{ border: '1px solid var(--color-gold-muted)', color: 'var(--color-gold)', borderRadius: '4px', padding: '6px 14px', fontSize: '0.78rem', textDecoration: 'none' }}>
-                    Buchen
-                  </a>
-                </div>
+                <button
+                  onClick={() => navigate(`/checkout?product=${item.key}`)}
+                  style={{ border: '1px solid rgba(139,110,62,0.5)', color: 'var(--color-gold)', background: 'transparent', borderRadius: '4px', padding: '8px 16px', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
+                >
+                  Jetzt freischalten →
+                </button>
               )}
             </div>
           )

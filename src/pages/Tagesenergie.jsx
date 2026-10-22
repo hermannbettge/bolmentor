@@ -20,12 +20,6 @@ export default function Tagesenergie() {
     checkExistingAnalysis()
   }, [user])
 
-  useEffect(() => {
-    if (!checkingExisting && !analysis && !loading) {
-      createAnalysis()
-    }
-  }, [checkingExisting])
-
   async function checkExistingAnalysis() {
     if (!user) return
     try {
