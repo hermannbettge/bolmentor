@@ -24,12 +24,12 @@ export default function Navbar() {
       backdropFilter: 'blur(8px)',
       borderBottom: '1px solid rgba(139,110,62,0.3)',
     }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: m ? '0 12px' : '0 20px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
         <Link to="/" style={{
           color: 'var(--color-gold)',
-          fontSize: '0.78rem',
+          fontSize: m ? '0.68rem' : '0.78rem',
           fontWeight: 500,
-          letterSpacing: '0.12em',
+          letterSpacing: m ? '0.06em' : '0.12em',
           textDecoration: 'none',
           flexShrink: 0,
         }}>
@@ -38,32 +38,32 @@ export default function Navbar() {
 
         {m ? (
           /* Mobile nav */
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             {user ? (
               <>
-                <Link to="/dashboard" style={{ color: 'var(--color-gold)', fontSize: '0.82rem', textDecoration: 'none', fontWeight: 500 }}>
+                <Link to="/dashboard" style={{ color: 'var(--color-gold)', fontSize: '0.78rem', textDecoration: 'none', fontWeight: 500 }}>
                   Dashboard
                 </Link>
-                <button onClick={handleSignOut} style={{ color: 'var(--color-text-muted)', fontSize: '0.82rem', background: 'none', border: 'none', cursor: 'pointer' }}>
+                <button onClick={handleSignOut} style={{ color: 'var(--color-text-muted)', fontSize: '0.78rem', background: 'none', border: 'none', cursor: 'pointer' }}>
                   Abmelden
                 </button>
               </>
             ) : (
               <>
-                <Link to="/login" style={{ color: 'var(--color-text-muted)', fontSize: '0.82rem', textDecoration: 'none' }}>
+                <Link to="/login" style={{ color: 'var(--color-text-muted)', fontSize: '0.78rem', textDecoration: 'none' }}>
                   Anmelden
                 </Link>
                 <Link to="/registrieren" style={{
                   backgroundColor: 'var(--color-gold)',
                   color: '#000',
-                  padding: '7px 14px',
+                  padding: '6px 10px',
                   borderRadius: '4px',
-                  fontSize: '0.82rem',
+                  fontSize: '0.75rem',
                   fontWeight: 500,
                   textDecoration: 'none',
                   whiteSpace: 'nowrap',
                 }}>
-                  Jetzt starten
+                  Starten
                 </Link>
               </>
             )}

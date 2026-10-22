@@ -382,7 +382,7 @@ export default function Salespage() {
                 </div>
                 <P small>Wenn du verstehen willst, wie die Maya-Energie sich in einem bestimmten Bereich auswirkt (Business, Gesundheit, Finanzen, Karriere, Beziehungen), buchst du diesen Bereich einmalig und hast lebenslangen Zugang.</P>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: m ? '1fr' : '1fr 1fr', gap: '8px' }}>
                 {['Business-Analyse','Gesundheitsanalyse','Familienanalyse','Selbstausdruck-Analyse','Finanzanalyse','Karriere-Analyse','Lebensphasen-Analyse','Beziehungsanalyse','Partnerschaftsanalyse','Einzel-Ereignisse'].map((item, i) => (
                   <div key={i} style={{ backgroundColor: CREAM, padding: '10px 14px', borderRadius: '2px', fontSize: '0.8rem', color: TEXT_MID, fontWeight: 400 }}>
                     <span style={{ color: COPPER, marginRight: '8px', fontSize: '0.6rem' }}>◆</span>{item}
@@ -404,7 +404,7 @@ export default function Salespage() {
               { name: 'Thomas K., 41', role: 'Führungskraft, München', quote: 'Ich war skeptisch. Dann habe ich die erste Analyse gelesen und das Gefühl gehabt, dass jemand beschreibt, wie ich wirklich funktioniere. Nicht wie ich sein sollte.' },
               { name: 'Julia R., 29', role: 'Coach, Berlin', quote: 'Der Energiekalender ist ein Orientierungspunkt geworden. Bevor ich größere Entscheidungen treffe, schaue ich rein. Es hilft mehr als ich erwartet hätte.' },
             ].map((t, i) => (
-              <div key={i} style={{ backgroundColor: 'rgba(244,239,230,0.05)', padding: '36px 28px', borderLeft: i > 0 ? '1px solid rgba(244,239,230,0.08)' : 'none' }}>
+              <div key={i} style={{ backgroundColor: 'rgba(244,239,230,0.05)', padding: m ? '28px 20px' : '36px 28px', borderLeft: (!m && i > 0) ? '1px solid rgba(244,239,230,0.08)' : 'none', borderTop: (m && i > 0) ? '1px solid rgba(244,239,230,0.08)' : 'none' }}>
                 <p style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontSize: '1rem', color: 'rgba(244,239,230,0.8)', lineHeight: 1.75, margin: '0 0 24px' }}>
                   „{t.quote}"
                 </p>
