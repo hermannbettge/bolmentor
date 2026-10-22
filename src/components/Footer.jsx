@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { redirectToCustomerPortal } from '../lib/stripe.js'
-import { useAuth } from '../context/AuthContext.jsx'
+import { useAuth } from '../hooks/useAuth.jsx'
 
 export default function Footer() {
   const { user } = useAuth()
