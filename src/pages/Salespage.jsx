@@ -528,7 +528,7 @@ export default function Salespage() {
           />
           <FaqItem
             question="Was ist der Unterschied zwischen Monatsmitgliedschaft und Jahrestarif?"
-            answer="Im Jahrestarif bekommst du vollen Zugang zum Energiekalender (Tagesanalysen für jedes Datum, nicht nur heute), 12 statt 2 Ereignis-Analysen, Jahresanalysen für alle Lebensbereiche — und bezahlst effektiv nur 16,40 € statt 27 € im Monat."
+            answer="Im Jahrestarif bekommst du vollen Zugang zum Energiekalender (Tagesanalysen für jedes Datum, nicht nur heute), 12 statt 2 Ereignis-Analysen, Jahresanalysen für alle Lebensbereiche — und 2 Monate geschenkt gegenüber dem monatlichen Preis."
           />
           <FaqItem
             question="Was sind Ereignis-Analysen?"
