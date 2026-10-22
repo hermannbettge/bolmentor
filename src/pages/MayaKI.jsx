@@ -97,8 +97,9 @@ export default function MayaKI() {
   }
 
   const name = profile?.name || 'du'
+  const isAdmin = status?.isAdmin === true
   const remaining = status?.remaining ?? null
-  const isLimitReached = remaining !== null && remaining <= 0
+  const isLimitReached = !isAdmin && remaining !== null && remaining <= 0
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: m ? 'calc(100vh - 70px)' : '100vh', backgroundColor: 'var(--color-bg-deep)', overflow: 'hidden' }}>
@@ -122,8 +123,8 @@ export default function MayaKI() {
             </div>
           </div>
 
-          {/* Usage indicator */}
-          {status && (
+          {/* Usage indicator — hidden for admins */}
+          {status && !isAdmin && (
             <div style={{ textAlign: 'right', flexShrink: 0 }}>
               <div style={{
                 fontSize: '0.7rem',

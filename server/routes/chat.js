@@ -120,10 +120,11 @@ router.get('/status', requireAuth, async (req, res) => {
   const { data: profile } = await supabase.from('profiles').select('subscription_plan, purchased_analyses').eq('id', req.user.id).single()
   if (!profile) return res.status(400).json({ error: 'Profil nicht gefunden' })
 
+  const isAdmin = profile.is_admin === true
   const plan = profile.subscription_plan || 'monthly'
   const purchased = profile.purchased_analyses || []
-  const limit = getDailyLimit(plan, purchased)
-  const allowedTopics = getAllowedTopics(plan, purchased)
+  const limit = isAdmin ? null : getDailyLimit(plan, purchased)
+  const allowedTopics = isAdmin ? Object.keys(TOPIC_META) : getAllowedTopics(plan, purchased)
 
   const todayStr = new Date().toISOString().split('T')[0]
   const { data: usage } = await supabase.from('maya_chat_usage').select('count').eq('user_id', req.user.id).eq('usage_date', todayStr).single()
@@ -132,10 +133,11 @@ router.get('/status', requireAuth, async (req, res) => {
   res.json({
     limit,
     used,
-    remaining: Math.max(0, limit - used),
+    remaining: isAdmin ? null : Math.max(0, limit - used),
     allowedTopics,
     allowedTopicLabels: allowedTopics.map(t => TOPIC_META[t].label),
     plan,
+    isAdmin,
   })
 })
 
@@ -149,17 +151,18 @@ router.post('/', requireAuth, async (req, res) => {
     const { data: profile } = await supabase.from('profiles').select('*').eq('id', req.user.id).single()
     if (!profile) return res.status(400).json({ error: 'Profil nicht gefunden' })
 
+    const isAdmin = profile.is_admin === true
     const plan = profile.subscription_plan || 'monthly'
     const purchased = profile.purchased_analyses || []
-    const limit = getDailyLimit(plan, purchased)
-    const allowedTopics = getAllowedTopics(plan, purchased)
+    const limit = isAdmin ? Infinity : getDailyLimit(plan, purchased)
+    const allowedTopics = isAdmin ? Object.keys(TOPIC_META) : getAllowedTopics(plan, purchased)
 
     // Check daily usage
     const todayStr = new Date().toISOString().split('T')[0]
     const { data: usage } = await supabase.from('maya_chat_usage').select('count').eq('user_id', req.user.id).eq('usage_date', todayStr).single()
     const usedToday = usage?.count || 0
 
-    if (usedToday >= limit) {
+    if (!isAdmin && usedToday >= limit) {
       return res.status(429).json({
         error: 'DAILY_LIMIT_REACHED',
         limit,
