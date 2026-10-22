@@ -58,9 +58,10 @@
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
 
 body {
+  overflow-x: hidden;
   background-color: var(--bg-deep);
   color: var(--text-1);
   font-family: 'Inter', sans-serif;
@@ -178,13 +179,14 @@ body {
 
 /* App content pages */
 .app-page {
-  padding: 48px 40px;
-  max-width: 900px;
+  padding: 48px 40px !important;
+  max-width: 900px !important;
 }
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
   .app-page {
-    padding: 24px 16px !important;
+    padding: 24px 16px 100px !important;
     max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 }
 

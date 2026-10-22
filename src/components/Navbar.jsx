@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
+import { useIsMobile } from '../hooks/useIsMobile.js'
 
 export default function Navbar() {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+  const m = useIsMobile()
 
   async function handleSignOut() {
     await signOut()
@@ -34,68 +36,70 @@ export default function Navbar() {
           BEWUSSTSEIN.OHNE.LIMIT
         </Link>
 
-        {/* Desktop nav */}
-        <div className="hide-mobile" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          {user ? (
-            <>
-              <Link to="/dashboard" style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textDecoration: 'none' }}>
-                Dashboard
-              </Link>
-              <button onClick={handleSignOut} style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', background: 'none', border: 'none', cursor: 'pointer' }}>
-                Abmelden
-              </button>
-            </>
-          ) : (
-            <>
-              <Link to="/login" style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textDecoration: 'none' }}>
-                Anmelden
-              </Link>
-              <Link to="/registrieren" style={{
-                backgroundColor: 'var(--color-gold)',
-                color: '#000',
-                padding: '8px 18px',
-                borderRadius: '4px',
-                fontSize: '0.85rem',
-                fontWeight: 500,
-                textDecoration: 'none',
-              }}>
-                Jetzt starten
-              </Link>
-            </>
-          )}
-        </div>
-
-        {/* Mobile: buttons always visible + hamburger for more */}
-        <div className="show-mobile" style={{ display: 'none', alignItems: 'center', gap: '12px' }}>
-          {user ? (
-            <>
-              <Link to="/dashboard" style={{ color: 'var(--color-gold)', fontSize: '0.82rem', textDecoration: 'none', fontWeight: 500 }}>
-                Dashboard
-              </Link>
-              <button onClick={handleSignOut} style={{ color: 'var(--color-text-muted)', fontSize: '0.82rem', background: 'none', border: 'none', cursor: 'pointer' }}>
-                Abmelden
-              </button>
-            </>
-          ) : (
-            <>
-              <Link to="/login" style={{ color: 'var(--color-text-muted)', fontSize: '0.82rem', textDecoration: 'none' }}>
-                Anmelden
-              </Link>
-              <Link to="/registrieren" style={{
-                backgroundColor: 'var(--color-gold)',
-                color: '#000',
-                padding: '7px 14px',
-                borderRadius: '4px',
-                fontSize: '0.82rem',
-                fontWeight: 500,
-                textDecoration: 'none',
-                whiteSpace: 'nowrap',
-              }}>
-                Jetzt starten
-              </Link>
-            </>
-          )}
-        </div>
+        {m ? (
+          /* Mobile nav */
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {user ? (
+              <>
+                <Link to="/dashboard" style={{ color: 'var(--color-gold)', fontSize: '0.82rem', textDecoration: 'none', fontWeight: 500 }}>
+                  Dashboard
+                </Link>
+                <button onClick={handleSignOut} style={{ color: 'var(--color-text-muted)', fontSize: '0.82rem', background: 'none', border: 'none', cursor: 'pointer' }}>
+                  Abmelden
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" style={{ color: 'var(--color-text-muted)', fontSize: '0.82rem', textDecoration: 'none' }}>
+                  Anmelden
+                </Link>
+                <Link to="/registrieren" style={{
+                  backgroundColor: 'var(--color-gold)',
+                  color: '#000',
+                  padding: '7px 14px',
+                  borderRadius: '4px',
+                  fontSize: '0.82rem',
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  whiteSpace: 'nowrap',
+                }}>
+                  Jetzt starten
+                </Link>
+              </>
+            )}
+          </div>
+        ) : (
+          /* Desktop nav */
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            {user ? (
+              <>
+                <Link to="/dashboard" style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textDecoration: 'none' }}>
+                  Dashboard
+                </Link>
+                <button onClick={handleSignOut} style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', background: 'none', border: 'none', cursor: 'pointer' }}>
+                  Abmelden
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textDecoration: 'none' }}>
+                  Anmelden
+                </Link>
+                <Link to="/registrieren" style={{
+                  backgroundColor: 'var(--color-gold)',
+                  color: '#000',
+                  padding: '8px 18px',
+                  borderRadius: '4px',
+                  fontSize: '0.85rem',
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                }}>
+                  Jetzt starten
+                </Link>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </nav>
   )
