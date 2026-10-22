@@ -368,7 +368,12 @@ function DayDetail({ day, onClose, navigate, profile }) {
             <div style={{ fontSize: '0.8rem', color: 'var(--text-2)', lineHeight: 1.6 }}>
               {regen.wave
                 ? 'Sturmwelle · Heilwelle: Ideale Zeit für Urlaub, Regeneration und Heilungsprozesse. Diese 13-tägige Periode gilt für alle Menschen.'
-                : 'Dieser Tag trägt universelle Ruhe-Energie. Tempo herausnehmen, weniger planen, Körper und Geist regenerieren lassen.'}
+                : [
+                  'Leichter Ruhetag. Tempo ein wenig herausnehmen, unnötige Termine vermeiden. Der Körper dankt kurze Pausen.',
+                  'Bewusster Pausentag. Weniger planen, mehr sein lassen. Wichtige Entscheidungen und intensive Gespräche auf morgen verschieben.',
+                  'Starker Regenerationstag. Rückzug empfohlen. Kein Stress, kein voller Terminkalender. Körper und Geist brauchen heute echte Stille.',
+                  'Maximaler Regenerationstag. Unbedingt Ruhe einplanen. Wer heute gegen den Strom schwimmt, zahlt einen hohen Preis. Vollständiger Rückzug ist keine Schwäche, sondern Intelligenz.',
+                ][regen.level] || 'Leichter Ruhetag. Tempo ein wenig herausnehmen.'}
             </div>
           </div>
         )}
