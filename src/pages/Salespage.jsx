@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 const CREAM = '#F4EFE6'
@@ -232,6 +232,11 @@ function FaqItem({ question, answer }) {
 }
 
 export default function Salespage() {
+  const now = new Date()
+  const isIntroPrice = now < new Date('2026-11-01')
+  const jahresPreis = isIntroPrice ? '170 €' : '270 €'
+  const jahresMonat = isIntroPrice ? '≈ 14,17 €/Monat' : '≈ 22,50 €/Monat'
+
   return (
     <div style={{ fontFamily: 'Inter, sans-serif', backgroundColor: CREAM }}>
 
@@ -408,7 +413,7 @@ export default function Salespage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '2px', marginTop: '8px' }}>
             {/* Basis Mitgliedschaft */}
-            <div style={{ backgroundColor: DEEP, padding: '40px 32px' }}>
+            <div style={{ backgroundColor: DEEP, padding: '40px 32px', display: 'flex', flexDirection: 'column' }}>
               <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: COPPER_LIGHT, marginBottom: '20px' }}>Mitgliedschaft</div>
               <div style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontSize: '2.8rem', fontWeight: 400, color: CREAM, lineHeight: 1 }}>17 €</div>
               <div style={{ color: 'rgba(244,239,230,0.35)', fontSize: '0.78rem', marginBottom: '4px', marginTop: '4px' }}>im ersten Monat</div>
@@ -429,20 +434,20 @@ export default function Salespage() {
                   </div>
                 ))}
               </div>
-              <div style={{ marginTop: '32px' }}>
+              <div style={{ marginTop: 'auto', paddingTop: '32px' }}>
                 <PillButton to="/registrieren" variant="copper">Jetzt starten →</PillButton>
               </div>
             </div>
 
             {/* Jahrestarif */}
-            <div style={{ backgroundColor: '#2A1F14', padding: '40px 32px', position: 'relative', border: `1px solid ${COPPER}` }}>
+            <div style={{ backgroundColor: '#2A1F14', padding: '40px 32px', position: 'relative', border: `1px solid ${COPPER}`, display: 'flex', flexDirection: 'column' }}>
               <div style={{ position: 'absolute', top: '-1px', left: '50%', transform: 'translateX(-50%)', backgroundColor: COPPER, padding: '4px 16px', fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.18em', color: CREAM, borderRadius: '0 0 4px 4px', whiteSpace: 'nowrap' }}>
                 Empfohlen
               </div>
               <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: COPPER_LIGHT, marginBottom: '20px' }}>Jahrestarif</div>
-              <div style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontSize: '2.8rem', fontWeight: 400, color: CREAM, lineHeight: 1 }}>197 €</div>
-              <div style={{ color: 'rgba(244,239,230,0.35)', fontSize: '0.78rem', marginBottom: '4px', marginTop: '4px' }}>pro Jahr</div>
-              <div style={{ color: COPPER_LIGHT, fontSize: '0.78rem', marginBottom: '32px' }}>≈ 16,40 €/Monat</div>
+              <div style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontSize: '2.8rem', fontWeight: 400, color: CREAM, lineHeight: 1 }}>{jahresPreis}</div>
+              <div style={{ color: 'rgba(244,239,230,0.35)', fontSize: '0.78rem', marginBottom: '4px', marginTop: '4px' }}>pro Jahr{isIntroPrice ? ' · Einführungspreis bis 31.10.' : ''}</div>
+              <div style={{ color: COPPER_LIGHT, fontSize: '0.78rem', marginBottom: '32px' }}>{jahresMonat}</div>
               <Line dark />
               <div style={{ paddingTop: '24px' }}>
                 {[
@@ -458,13 +463,13 @@ export default function Salespage() {
                   </div>
                 ))}
               </div>
-              <div style={{ marginTop: '32px' }}>
+              <div style={{ marginTop: 'auto', paddingTop: '32px' }}>
                 <PillButton to="/registrieren" variant="copper">Jahrestarif wählen →</PillButton>
               </div>
             </div>
 
             {/* Zusatzanalysen */}
-            <div style={{ backgroundColor: '#DDD5C2', padding: '40px 32px' }}>
+            <div style={{ backgroundColor: '#DDD5C2', padding: '40px 32px', display: 'flex', flexDirection: 'column' }}>
               <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: COPPER, marginBottom: '20px' }}>Zusatzanalysen</div>
               <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.2rem', fontWeight: 400, color: TEXT, marginBottom: '8px', lineHeight: 1.4 }}>Einzeln buchbar.</div>
               <div style={{ color: TEXT_LIGHT, fontSize: '0.82rem', marginBottom: '32px' }}>Für die Bereiche, die gerade wichtig sind. Einmalig, ohne Abo.</div>
@@ -485,6 +490,9 @@ export default function Salespage() {
                     <span style={{ color: COPPER, flexShrink: 0, fontSize: '0.6rem', marginTop: '5px' }}>◆</span> {item}
                   </div>
                 ))}
+              </div>
+              <div style={{ marginTop: 'auto', paddingTop: '32px' }}>
+                <PillButton to="/meine-analysen" variant="outline">Analysen ansehen →</PillButton>
               </div>
             </div>
           </div>
