@@ -295,7 +295,7 @@ export default function MayaKI() {
       </div>
 
       {/* Input */}
-      <div style={{ borderTop: '1px solid var(--border)', padding: m ? '12px 16px' : '16px 32px', flexShrink: 0, backgroundColor: 'var(--color-bg-deep)' }}>
+      <div style={{ borderTop: '1px solid var(--border)', padding: m ? '12px 16px' : '16px 32px', paddingBottom: m ? 'calc(12px + env(safe-area-inset-bottom, 0px))' : '16px', flexShrink: 0, backgroundColor: 'var(--color-bg-deep)' }}>
         {isLimitReached ? (
           <div style={{ textAlign: 'center', padding: '8px', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
             Tageslimit erreicht. Morgen stehen dir wieder Fragen zur Verfügung.

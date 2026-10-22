@@ -1,16 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
+import { useTheme } from '../hooks/useTheme.jsx'
+import { useIsMobile } from '../hooks/useIsMobile.js'
 import { calculateKin } from '../lib/mayanCalendar.js'
 import { supabase } from '../lib/supabase.js'
 import { redirectToCustomerPortal } from '../lib/stripe.js'
-
-const CREAM = '#F4EFE6'
-const DEEP = '#1A1410'
-const COPPER = '#A0522D'
-const TEXT = '#2A2018'
-const TEXT_MID = '#5A4E42'
-const TEXT_LIGHT = '#8C7E72'
-const BORDER = 'rgba(42,32,24,0.12)'
 
 const ANALYSE_LABELS = {
   business: 'Business-Analyse', health: 'Gesundheitsanalyse', family: 'Familienanalyse',
@@ -21,8 +16,8 @@ const ANALYSE_LABELS = {
 function Field({ label, value, onChange, type = 'text', placeholder = '', required = false }) {
   return (
     <div style={{ marginBottom: '20px' }}>
-      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: TEXT_LIGHT, marginBottom: '8px' }}>
-        {label}{required && <span style={{ color: COPPER }}> *</span>}
+      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-2)', marginBottom: '8px' }}>
+        {label}{required && <span style={{ color: 'var(--accent)' }}> *</span>}
       </label>
       <input
         type={type}
@@ -32,11 +27,11 @@ function Field({ label, value, onChange, type = 'text', placeholder = '', requir
         required={required}
         style={{
           width: '100%', boxSizing: 'border-box',
-          backgroundColor: '#FBF8F3',
-          border: `1px solid ${BORDER}`,
+          backgroundColor: 'var(--bg-input)',
+          border: '1px solid var(--border)',
           borderRadius: '3px',
           padding: '11px 14px',
-          color: TEXT,
+          color: 'var(--text-1)',
           fontSize: '0.92rem',
           outline: 'none',
           fontFamily: 'Inter, sans-serif',
@@ -49,7 +44,7 @@ function Field({ label, value, onChange, type = 'text', placeholder = '', requir
 function Section({ title, children }) {
   return (
     <div style={{ marginBottom: '40px' }}>
-      <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '20px', paddingBottom: '12px', borderBottom: `1px solid ${BORDER}` }}>
+      <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--accent)', marginBottom: '20px', paddingBottom: '12px', borderBottom: '1px solid var(--border)' }}>
         {title}
       </div>
       {children}
@@ -57,8 +52,20 @@ function Section({ title, children }) {
   )
 }
 
+const EVENT_CATEGORIES = [
+  { value: 'land', label: 'Land / Nation' },
+  { value: 'job', label: 'Job / Karriere' },
+  { value: 'beziehung', label: 'Beziehung / Partnerschaft' },
+  { value: 'unternehmen', label: 'Unternehmen / Projekt' },
+  { value: 'kauf', label: 'Kauf / Besitz' },
+  { value: 'sonstiges', label: 'Sonstiges' },
+]
+
 export default function Profil() {
   const { profile, updateProfile, signOut } = useAuth()
+  const { theme, toggle } = useTheme()
+  const navigate = useNavigate()
+  const m = useIsMobile()
 
   function initBirthDate() {
     if (!profile?.birth_date) return ''
@@ -86,7 +93,6 @@ export default function Profil() {
   const [recalcMsg, setRecalcMsg] = useState('')
   const [recalcing, setRecalcing] = useState(false)
 
-  // Events state
   const [events, setEvents] = useState([])
   const [showEventForm, setShowEventForm] = useState(false)
   const [eventName, setEventName] = useState('')
@@ -96,9 +102,6 @@ export default function Profil() {
   const [eventSaving, setEventSaving] = useState(false)
   const [eventMsg, setEventMsg] = useState('')
 
-  // Event unlock rules:
-  // - Admin or annual plan → 12 immediately
-  // - Monthly: base max 2 (month 1 → 1, month 2+ → 2), +1 per purchased extra module, cap 12
   function calcMaxEvents() {
     if (profile?.max_events_override != null) return profile.max_events_override
     if (profile?.is_admin) return 12
@@ -110,15 +113,6 @@ export default function Profil() {
     return Math.min(12, base + extraModules)
   }
   const maxEvents = calcMaxEvents()
-
-  const EVENT_CATEGORIES = [
-    { value: 'land', label: 'Land / Nation' },
-    { value: 'job', label: 'Job / Karriere' },
-    { value: 'beziehung', label: 'Beziehung / Partnerschaft' },
-    { value: 'unternehmen', label: 'Unternehmen / Projekt' },
-    { value: 'kauf', label: 'Kauf / Besitz' },
-    { value: 'sonstiges', label: 'Sonstiges' },
-  ]
 
   useEffect(() => {
     async function loadEvents() {
@@ -133,13 +127,12 @@ export default function Profil() {
   async function handleSaveEvent(e) {
     e.preventDefault()
     if (!eventName || !eventDate) { setEventMsg('Name und Datum sind Pflichtfelder.'); return }
-    if (events.length >= maxEvents) { setEventMsg(`Maximal ${maxEvents} Ereignisse freigeschaltet. Nächster Slot in ${30 - new Date().getDate()} Tagen.`); return }
+    if (events.length >= maxEvents) { setEventMsg(`Maximal ${maxEvents} Ereignisse freigeschaltet.`); return }
     setEventSaving(true); setEventMsg('')
     try {
       const { data: { session } } = await supabase.auth.getSession()
-      const isoDate = eventDate
       const { data, error } = await supabase.from('user_events').insert({
-        user_id: session.user.id, name: eventName, event_date: isoDate,
+        user_id: session.user.id, name: eventName, event_date: eventDate,
         category: eventCategory, description: eventDescription || null,
       }).select().single()
       if (error) throw error
@@ -163,18 +156,11 @@ export default function Profil() {
 
   async function handleRecalculate() {
     if (!profile?.birth_date) return
-    setRecalcing(true)
-    setRecalcMsg('')
+    setRecalcing(true); setRecalcMsg('')
     try {
-      const { createClient } = await import('@supabase/supabase-js')
-      const sb = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY)
-      const { data: { session } } = await sb.auth.getSession()
+      const { data: { session } } = await supabase.auth.getSession()
       if (!session) throw new Error('Nicht angemeldet')
-      // Delete cached Tagesenergie and Monatsanalyse so they regenerate with correct Kin
-      await sb.from('analyses')
-        .delete()
-        .eq('user_id', session.user.id)
-        .in('analysis_type', ['tagesenergie', 'monatsanalyse'])
+      await supabase.from('analyses').delete().eq('user_id', session.user.id).in('analysis_type', ['tagesenergie', 'monatsanalyse'])
       setRecalcMsg('Maya-Profil aktualisiert. Deine Analysen werden beim nächsten Aufruf neu erstellt.')
     } catch (err) {
       setRecalcMsg('Fehler: ' + err.message)
@@ -196,8 +182,7 @@ export default function Profil() {
       setMsg('Bitte fülle alle Pflichtfelder aus.')
       return
     }
-    setSaving(true)
-    setMsg('')
+    setSaving(true); setMsg('')
     try {
       const parts = birthDate.split('.')
       const isoDate = parts.length === 3
@@ -221,19 +206,28 @@ export default function Profil() {
     }
   }
 
+  const col2 = { display: 'grid', gridTemplateColumns: m ? '1fr' : '1fr 1fr', gap: m ? '0' : '0 20px' }
+  const colZip = { display: 'grid', gridTemplateColumns: m ? '1fr' : '120px 1fr', gap: m ? '0' : '0 20px' }
+
   return (
-    <div style={{ backgroundColor: CREAM, minHeight: '100vh', padding: 'clamp(24px, 5vw, 48px) clamp(16px, 4vw, 40px)', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{
+      backgroundColor: 'var(--bg-deep)',
+      minHeight: '100vh',
+      padding: m ? '24px 16px 100px' : 'clamp(24px,5vw,48px) clamp(16px,4vw,40px)',
+      fontFamily: 'Inter, sans-serif',
+      transition: 'background-color 0.25s ease',
+    }}>
       <div style={{ maxWidth: '640px' }}>
-        <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '8px' }}>
+        <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--accent)', marginBottom: '8px' }}>
           Konto
         </div>
-        <h1 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: '2.2rem', color: TEXT, margin: '0 0 40px' }}>
+        <h1 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: m ? '1.8rem' : '2.2rem', color: 'var(--text-1)', margin: '0 0 40px' }}>
           Dein Profil
         </h1>
 
         <form onSubmit={handleSave}>
           <Section title="Persönliche Daten">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
+            <div style={col2}>
               <Field label="Vorname" value={firstName} onChange={setFirstName} required placeholder="Max" />
               <Field label="Nachname" value={lastName} onChange={setLastName} required placeholder="Mustermann" />
             </div>
@@ -242,7 +236,7 @@ export default function Profil() {
           </Section>
 
           <Section title="Partnerdaten (für Partnerschaftsanalyse)">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
+            <div style={col2}>
               <Field label="Vorname Partner/in" value={partnerFirstName} onChange={setPartnerFirstName} placeholder="Anna" />
               <Field label="Nachname Partner/in" value={partnerLastName} onChange={setPartnerLastName} placeholder="Musterfrau" />
             </div>
@@ -251,14 +245,14 @@ export default function Profil() {
 
           <Section title="Adresse">
             <Field label="Straße und Hausnummer" value={address} onChange={setAddress} required placeholder="Musterstraße 1" />
-            <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '0 20px' }}>
+            <div style={colZip}>
               <Field label="PLZ" value={zip} onChange={setZip} required placeholder="12345" />
               <Field label="Ort" value={city} onChange={setCity} required placeholder="München" />
             </div>
           </Section>
 
           {msg && (
-            <p style={{ fontSize: '0.85rem', color: msg.includes('Fehler') || msg.includes('Pflicht') ? '#c0392b' : COPPER, marginBottom: '16px' }}>
+            <p style={{ fontSize: '0.85rem', color: msg.includes('Fehler') || msg.includes('Pflicht') ? '#c0392b' : 'var(--accent)', marginBottom: '16px' }}>
               {msg}
             </p>
           )}
@@ -267,10 +261,11 @@ export default function Profil() {
             type="submit"
             disabled={saving}
             style={{
-              backgroundColor: DEEP, color: CREAM, border: 'none',
+              backgroundColor: 'var(--text-1)', color: 'var(--bg-deep)', border: 'none',
               borderRadius: '40px', padding: '13px 32px',
               fontWeight: 500, fontSize: '0.85rem', cursor: saving ? 'not-allowed' : 'pointer',
               opacity: saving ? 0.7 : 1, marginBottom: '40px',
+              fontFamily: 'Inter, sans-serif',
             }}
           >
             {saving ? 'Wird gespeichert…' : 'Profil speichern'}
@@ -280,7 +275,7 @@ export default function Profil() {
         {/* Maya Profil */}
         <Section title="Mein Maya Profil">
           {kinData ? (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '20px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: m ? '1fr' : '1fr 1fr', gap: '8px', marginBottom: '20px' }}>
               {[
                 { label: 'Kin-Nummer', value: `Kin ${kinData.kin}` },
                 { label: 'Leitsiegel', value: `${kinData.tone} ${kinData.seal}` },
@@ -289,14 +284,14 @@ export default function Profil() {
                 { label: 'Antipode', value: kinData.antipode },
                 { label: 'Wellenform', value: `Welle ${kinData.wavespell}` },
               ].map(item => (
-                <div key={item.label} style={{ padding: '14px 16px', backgroundColor: '#EDE7D9', borderRadius: '3px' }}>
-                  <div style={{ color: TEXT_LIGHT, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>{item.label}</div>
-                  <div style={{ color: TEXT, fontSize: '0.9rem', fontWeight: 400 }}>{item.value}</div>
+                <div key={item.label} style={{ padding: '14px 16px', backgroundColor: 'var(--bg-card)', borderRadius: '3px', border: '1px solid var(--border)' }}>
+                  <div style={{ color: 'var(--text-2)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>{item.label}</div>
+                  <div style={{ color: 'var(--text-1)', fontSize: '0.9rem', fontWeight: 400 }}>{item.value}</div>
                 </div>
               ))}
             </div>
           ) : (
-            <p style={{ color: TEXT_LIGHT, fontSize: '0.88rem', marginBottom: '16px' }}>
+            <p style={{ color: 'var(--text-2)', fontSize: '0.88rem', marginBottom: '16px' }}>
               Trage dein Geburtsdatum ein und speichere das Profil, um dein Maya-Profil zu sehen.
             </p>
           )}
@@ -304,110 +299,111 @@ export default function Profil() {
             onClick={handleRecalculate}
             disabled={recalcing}
             style={{
-              border: `1px solid ${COPPER}`, color: COPPER, backgroundColor: 'transparent',
+              border: '1px solid var(--accent)', color: 'var(--accent)', backgroundColor: 'transparent',
               borderRadius: '40px', padding: '10px 22px', fontSize: '0.82rem',
               cursor: recalcing ? 'not-allowed' : 'pointer', opacity: recalcing ? 0.6 : 1,
+              fontFamily: 'Inter, sans-serif',
             }}
           >
             {recalcing ? 'Wird aktualisiert…' : 'Maya-Profil neu berechnen'}
           </button>
           {recalcMsg && (
-            <p style={{ fontSize: '0.83rem', color: recalcMsg.includes('Fehler') ? '#c0392b' : COPPER, marginTop: '10px' }}>
+            <p style={{ fontSize: '0.83rem', color: recalcMsg.includes('Fehler') ? '#c0392b' : 'var(--accent)', marginTop: '10px' }}>
               {recalcMsg}
             </p>
           )}
         </Section>
 
-        {/* Meine Ereignisse */}
+        {/* Ereignisse */}
         <Section title="Meine Ereignisse (für Ereignis-Analysen)">
-          <p style={{ color: TEXT_LIGHT, fontSize: '0.83rem', lineHeight: 1.7, marginBottom: '20px' }}>
+          <p style={{ color: 'var(--text-2)', fontSize: '0.83rem', lineHeight: 1.7, marginBottom: '20px' }}>
             Analysiere alles, dem du ein Datum zuordnen kannst: ein Land, ein Job-Start, eine Beziehung, ein Kauf, ein Unternehmen.
             {' '}Aktuell <strong>{maxEvents}</strong> Slot{maxEvents !== 1 ? 's' : ''} freigeschaltet
             {profile?.subscription_plan === 'annual' || profile?.is_admin ? ' (alle 12 freigeschaltet)' : ` — Grundmodul: 2, +1 pro gebuchtem Zusatzmodul, oder Jahrestarif für sofort 12.`}
           </p>
 
           {events.map(ev => (
-            <div key={ev.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', backgroundColor: '#EDE7D9', borderRadius: '3px', marginBottom: '8px' }}>
+            <div key={ev.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', backgroundColor: 'var(--bg-card)', borderRadius: '3px', marginBottom: '8px', border: '1px solid var(--border)' }}>
               <div>
-                <div style={{ color: TEXT, fontSize: '0.9rem', fontWeight: 500 }}>{ev.name}</div>
-                <div style={{ color: TEXT_LIGHT, fontSize: '0.75rem', marginTop: '2px' }}>
+                <div style={{ color: 'var(--text-1)', fontSize: '0.9rem', fontWeight: 500 }}>{ev.name}</div>
+                <div style={{ color: 'var(--text-2)', fontSize: '0.75rem', marginTop: '2px' }}>
                   {EVENT_CATEGORIES.find(c => c.value === ev.category)?.label || ev.category} · {new Date(ev.event_date).toLocaleDateString('de-DE')}
                 </div>
               </div>
-              <button onClick={() => handleDeleteEvent(ev.id)} style={{ background: 'none', border: 'none', color: TEXT_LIGHT, cursor: 'pointer', fontSize: '0.8rem', padding: '4px 8px' }}>
+              <button onClick={() => handleDeleteEvent(ev.id)} style={{ background: 'none', border: 'none', color: 'var(--text-2)', cursor: 'pointer', fontSize: '0.8rem', padding: '4px 8px', fontFamily: 'Inter, sans-serif' }}>
                 Entfernen
               </button>
             </div>
           ))}
 
           {events.length < maxEvents && !showEventForm && (
-            <button onClick={() => setShowEventForm(true)} style={{ border: `1px dashed ${COPPER}`, color: COPPER, background: 'transparent', borderRadius: '3px', padding: '10px 20px', fontSize: '0.82rem', cursor: 'pointer', width: '100%', marginTop: '8px' }}>
+            <button onClick={() => setShowEventForm(true)} style={{ border: '1px dashed var(--accent)', color: 'var(--accent)', background: 'transparent', borderRadius: '3px', padding: '10px 20px', fontSize: '0.82rem', cursor: 'pointer', width: '100%', marginTop: '8px', fontFamily: 'Inter, sans-serif' }}>
               + Ereignis hinzufügen ({events.length}/{maxEvents})
             </button>
           )}
           {events.length >= maxEvents && !showEventForm && (
-            <div style={{ fontSize: '0.8rem', color: TEXT_LIGHT, marginTop: '8px', textAlign: 'center', padding: '10px' }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-2)', marginTop: '8px', textAlign: 'center', padding: '10px' }}>
               Alle {maxEvents} Slots belegt — nächster Slot nächsten Monat.
             </div>
           )}
 
           {showEventForm && (
-            <form onSubmit={handleSaveEvent} style={{ marginTop: '16px', padding: '20px', backgroundColor: '#EDE7D9', borderRadius: '3px' }}>
+            <form onSubmit={handleSaveEvent} style={{ marginTop: '16px', padding: '20px', backgroundColor: 'var(--bg-card)', borderRadius: '3px', border: '1px solid var(--border)' }}>
               <Field label="Name des Ereignisses" value={eventName} onChange={setEventName} required placeholder="z.B. Deutschland, Job bei Firma X" />
               <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: TEXT_LIGHT, marginBottom: '8px' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-2)', marginBottom: '8px' }}>
                   Kategorie
                 </label>
-                <select value={eventCategory} onChange={e => setEventCategory(e.target.value)} style={{ width: '100%', backgroundColor: '#FBF8F3', border: `1px solid ${BORDER}`, borderRadius: '3px', padding: '11px 14px', color: TEXT, fontSize: '0.92rem', fontFamily: 'Inter, sans-serif' }}>
+                <select value={eventCategory} onChange={e => setEventCategory(e.target.value)} style={{ width: '100%', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '3px', padding: '11px 14px', color: 'var(--text-1)', fontSize: '0.92rem', fontFamily: 'Inter, sans-serif' }}>
                   {EVENT_CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
                 </select>
               </div>
               <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: TEXT_LIGHT, marginBottom: '8px' }}>
-                  Datum <span style={{ color: COPPER }}>*</span>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-2)', marginBottom: '8px' }}>
+                  Datum <span style={{ color: 'var(--accent)' }}>*</span>
                 </label>
-                <input type="date" value={eventDate} onChange={e => setEventDate(e.target.value)} required style={{ width: '100%', boxSizing: 'border-box', backgroundColor: '#FBF8F3', border: `1px solid ${BORDER}`, borderRadius: '3px', padding: '11px 14px', color: TEXT, fontSize: '0.92rem', fontFamily: 'Inter, sans-serif' }} />
+                <input type="date" value={eventDate} onChange={e => setEventDate(e.target.value)} required style={{ width: '100%', boxSizing: 'border-box', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '3px', padding: '11px 14px', color: 'var(--text-1)', fontSize: '0.92rem', fontFamily: 'Inter, sans-serif' }} />
               </div>
               <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: TEXT_LIGHT, marginBottom: '8px' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-2)', marginBottom: '8px' }}>
                   Kontext (optional)
                 </label>
-                <textarea value={eventDescription} onChange={e => setEventDescription(e.target.value)} placeholder="Kurze Beschreibung oder Kontext" rows={2} style={{ width: '100%', boxSizing: 'border-box', backgroundColor: '#FBF8F3', border: `1px solid ${BORDER}`, borderRadius: '3px', padding: '11px 14px', color: TEXT, fontSize: '0.92rem', fontFamily: 'Inter, sans-serif', resize: 'vertical' }} />
+                <textarea value={eventDescription} onChange={e => setEventDescription(e.target.value)} placeholder="Kurze Beschreibung oder Kontext" rows={2} style={{ width: '100%', boxSizing: 'border-box', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '3px', padding: '11px 14px', color: 'var(--text-1)', fontSize: '0.92rem', fontFamily: 'Inter, sans-serif', resize: 'vertical' }} />
               </div>
-              {eventMsg && <p style={{ fontSize: '0.82rem', color: eventMsg.includes('Fehler') || eventMsg.includes('Pflicht') || eventMsg.includes('Maximal') ? '#c0392b' : COPPER, marginBottom: '12px' }}>{eventMsg}</p>}
+              {eventMsg && <p style={{ fontSize: '0.82rem', color: eventMsg.includes('Fehler') || eventMsg.includes('Pflicht') || eventMsg.includes('Maximal') ? '#c0392b' : 'var(--accent)', marginBottom: '12px' }}>{eventMsg}</p>}
               <div style={{ display: 'flex', gap: '12px' }}>
-                <button type="submit" disabled={eventSaving} style={{ backgroundColor: DEEP, color: CREAM, border: 'none', borderRadius: '40px', padding: '11px 24px', fontWeight: 500, fontSize: '0.82rem', cursor: eventSaving ? 'not-allowed' : 'pointer', opacity: eventSaving ? 0.7 : 1 }}>
+                <button type="submit" disabled={eventSaving} style={{ backgroundColor: 'var(--text-1)', color: 'var(--bg-deep)', border: 'none', borderRadius: '40px', padding: '11px 24px', fontWeight: 500, fontSize: '0.82rem', cursor: eventSaving ? 'not-allowed' : 'pointer', opacity: eventSaving ? 0.7 : 1, fontFamily: 'Inter, sans-serif' }}>
                   {eventSaving ? 'Wird gespeichert…' : 'Speichern'}
                 </button>
-                <button type="button" onClick={() => setShowEventForm(false)} style={{ border: `1px solid ${BORDER}`, color: TEXT_MID, backgroundColor: 'transparent', borderRadius: '40px', padding: '11px 20px', fontSize: '0.82rem', cursor: 'pointer' }}>
+                <button type="button" onClick={() => setShowEventForm(false)} style={{ border: '1px solid var(--border)', color: 'var(--text-2)', backgroundColor: 'transparent', borderRadius: '40px', padding: '11px 20px', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}>
                   Abbrechen
                 </button>
               </div>
             </form>
           )}
-          {eventMsg && !showEventForm && <p style={{ fontSize: '0.82rem', color: COPPER, marginTop: '8px' }}>{eventMsg}</p>}
+          {eventMsg && !showEventForm && <p style={{ fontSize: '0.82rem', color: 'var(--accent)', marginTop: '8px' }}>{eventMsg}</p>}
         </Section>
 
         {/* Mitgliedschaft */}
         <Section title="Mitgliedschaft">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderBottom: `1px solid ${BORDER}` }}>
-            <span style={{ color: TEXT_MID, fontSize: '0.9rem' }}>Status</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
+            <span style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>Status</span>
             <span style={{ fontSize: '0.85rem', fontWeight: 500, color: profile?.membership_active ? '#2d8a4e' : '#c0392b' }}>
               {profile?.membership_active ? '● Aktiv' : '● Inaktiv'}
             </span>
           </div>
           {profile?.membership_start && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0', borderBottom: `1px solid ${BORDER}` }}>
-              <span style={{ color: TEXT_MID, fontSize: '0.9rem' }}>Mitglied seit</span>
-              <span style={{ color: TEXT, fontSize: '0.9rem' }}>{new Date(profile.membership_start).toLocaleDateString('de-DE')}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
+              <span style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>Mitglied seit</span>
+              <span style={{ color: 'var(--text-1)', fontSize: '0.9rem' }}>{new Date(profile.membership_start).toLocaleDateString('de-DE')}</span>
             </div>
           )}
           {profile?.purchased_analyses?.length > 0 && (
-            <div style={{ padding: '16px 0' }}>
-              <div style={{ color: TEXT_LIGHT, fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '10px' }}>Gebuchte Zusatzanalysen</div>
+            <div style={{ padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
+              <div style={{ color: 'var(--text-2)', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '10px' }}>Gebuchte Zusatzanalysen</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {profile.purchased_analyses.map(key => (
-                  <span key={key} style={{ backgroundColor: 'rgba(160,82,45,0.1)', border: '1px solid rgba(160,82,45,0.3)', color: COPPER, padding: '4px 12px', borderRadius: '20px', fontSize: '0.78rem' }}>
+                  <span key={key} style={{ backgroundColor: 'rgba(var(--accent-rgb,160,82,45),0.1)', border: '1px solid var(--border)', color: 'var(--accent)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.78rem' }}>
                     {ANALYSE_LABELS[key] || key}
                   </span>
                 ))}
@@ -415,31 +411,81 @@ export default function Profil() {
             </div>
           )}
           {profile?.subscription_plan && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0', borderBottom: `1px solid ${BORDER}` }}>
-              <span style={{ color: TEXT_MID, fontSize: '0.9rem' }}>Tarif</span>
-              <span style={{ color: TEXT, fontSize: '0.9rem' }}>{profile.subscription_plan === 'annual' ? 'Jahrestarif' : 'Monatsmitgliedschaft'}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
+              <span style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>Tarif</span>
+              <span style={{ color: 'var(--text-1)', fontSize: '0.9rem' }}>{profile.subscription_plan === 'annual' ? 'Jahrestarif' : 'Monatsmitgliedschaft'}</span>
             </div>
           )}
           {profile?.membership_active && (
             <button
-              onClick={async () => {
-                try { await redirectToCustomerPortal() }
-                catch (e) { alert(e.message) }
-              }}
-              style={{ marginTop: '16px', border: `1px solid ${BORDER}`, color: TEXT_MID, background: 'transparent', borderRadius: '40px', padding: '10px 20px', fontSize: '0.82rem', cursor: 'pointer' }}
+              onClick={async () => { try { await redirectToCustomerPortal() } catch (e) { alert(e.message) } }}
+              style={{ marginTop: '16px', border: '1px solid var(--border)', color: 'var(--text-2)', background: 'transparent', borderRadius: '40px', padding: '10px 20px', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
             >
               Abonnement verwalten / kündigen
             </button>
           )}
         </Section>
 
-        <div style={{ borderTop: `1px solid ${BORDER}`, paddingTop: '24px' }}>
-          <button onClick={signOut} style={{ background: 'none', border: 'none', color: TEXT_LIGHT, fontSize: '0.85rem', cursor: 'pointer', padding: 0 }}>
-            Abmelden
-          </button>
-        </div>
-      </div>
+        {/* Einstellungen — Theme + Admin + Abmelden */}
+        <Section title="Einstellungen">
+          {/* Theme Toggle */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid var(--border)' }}>
+            <span style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>Design</span>
+            <button
+              onClick={toggle}
+              style={{
+                border: '1px solid var(--border)',
+                borderRadius: '20px',
+                padding: '6px 14px',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                color: 'var(--text-2)',
+                backgroundColor: 'transparent',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontFamily: 'Inter, sans-serif',
+              }}
+            >
+              {theme === 'dark' ? '☀ Hell' : '☾ Dunkel'}
+            </button>
+          </div>
 
+          {/* Admin */}
+          {profile?.is_admin && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid var(--border)' }}>
+              <span style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>Administration</span>
+              <button
+                onClick={() => navigate('/admin')}
+                style={{
+                  backgroundColor: 'var(--accent)',
+                  color: 'var(--bg-deep)',
+                  border: 'none',
+                  borderRadius: '20px',
+                  padding: '6px 16px',
+                  fontWeight: 500,
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                  fontFamily: 'Inter, sans-serif',
+                }}
+              >
+                Admin-Bereich →
+              </button>
+            </div>
+          )}
+
+          {/* Abmelden */}
+          <div style={{ paddingTop: '20px' }}>
+            <button
+              onClick={signOut}
+              style={{ background: 'none', border: 'none', color: 'var(--text-2)', fontSize: '0.85rem', cursor: 'pointer', padding: 0, fontFamily: 'Inter, sans-serif' }}
+            >
+              Abmelden
+            </button>
+          </div>
+        </Section>
+
+      </div>
     </div>
   )
 }

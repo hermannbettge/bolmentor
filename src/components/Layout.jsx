@@ -7,7 +7,7 @@ import MayaChat from './MayaChat.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { useState, useEffect } from 'react'
 
-const PROTECTED_ROUTES = ['/dashboard', '/tagesenergie', '/kalender', '/monatsanalyse', '/analysen', '/profil', '/analyse/', '/admin']
+const PROTECTED_ROUTES = ['/dashboard', '/tagesenergie', '/kalender', '/monatsanalyse', '/analysen', '/profil', '/analyse/', '/admin', '/maya-ki', '/maya-kalender', '/checkout']
 
 export default function Layout({ children }) {
   const { user } = useAuth()
@@ -37,7 +37,7 @@ export default function Layout({ children }) {
 
   if (user && isProtected && isMobile) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg-deep)', paddingBottom: '70px' }}>
+      <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg-deep)', paddingBottom: 'calc(70px + env(safe-area-inset-bottom, 0px))' }}>
         {children}
         <BottomNav />
         <MayaChat />
