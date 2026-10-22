@@ -16,6 +16,7 @@ import AnalysePage from './pages/AnalysePage.jsx'
 import AnalyseEvent from './pages/AnalyseEvent.jsx'
 import PartnerschaftsanalysePage from './pages/PartnerschaftsanalysePage.jsx'
 import Kalender from './pages/Kalender.jsx'
+import MayaInfo from './pages/MayaInfo.jsx'
 
 function ProtectedRoute({ children }) {
   const { user, profile, loading } = useAuth()
@@ -56,6 +57,7 @@ function AppRoutes() {
         <Route path="/analyse/event/:eventId" element={<ProtectedRoute><AnalyseEvent /></ProtectedRoute>} />
         <Route path="/analyse/partnerschaft" element={<ProtectedRoute><PartnerschaftsanalysePage /></ProtectedRoute>} />
         <Route path="/analyse/:type" element={<ProtectedRoute><AnalysePage /></ProtectedRoute>} />
+        <Route path="/maya-kalender" element={<ProtectedRoute><MayaInfo /></ProtectedRoute>} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

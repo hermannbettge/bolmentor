@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { supabase } from '../lib/supabase.js'
 import AnalysisDisplay from '../components/AnalysisDisplay.jsx'
+import { getRegenDay, getRegenSymbol, REGEN_LEGEND } from '../data/regenDays.js'
 
 const GERMAN_MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
 const WEEKDAYS = ['Mo','Di','Mi','Do','Fr','Sa','So']
@@ -101,8 +102,8 @@ export default function Kalender() {
           </div>
         </div>
 
-        {/* Legend */}
-        <div style={{ display: 'flex', gap: '16px', marginBottom: '20px', flexWrap: 'wrap' }}>
+        {/* Legend — Energietypen */}
+        <div style={{ display: 'flex', gap: '16px', marginBottom: '10px', flexWrap: 'wrap' }}>
           {Object.entries(ENERGY).map(([k, e]) => (
             <div key={k} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: e.color }} />
@@ -113,6 +114,15 @@ export default function Kalender() {
             <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#FFD700' }} />
             <span style={{ color: 'var(--text-2)', fontSize: '0.75rem' }}>Persönlicher Kraft-Tag</span>
           </div>
+        </div>
+        {/* Legend — Regenerationstage */}
+        <div style={{ display: 'flex', gap: '16px', marginBottom: '20px', flexWrap: 'wrap' }}>
+          {REGEN_LEGEND.map((item, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <span style={{ fontSize: '0.75rem', color: item.symbol === '〰' ? '#7B9ED9' : '#C47A5A' }}>{item.symbol}</span>
+              <span style={{ color: 'var(--text-2)', fontSize: '0.72rem' }}>{item.label}</span>
+            </div>
+          ))}
         </div>
 
         {loading ? (
@@ -155,15 +165,17 @@ function MonthView({ days, firstDay, todayStr, selected, setSelected }) {
             const res = RESONANCE_STYLE[day.resonance]
             const isToday = day.date === todayStr
             const isSel = selected?.date === day.date
+            const regen = getRegenDay(day.date)
+            const regenInfo = getRegenSymbol(regen)
             return (
               <div
                 key={di}
                 onClick={() => setSelected(day)}
                 style={{
-                  border: isSel ? '2px solid var(--accent)' : res.border,
+                  border: isSel ? '2px solid var(--accent)' : regen?.wave ? '1px solid rgba(123,158,217,0.4)' : res.border,
                   borderRadius: '6px',
                   padding: '8px 6px',
-                  backgroundColor: isSel ? 'rgba(var(--accent-rgb,184,151,90),0.15)' : e.bg,
+                  backgroundColor: isSel ? 'rgba(var(--accent-rgb,184,151,90),0.15)' : regen?.wave ? 'rgba(123,158,217,0.07)' : e.bg,
                   cursor: 'pointer',
                   minHeight: '72px',
                   display: 'flex', flexDirection: 'column', gap: '3px',
@@ -181,6 +193,11 @@ function MonthView({ days, firstDay, todayStr, selected, setSelected }) {
                   {day.toneNumber} {day.seal.split(' ')[1] || day.seal}
                 </div>
                 <div style={{ fontSize: '0.6rem', color: e.color, fontWeight: 500 }}>{e.label}</div>
+                {regenInfo && (
+                  <div style={{ fontSize: '0.65rem', color: regenInfo.color, marginTop: '2px', fontWeight: 500 }}>
+                    {regenInfo.symbol}
+                  </div>
+                )}
               </div>
             )
           })}
@@ -241,6 +258,9 @@ function DayDetail({ day, onClose, navigate, profile }) {
   const todayDate = new Date().toISOString().split('T')[0]
   const isToday = day.date === todayDate
   const canCreateForDate = profile?.is_admin || profile?.subscription_plan === 'annual' || isToday
+
+  const regen = getRegenDay(day.date)
+  const regenInfo = getRegenSymbol(regen)
 
   const [analysis, setAnalysis] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -331,6 +351,20 @@ function DayDetail({ day, onClose, navigate, profile }) {
           <div style={{ padding: '12px 16px', borderRadius: '8px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', marginBottom: '16px' }}>
             <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--accent)', marginBottom: '2px' }}>{res.label}</div>
             <div style={{ fontSize: '0.82rem', color: 'var(--text-1)' }}>Dieser Tag resoniert besonders mit deiner Geburtsenergie.</div>
+          </div>
+        )}
+
+        {/* Regenerationstag */}
+        {regenInfo && (
+          <div style={{ padding: '12px 16px', borderRadius: '8px', backgroundColor: regen.wave ? 'rgba(123,158,217,0.08)' : 'rgba(196,122,90,0.08)', border: `1px solid ${regen.wave ? 'rgba(123,158,217,0.3)' : 'rgba(196,122,90,0.3)'}`, marginBottom: '16px' }}>
+            <div style={{ fontSize: '0.78rem', fontWeight: 600, color: regenInfo.color, marginBottom: '4px' }}>
+              {regenInfo.symbol} {regenInfo.label}
+            </div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-2)', lineHeight: 1.6 }}>
+              {regen.wave
+                ? 'Sturmwelle · Heilwelle: Ideale Zeit für Urlaub, Regeneration und Heilungsprozesse. Diese 13-tägige Periode gilt für alle Menschen.'
+                : 'Dieser Tag trägt universelle Ruhe-Energie. Tempo herausnehmen, weniger planen, Körper und Geist regenerieren lassen.'}
+            </div>
           </div>
         )}
 

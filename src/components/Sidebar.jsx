@@ -110,6 +110,7 @@ export default function Sidebar() {
 
         <div style={{ height: '1px', backgroundColor: 'var(--sidebar-border)', margin: '10px 24px' }} />
         <NavItem to="/analysen" label="Alle Analysen" />
+        <NavItem to="/maya-kalender" label="Was ist der Maya Kalender?" />
         <NavItem to="/profil" label="Profil & Konto" />
         {profile?.is_admin && <NavItem to="/admin" label="Admin" />}
       </nav>
