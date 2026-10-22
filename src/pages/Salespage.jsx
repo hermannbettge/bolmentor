@@ -272,7 +272,7 @@ export default function Salespage() {
               <H2>Du hast dich schon intensiv mit dir beschäftigt. Und trotzdem läuft vieles gleich.</H2>
             </div>
             <div style={{ paddingTop: '8px' }}>
-              <FeatureRow num="1" text="Du weißt einiges über dich, du hast gelesen, vielleicht Seminare besucht — und trotzdem gibt es Muster, die immer wieder auftauchen. In Beziehungen. Im Business. Mit Geld. Mit deiner Gesundheit." />
+              <FeatureRow num="1" text="Du weißt einiges über dich, du hast gelesen, vielleicht Seminare besucht, und trotzdem gibt es Muster, die immer wieder auftauchen: in Beziehungen, im Business, mit Geld und mit deiner Gesundheit." />
               <FeatureRow num="2" text="Manche Phasen laufen wie von selbst. Andere fühlen sich zäh an, egal was du tust — und du weißt nicht warum." />
               <FeatureRow num="3" text="Du weißt, was du verändern möchtest. Die Frage ist: Warum passiert es im entscheidenden Moment trotzdem nicht?" />
               <Line />
