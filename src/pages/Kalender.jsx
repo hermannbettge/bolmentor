@@ -172,10 +172,10 @@ function MonthView({ days, firstDay, todayStr, selected, setSelected }) {
                 key={di}
                 onClick={() => setSelected(day)}
                 style={{
-                  border: isSel ? '2px solid var(--accent)' : regen?.wave ? '1px solid rgba(123,158,217,0.4)' : res.border,
+                  border: isSel ? '2px solid var(--accent)' : regen?.wave ? '1px solid rgba(123,158,217,0.6)' : regen ? `1px solid rgba(196,122,90,0.4)` : res.border,
                   borderRadius: '6px',
                   padding: '8px 6px',
-                  backgroundColor: isSel ? 'rgba(var(--accent-rgb,184,151,90),0.15)' : regen?.wave ? 'rgba(123,158,217,0.07)' : e.bg,
+                  backgroundColor: isSel ? 'rgba(var(--accent-rgb,184,151,90),0.15)' : regen?.wave ? 'rgba(123,158,217,0.18)' : regen ? `${e.bg}` : e.bg,
                   cursor: 'pointer',
                   minHeight: '72px',
                   display: 'flex', flexDirection: 'column', gap: '3px',
@@ -187,17 +187,19 @@ function MonthView({ days, firstDay, todayStr, selected, setSelected }) {
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <span style={{ fontSize: '0.82rem', fontWeight: isToday ? 700 : 400, color: isToday ? 'var(--accent)' : 'var(--text-1)' }}>{day.day}</span>
-                  <div style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: day.resonance === 'birthday' ? '#FFD700' : e.color, flexShrink: 0 }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+                    {regenInfo && (
+                      <span style={{ fontSize: '0.72rem', color: regenInfo.color, lineHeight: 1, fontWeight: 600 }}>
+                        {regenInfo.symbol}
+                      </span>
+                    )}
+                    <div style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: day.resonance === 'birthday' ? '#FFD700' : e.color }} />
+                  </div>
                 </div>
                 <div style={{ fontSize: '0.65rem', color: 'var(--text-2)', lineHeight: 1.2 }}>
                   {day.toneNumber} {day.seal.split(' ')[1] || day.seal}
                 </div>
                 <div style={{ fontSize: '0.6rem', color: e.color, fontWeight: 500 }}>{e.label}</div>
-                {regenInfo && (
-                  <div style={{ fontSize: '0.65rem', color: regenInfo.color, marginTop: '2px', fontWeight: 500 }}>
-                    {regenInfo.symbol}
-                  </div>
-                )}
               </div>
             )
           })}
@@ -217,14 +219,16 @@ function ListView({ days, todayStr, selected, setSelected }) {
         const isSel = selected?.date === day.date
         const dateObj = new Date(day.date + 'T00:00:00')
         const weekday = ['So','Mo','Di','Mi','Do','Fr','Sa'][dateObj.getDay()]
+        const regen = getRegenDay(day.date)
+        const regenInfo = getRegenSymbol(regen)
         return (
           <div key={day.date} onClick={() => setSelected(day)} style={{
-            display: 'grid', gridTemplateColumns: '48px 1fr auto auto',
+            display: 'grid', gridTemplateColumns: '48px 1fr auto',
             alignItems: 'center', gap: '12px',
             padding: '12px 16px',
             borderRadius: '6px',
-            border: isSel ? '2px solid var(--accent)' : res.border,
-            backgroundColor: isToday ? 'rgba(var(--accent-rgb,184,151,90),0.08)' : e.bg,
+            border: isSel ? '2px solid var(--accent)' : regen?.wave ? '1px solid rgba(123,158,217,0.6)' : regen ? '1px solid rgba(196,122,90,0.4)' : res.border,
+            backgroundColor: isToday ? 'rgba(var(--accent-rgb,184,151,90),0.08)' : regen?.wave ? 'rgba(123,158,217,0.1)' : e.bg,
             cursor: 'pointer',
           }}>
             <div>
@@ -239,9 +243,10 @@ function ListView({ days, todayStr, selected, setSelected }) {
                 Ton {day.toneNumber} · {day.tonePower} · Thema: {day.lifeTheme}
               </div>
             </div>
-            <div style={{ textAlign: 'right' }}>
+            <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '3px' }}>
               <div style={{ fontSize: '0.72rem', color: e.color, fontWeight: 500 }}>{e.label}</div>
-              {day.resonance !== 'none' && <div style={{ fontSize: '0.65rem', color: 'var(--accent)', marginTop: '2px' }}>{res.label}</div>}
+              {day.resonance !== 'none' && <div style={{ fontSize: '0.65rem', color: 'var(--accent)' }}>{res.label}</div>}
+              {regenInfo && <div style={{ fontSize: '0.82rem', color: regenInfo.color, fontWeight: 600 }}>{regenInfo.symbol}</div>}
             </div>
           </div>
         )
