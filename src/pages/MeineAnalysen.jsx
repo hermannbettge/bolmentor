@@ -58,7 +58,7 @@ export default function MeineAnalysen() {
   }, [user, profile])
 
   return (
-    <div style={{ padding: '48px 40px', maxWidth: '800px' }}>
+    <div className="app-page">
       <div style={{ fontSize: '0.75rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--color-gold-muted)', marginBottom: '12px' }}>
         Zusatzanalysen
       </div>

@@ -22,7 +22,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{ padding: '48px 40px', maxWidth: '800px' }}>
+    <div className="app-page">
       <div style={{ marginBottom: '48px' }}>
         <h1 style={{ color: 'var(--color-gold)', fontWeight: 300, fontSize: '2rem', marginBottom: '8px' }}>
           {greeting()}, {profile?.name || 'willkommen'}.

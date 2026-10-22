@@ -242,7 +242,7 @@ export default function Salespage() {
 
       {/* 1. PATTERN INTERRUPT — Hero */}
       <section style={{ backgroundColor: CREAM, borderBottom: `1px solid rgba(42,32,24,0.08)` }}>
-        <div style={{ maxWidth: '860px', margin: '0 auto', padding: '100px 40px 80px', textAlign: 'center' }}>
+        <div className="resp-hero-padding" style={{ maxWidth: '860px', margin: '0 auto', textAlign: 'center' }}>
           <Tag>Maya Tzolkin · Bewusstseinssystem</Tag>
 
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px', marginBottom: '40px' }}>
@@ -270,8 +270,8 @@ export default function Salespage() {
 
       {/* 2. SCHMERZ — Was sich wiederholt */}
       <section style={{ backgroundColor: SAND }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '80px 40px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'start' }}>
+        <div className="resp-section">
+          <div className="resp-grid-2">
             <div>
               <Tag>Das kennst du</Tag>
               <H2>Du hast dich schon intensiv mit dir beschäftigt. Und trotzdem läuft vieles gleich.</H2>
@@ -288,7 +288,7 @@ export default function Salespage() {
 
       {/* 3. WUNSCHZUSTAND */}
       <section style={{ backgroundColor: CREAM }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '80px 40px' }}>
+        <div className="resp-section-sm">
           <BlockQuote>
             Stell dir vor, du weißt jeden Morgen, welche Energie dieser Tag trägt, bevor er beginnt. Und du kennst die Muster, die dein Leben bisher geprägt haben.
           </BlockQuote>
@@ -297,8 +297,8 @@ export default function Salespage() {
 
       {/* 4. LÖSUNG — Das System */}
       <section style={{ backgroundColor: WARM }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '80px 40px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'start' }}>
+        <div className="resp-section">
+          <div className="resp-grid-2">
             <div>
               <Tag dark>Die Lösung</Tag>
               <H2 dark>Das Muster lesen. Mit dem ältesten Bewusstseinssystem der Welt.</H2>
@@ -321,11 +321,11 @@ export default function Salespage() {
 
       {/* APP PREVIEW — Mockups */}
       <section style={{ backgroundColor: SAND }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '80px 40px' }}>
+        <div className="resp-section">
           <Tag>Die App</Tag>
           <H2>Dein persönliches Maya-Dashboard.</H2>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginTop: '40px' }}>
+          <div className="resp-grid-3" style={{ gap: '16px', marginTop: '40px' }}>
             {[
               {
                 icon: '◎',
@@ -357,7 +357,7 @@ export default function Salespage() {
 
           {/* Zusatzanalysen Preview */}
           <div style={{ marginTop: '16px', backgroundColor: '#DDD5C2', padding: '32px 28px', borderRadius: '2px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', alignItems: 'center' }}>
+            <div className="resp-grid-2" style={{ gap: '32px', alignItems: 'center' }}>
               <div>
                 <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: COPPER, marginBottom: '12px' }}>Zusatzanalysen</div>
                 <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.3rem', color: TEXT, marginBottom: '12px', lineHeight: 1.4 }}>
@@ -379,9 +379,9 @@ export default function Salespage() {
 
       {/* 5. PROOF — Testimonials */}
       <section style={{ backgroundColor: WARM }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '80px 40px' }}>
+        <div className="resp-section">
           <Tag dark>Stimmen</Tag>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
+          <div className="resp-grid-3">
             {[
               { name: 'Sarah M., 34', role: 'Unternehmerin, Hamburg', quote: 'Ich habe vieles über mich gewusst. Die Maya Analyse hat mir gezeigt, warum es trotzdem immer wieder gleich läuft. Das hat etwas in mir geöffnet.' },
               { name: 'Thomas K., 41', role: 'Führungskraft, München', quote: 'Ich war skeptisch. Dann habe ich die erste Analyse gelesen und das Gefühl gehabt, dass jemand beschreibt, wie ich wirklich funktioniere. Nicht wie ich sein sollte.' },
@@ -401,7 +401,7 @@ export default function Salespage() {
 
       {/* 6. CTA — Preistabelle */}
       <section style={{ backgroundColor: SAND }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '80px 40px' }}>
+        <div className="resp-section">
           <Tag>Dein Zugang</Tag>
           <H2>Wähle deinen Einstieg.</H2>
 
@@ -411,7 +411,7 @@ export default function Salespage() {
             <div style={{ color: '#FFF8F2', fontSize: '0.88rem', fontWeight: 300 }}>Im Oktober 2026 startest du für <strong>17 €</strong> statt 27 €. Ab dem 1. November 2026 gilt der reguläre Preis von 27 €/Monat.</div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '2px', marginTop: '8px' }}>
+          <div className="resp-grid-3" style={{ marginTop: '8px' }}>
             {/* Basis Mitgliedschaft */}
             <div style={{ backgroundColor: DEEP, padding: '40px 32px', display: 'flex', flexDirection: 'column' }}>
               <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: COPPER_LIGHT, marginBottom: '20px' }}>Mitgliedschaft</div>
@@ -501,7 +501,7 @@ export default function Salespage() {
 
       {/* FINALER CTA */}
       <section style={{ backgroundColor: CREAM }}>
-        <div style={{ maxWidth: '680px', margin: '0 auto', padding: '100px 40px', textAlign: 'center' }}>
+        <div className="resp-hero-padding" style={{ maxWidth: '680px', margin: '0 auto', textAlign: 'center' }}>
           <div style={{ width: '1px', height: '60px', backgroundColor: 'rgba(160,82,45,0.3)', margin: '0 auto 48px' }} />
           <H2>Du weißt wahrscheinlich längst, was du in deinem Leben besser verstehen möchtest.</H2>
           <P>
@@ -516,7 +516,7 @@ export default function Salespage() {
 
       {/* FAQ */}
       <section style={{ backgroundColor: SAND }}>
-        <div style={{ maxWidth: '720px', margin: '0 auto', padding: '80px 40px' }}>
+        <div className="resp-section-sm">
           <Tag>Häufige Fragen</Tag>
           <FaqItem
             question="Was genau ist der Maya Kalender?"

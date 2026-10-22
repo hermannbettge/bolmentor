@@ -74,14 +74,14 @@ export default function Monatsanalyse() {
 
   if (checkingExisting) {
     return (
-      <div style={{ padding: '48px 40px' }}>
+      <div className="app-page">
         <div style={{ color: 'var(--color-text-muted)' }} className="pulse-gold">Wird geladen...</div>
       </div>
     )
   }
 
   return (
-    <div style={{ padding: '48px 40px', maxWidth: '720px' }}>
+    <div className="app-page">
       <div style={{ fontSize: '0.75rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--color-gold-muted)', marginBottom: '12px' }}>
         Monatsanalyse
       </div>

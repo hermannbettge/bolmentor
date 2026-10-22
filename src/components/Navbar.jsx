@@ -1,13 +1,16 @@
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
 
 export default function Navbar() {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
+  const [menuOpen, setMenuOpen] = useState(false)
 
   async function handleSignOut() {
     await signOut()
     navigate('/')
+    setMenuOpen(false)
   }
 
   return (
@@ -15,38 +18,30 @@ export default function Navbar() {
       position: 'sticky',
       top: 0,
       zIndex: 50,
-      height: '60px',
       backgroundColor: 'var(--color-bg-deep)',
       backdropFilter: 'blur(8px)',
       borderBottom: '1px solid rgba(139,110,62,0.3)',
-      display: 'flex',
-      alignItems: 'center',
-      padding: '0 24px',
     }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Link to="/" style={{
           color: 'var(--color-gold)',
-          fontSize: '0.85rem',
+          fontSize: '0.78rem',
           fontWeight: 500,
-          letterSpacing: '0.15em',
+          letterSpacing: '0.12em',
           textDecoration: 'none',
+          flexShrink: 0,
         }}>
           BEWUSSTSEIN.OHNE.LIMIT
         </Link>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+        {/* Desktop nav */}
+        <div className="hide-mobile" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           {user ? (
             <>
               <Link to="/dashboard" style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textDecoration: 'none' }}>
                 Dashboard
               </Link>
-              <button onClick={handleSignOut} style={{
-                color: 'var(--color-text-muted)',
-                fontSize: '0.85rem',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-              }}>
+              <button onClick={handleSignOut} style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', background: 'none', border: 'none', cursor: 'pointer' }}>
                 Abmelden
               </button>
             </>
@@ -63,6 +58,38 @@ export default function Navbar() {
                 fontSize: '0.85rem',
                 fontWeight: 500,
                 textDecoration: 'none',
+              }}>
+                Jetzt starten
+              </Link>
+            </>
+          )}
+        </div>
+
+        {/* Mobile: buttons always visible + hamburger for more */}
+        <div className="show-mobile" style={{ display: 'none', alignItems: 'center', gap: '12px' }}>
+          {user ? (
+            <>
+              <Link to="/dashboard" style={{ color: 'var(--color-gold)', fontSize: '0.82rem', textDecoration: 'none', fontWeight: 500 }}>
+                Dashboard
+              </Link>
+              <button onClick={handleSignOut} style={{ color: 'var(--color-text-muted)', fontSize: '0.82rem', background: 'none', border: 'none', cursor: 'pointer' }}>
+                Abmelden
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" style={{ color: 'var(--color-text-muted)', fontSize: '0.82rem', textDecoration: 'none' }}>
+                Anmelden
+              </Link>
+              <Link to="/registrieren" style={{
+                backgroundColor: 'var(--color-gold)',
+                color: '#000',
+                padding: '7px 14px',
+                borderRadius: '4px',
+                fontSize: '0.82rem',
+                fontWeight: 500,
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
               }}>
                 Jetzt starten
               </Link>

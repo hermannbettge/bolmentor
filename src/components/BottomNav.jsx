@@ -2,8 +2,8 @@ import { NavLink } from 'react-router-dom'
 
 const NAV_ITEMS = [
   { to: '/tagesenergie', icon: '🌅', label: 'Heute' },
-  { to: '/monatsanalyse', icon: '📅', label: 'Monat' },
-  { to: '/analysen', icon: '📊', label: 'Analysen' },
+  { to: '/kalender', icon: '◈', label: 'Kalender' },
+  { to: '/analysen', icon: '◎', label: 'Analysen' },
   { to: '/profil', icon: '👤', label: 'Profil' },
 ]
 

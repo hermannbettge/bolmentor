@@ -222,7 +222,7 @@ export default function Profil() {
   }
 
   return (
-    <div style={{ backgroundColor: CREAM, minHeight: '100vh', padding: '48px 40px', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ backgroundColor: CREAM, minHeight: '100vh', padding: 'clamp(24px, 5vw, 48px) clamp(16px, 4vw, 40px)', fontFamily: 'Inter, sans-serif' }}>
       <div style={{ maxWidth: '640px' }}>
         <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '8px' }}>
           Konto

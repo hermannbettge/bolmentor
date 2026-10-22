@@ -72,7 +72,7 @@ export default function Kalender() {
   const todayStr = now.toISOString().split('T')[0]
 
   return (
-    <div style={{ backgroundColor: 'var(--bg-deep)', minHeight: '100vh', padding: '40px 32px', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ backgroundColor: 'var(--bg-deep)', minHeight: '100vh', padding: 'clamp(16px, 4vw, 40px) clamp(12px, 3vw, 32px)', fontFamily: 'Inter, sans-serif' }}>
       <div style={{ maxWidth: '960px' }}>
 
         {/* Header */}
