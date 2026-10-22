@@ -31,14 +31,15 @@ app.use('/api/auth', authRoutes)
 app.use('/api/stripe', stripeRoutes)
 app.use('/api/stripe/webhook', stripeWebhookRoutes)
 
-// Serve built frontend in production
-if (process.env.NODE_ENV === 'production') {
-  const distPath = path.join(__dirname, '..', 'dist')
-  app.use(express.static(distPath))
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(distPath, 'index.html'))
-  })
-}
+// Health check for Railway
+app.get('/health', (req, res) => res.json({ status: 'ok' }))
+
+// Serve built frontend
+const distPath = path.join(__dirname, '..', 'dist')
+app.use(express.static(distPath))
+app.get('*', (req, res) => {
+  res.sendFile(path.join(distPath, 'index.html'))
+})
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server läuft auf Port ${PORT}`)
