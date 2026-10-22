@@ -23,16 +23,12 @@ export default function Tagesenergie() {
   async function checkExistingAnalysis() {
     if (!user) return
     try {
-      const { data } = await supabase
-        .from('analyses')
-        .select('content, created_at')
-        .eq('user_id', user.id)
-        .eq('type', 'daily')
-        .eq('analysis_date', new Date().toISOString().split('T')[0])
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single()
-      if (data) setAnalysis(data.content)
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch('/api/analysis/daily', {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+      const data = await res.json()
+      if (data.content) setAnalysis(data.content)
     } catch {
       // No existing analysis
     } finally {
