@@ -1,14 +1,9 @@
 import { Router } from 'express'
 import Stripe from 'stripe'
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from '../lib/supabase.js'
 import { PRICE_MAP } from './stripe.js'
 
 const router = Router()
-
-const supabase = createClient(
-  process.env.VITE_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-)
 
 async function fulfillOrder(userId, priceId) {
   const mapping = PRICE_MAP[priceId]

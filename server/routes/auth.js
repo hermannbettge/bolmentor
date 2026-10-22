@@ -1,12 +1,8 @@
 import { Router } from 'express'
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from '../lib/supabase.js'
 
 const router = Router()
 
-const supabase = createClient(
-  process.env.VITE_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-)
 
 router.post('/register', async (req, res) => {
   const { email, password, name, birthDate } = req.body
