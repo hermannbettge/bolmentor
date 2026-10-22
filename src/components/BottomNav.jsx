@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 const NAV_ITEMS = [
   { to: '/tagesenergie', icon: '🌅', label: 'Heute' },
   { to: '/kalender', icon: '◈', label: 'Kalender' },
+  { to: '/maya-ki', icon: '☽', label: 'Maya KI' },
   { to: '/analysen', icon: '◎', label: 'Analysen' },
   { to: '/profil', icon: '👤', label: 'Profil' },
 ]

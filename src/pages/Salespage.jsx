@@ -416,6 +416,60 @@ export default function Salespage() {
         </div>
       </section>
 
+      {/* MAYA KI */}
+      <section style={{ backgroundColor: CREAM }}>
+        <div style={sectionPad}>
+          <div style={{ display: 'grid', gridTemplateColumns: m ? '1fr' : '1fr 1fr', gap: m ? '40px' : '80px', alignItems: 'center' }}>
+            <div>
+              <Tag>Neu</Tag>
+              <H2>Maya KI — Dein persönlicher Berater.</H2>
+              <P>
+                Maya KI kennt dein Profil, dein Sonnensiegel, deinen galaktischen Ton und die Energie des heutigen Tages. Du kannst ihr alles fragen — über Beziehungen, Business, Entscheidungen, Blockaden. Sie antwortet nicht generisch. Sie antwortet für dich.
+              </P>
+              <div style={{ marginTop: '32px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {[
+                  'Basiert auf deinem persönlichen Maya-Profil',
+                  'Kennt die Energie des heutigen Tages',
+                  'Antwortet auf Deutsch, direkt und persönlich',
+                  'Unbegrenzt nutzbar als Mitglied',
+                ].map((item, i) => (
+                  <div key={i} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', fontSize: '0.9rem', color: TEXT_MID, fontWeight: 300 }}>
+                    <span style={{ color: COPPER, flexShrink: 0, fontSize: '0.6rem', marginTop: '6px' }}>◆</span>
+                    {item}
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop: '36px' }}>
+                <PillButton to="/registrieren" variant="copper">Jetzt ausprobieren →</PillButton>
+              </div>
+            </div>
+            <div style={{ backgroundColor: DEEP, borderRadius: '4px', padding: m ? '24px' : '40px', fontFamily: 'Inter, sans-serif' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px', borderBottom: '1px solid rgba(244,239,230,0.1)', paddingBottom: '20px' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '50%', border: `1px solid ${COPPER}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: COPPER_LIGHT, fontSize: '1.1rem' }}>☽</div>
+                <div>
+                  <div style={{ color: CREAM, fontWeight: 500, fontSize: '0.9rem' }}>Maya KI</div>
+                  <div style={{ color: 'rgba(244,239,230,0.4)', fontSize: '0.75rem' }}>Persönliche Beraterin</div>
+                </div>
+              </div>
+              <div style={{ fontSize: '0.9rem', color: 'rgba(244,239,230,0.75)', lineHeight: 1.8, fontWeight: 300, fontStyle: 'italic' }}>
+                „Du trägst den Weißen Magier als Siegel — das bedeutet, du wirkst durch Ausrichtung, nicht durch Kraft. Wenn du gerade das Gefühl hast, gegen Widerstände zu arbeiten, frag dich: Bist du wirklich ausgerichtet, oder machst du es aus Pflicht? Heute ist ein guter Tag, um loszulassen, was du nicht wirklich willst."
+              </div>
+              <div style={{ marginTop: '24px', display: 'flex', gap: '8px' }}>
+                {[
+                  'Warum läuft das immer gleich ab?',
+                  'Was trägt dieser Tag energetisch?',
+                  'Was blockiert mich gerade?',
+                ].map((s, i) => (
+                  <div key={i} style={{ backgroundColor: 'rgba(244,239,230,0.06)', border: '1px solid rgba(244,239,230,0.1)', borderRadius: '16px', padding: '6px 12px', fontSize: '0.72rem', color: 'rgba(244,239,230,0.5)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: m ? '120px' : '160px' }}>
+                    {s}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 6. CTA — Preistabelle */}
       <section style={{ backgroundColor: SAND }}>
         <div style={sectionPad}>
@@ -442,6 +496,7 @@ export default function Salespage() {
                   'Monatliche Tiefenanalyse',
                   'Energiekalender (Heute)',
                   '2 Ereignis-Analysen inklusive',
+                  'Maya KI — persönliche Beraterin',
                   'PDF-Download jeder Analyse',
                   'Persönliches Maya-Profil',
                   'Jederzeit kündbar',
