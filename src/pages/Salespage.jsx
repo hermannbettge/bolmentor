@@ -257,11 +257,11 @@ export default function Salespage() {
 
           <div style={{ maxWidth: '600px', margin: '0 auto 40px' }}>
             <P>
-              Es liegt nicht an fehlender Disziplin. Es liegt daran, dass du das Muster noch nicht gelesen hast. Dein Geburtsdatum enthält einen Code — und dieser Code beschreibt, wie du wirklich funktionierst.
+              Es liegt nicht an fehlender Disziplin. Es liegt daran, dass du das Muster noch nicht gelesen hast. Dein Geburtsdatum enthält einen Code, und dieser Code beschreibt, wie du wirklich funktionierst.
             </P>
           </div>
 
-          <PillButton to="/registrieren" variant="copper">Jetzt starten — 17 € im ersten Monat →</PillButton>
+          <PillButton to="/registrieren" variant="copper">Jetzt starten · 17 € im ersten Monat →</PillButton>
           <p style={{ color: TEXT_LIGHT, fontSize: '0.78rem', marginTop: '14px' }}>
             Einführungspreis Oktober 2026 · Danach 27 €/Monat · Jederzeit kündbar
           </p>
@@ -278,7 +278,7 @@ export default function Salespage() {
             </div>
             <div style={{ paddingTop: '8px' }}>
               <FeatureRow num="1" text="Du weißt einiges über dich, du hast gelesen, vielleicht Seminare besucht, und trotzdem gibt es Muster, die immer wieder auftauchen: in Beziehungen, im Business, mit Geld und mit deiner Gesundheit." />
-              <FeatureRow num="2" text="Manche Phasen laufen wie von selbst. Andere fühlen sich zäh an, egal was du tust — und du weißt nicht warum." />
+              <FeatureRow num="2" text="Manche Phasen laufen wie von selbst. Andere fühlen sich zäh an, egal was du tust, und du weißt nicht warum." />
               <FeatureRow num="3" text="Du weißt, was du verändern möchtest. Die Frage ist: Warum passiert es im entscheidenden Moment trotzdem nicht?" />
               <Line />
             </div>
@@ -290,7 +290,7 @@ export default function Salespage() {
       <section style={{ backgroundColor: CREAM }}>
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '80px 40px' }}>
           <BlockQuote>
-            Stell dir vor, du weißt jeden Morgen, welche Energie dieser Tag trägt — bevor er beginnt. Und du kennst die Muster, die dein Leben bisher geprägt haben.
+            Stell dir vor, du weißt jeden Morgen, welche Energie dieser Tag trägt, bevor er beginnt. Und du kennst die Muster, die dein Leben bisher geprägt haben.
           </BlockQuote>
         </div>
       </section>
@@ -301,7 +301,7 @@ export default function Salespage() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'start' }}>
             <div>
               <Tag dark>Die Lösung</Tag>
-              <H2 dark>Das Muster lesen — mit dem ältesten Bewusstseinssystem der Welt.</H2>
+              <H2 dark>Das Muster lesen. Mit dem ältesten Bewusstseinssystem der Welt.</H2>
               <P dark>Die Maya haben vor über 5.000 Jahren kein Zeitsystem entwickelt, sondern ein Bewusstseinssystem. Dein Geburtsdatum ergibt eine einzigartige Kombination aus Sonnensiegel und galaktischem Ton. Diese Kombination beschreibt, was dich antreibt, was dich blockiert und welches Thema sich durch dein ganzes Leben zieht.</P>
               <div style={{ marginTop: '32px' }}>
                 <PillButton to="/registrieren" variant="outline">Jetzt Zugang sichern →</PillButton>
@@ -312,7 +312,7 @@ export default function Salespage() {
               <FeatureRow num="02" title="Dein galaktischer Ton" text="Wie du auf andere wirkst, was dich herausfordert und wo deine besondere Kraft liegt." dark />
               <FeatureRow num="03" title="Dein persönliches Orakel" text="Die vier Energien, die dich begleiten: Stärken, Herausforderungen und verborgene Ressourcen." dark />
               <FeatureRow num="04" title="Tägliche Energie" text="Jeden Tag eine frische Analyse: welche Energie heute aktiv ist und wie du damit arbeitest." dark />
-              <FeatureRow num="05" title="Energiekalender" text="Sehe auf einen Blick, welche Tage besonders kraftvoll für dich sind — und welche zum Rückzug einladen." dark />
+              <FeatureRow num="05" title="Energiekalender" text="Sehe auf einen Blick, welche Tage besonders kraftvoll für dich sind und welche zum Rückzug einladen." dark />
               <Line dark />
             </div>
           </div>
@@ -330,13 +330,13 @@ export default function Salespage() {
               {
                 icon: '◎',
                 title: 'Deine Kernanalyse',
-                desc: 'Sonnensiegel, galaktischer Ton, Orakel und dein Lebensthema — alles in einer tiefen, persönlichen Analyse.',
+                desc: 'Sonnensiegel, galaktischer Ton, Orakel und dein Lebensthema. Alles in einer tiefen, persönlichen Analyse.',
                 detail: 'Basiert auf deinem Geburtsdatum · KI-generiert · PDF-Download',
               },
               {
                 icon: '◈',
                 title: 'Energiekalender',
-                desc: 'Sieh jeden Tag im Monat auf einen Blick. Aktions-, Kreativ-, Balance- und Ruhetage — immer im Überblick.',
+                desc: 'Sieh jeden Tag im Monat auf einen Blick. Aktions-, Kreativ-, Balance- und Ruhetage, immer im Überblick.',
                 detail: 'Täglich aktuell · Klick für Tagesanalyse · Jahresübersicht',
               },
               {
@@ -363,7 +363,7 @@ export default function Salespage() {
                 <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.3rem', color: TEXT, marginBottom: '12px', lineHeight: 1.4 }}>
                   Tiefe Analysen für jeden Lebensbereich.
                 </div>
-                <P small>Wenn du verstehen willst, wie die Maya-Energie sich in einem bestimmten Bereich auswirkt: Business, Gesundheit, Finanzen, Karriere, Beziehungen — buchst du diesen Bereich einmalig und hast lebenslangen Zugang.</P>
+                <P small>Wenn du verstehen willst, wie die Maya-Energie sich in einem bestimmten Bereich auswirkt (Business, Gesundheit, Finanzen, Karriere, Beziehungen), buchst du diesen Bereich einmalig und hast lebenslangen Zugang.</P>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                 {['Business-Analyse','Gesundheitsanalyse','Familienanalyse','Selbstausdruck-Analyse','Finanzanalyse','Karriere-Analyse','Lebensphasen-Analyse','Beziehungsanalyse','Partnerschaftsanalyse','Einzel-Ereignisse'].map((item, i) => (
@@ -430,7 +430,7 @@ export default function Salespage() {
                   'Jederzeit kündbar',
                 ].map((item, i) => (
                   <div key={i} style={{ color: 'rgba(244,239,230,0.7)', fontWeight: 300, fontSize: '0.88rem', marginBottom: '11px', display: 'flex', gap: '12px' }}>
-                    <span style={{ color: COPPER_LIGHT, flexShrink: 0 }}>—</span> {item}
+                    <span style={{ color: COPPER_LIGHT, flexShrink: 0 }}>·</span> {item}
                   </div>
                 ))}
               </div>
@@ -459,7 +459,7 @@ export default function Salespage() {
                   '2 Monate geschenkt',
                 ].map((item, i) => (
                   <div key={i} style={{ color: 'rgba(244,239,230,0.8)', fontWeight: 300, fontSize: '0.88rem', marginBottom: '11px', display: 'flex', gap: '12px' }}>
-                    <span style={{ color: COPPER_LIGHT, flexShrink: 0 }}>—</span> {item}
+                    <span style={{ color: COPPER_LIGHT, flexShrink: 0 }}>·</span> {item}
                   </div>
                 ))}
               </div>
@@ -508,7 +508,7 @@ export default function Salespage() {
             Die spannendere Frage ist, welches Muster heute noch dafür sorgt, dass bestimmte Situationen immer wieder ähnlich verlaufen.<br />Genau dort beginnt der nächste Schritt.
           </P>
           <div style={{ marginTop: '40px', display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <PillButton to="/registrieren" variant="copper">Jetzt starten — 17 € im ersten Monat →</PillButton>
+            <PillButton to="/registrieren" variant="copper">Jetzt starten · 17 € im ersten Monat →</PillButton>
           </div>
           <p style={{ color: TEXT_LIGHT, fontSize: '0.78rem', marginTop: '14px' }}>Einführungspreis Oktober 2026 · Danach 27 €/Monat · Jederzeit kündbar</p>
         </div>
@@ -528,11 +528,11 @@ export default function Salespage() {
           />
           <FaqItem
             question="Was ist der Unterschied zwischen Monatsmitgliedschaft und Jahrestarif?"
-            answer="Im Jahrestarif bekommst du vollen Zugang zum Energiekalender (Tagesanalysen für jedes Datum, nicht nur heute), 12 statt 2 Ereignis-Analysen, Jahresanalysen für alle Lebensbereiche — und 2 Monate geschenkt gegenüber dem monatlichen Preis."
+            answer="Im Jahrestarif bekommst du vollen Zugang zum Energiekalender (Tagesanalysen für jedes Datum, nicht nur heute), 12 statt 2 Ereignis-Analysen, Jahresanalysen für alle Lebensbereiche und 2 Monate geschenkt gegenüber dem monatlichen Preis."
           />
           <FaqItem
             question="Was sind Ereignis-Analysen?"
-            answer="Du kannst jedem Datum, das für dich bedeutsam war oder ist, eine Maya-Analyse zuordnen. Eine Beziehung, ein Unternehmensstart, ein Vertrag, ein Umzug. Die Analyse zeigt, welche Energie damals aktiv war — und was das heute bedeutet."
+            answer="Du kannst jedem Datum, das für dich bedeutsam war oder ist, eine Maya-Analyse zuordnen. Eine Beziehung, ein Unternehmensstart, ein Vertrag, ein Umzug. Die Analyse zeigt, welche Energie damals aktiv war und was das heute bedeutet."
           />
           <FaqItem
             question="Ist das Esoterik?"
