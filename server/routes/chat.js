@@ -69,6 +69,43 @@ function calculateKin(dateStr) {
   }
 }
 
+// Topic labels for display and system prompt
+const TOPIC_META = {
+  base:         { label: 'Persönliches Profil & Tagesenergie',    keywords: ['profil', 'siegel', 'ton', 'kin', 'tagesenergie', 'kalender', 'wellenform', 'lebensthema', 'persönlich'] },
+  business:     { label: 'Business & Beruf',                       keywords: ['business', 'unternehmen', 'beruf', 'arbeit', 'karriere', 'erfolg', 'strategie', 'kunden', 'umsatz', 'chef', 'kollegen', 'führung'] },
+  health:       { label: 'Gesundheit',                             keywords: ['gesundheit', 'körper', 'krankheit', 'energie', 'regeneration', 'schlaf', 'ernährung', 'schmerz', 'wellness', 'heilung'] },
+  family:       { label: 'Familie',                                keywords: ['familie', 'eltern', 'kind', 'kinder', 'geschwister', 'mutter', 'vater', 'herkunft', 'kindheit', 'erziehung'] },
+  selfexpression: { label: 'Selbstausdruck & Kreativität',         keywords: ['ausdruck', 'kreativität', 'kreativ', 'authentisch', 'sichtbarkeit', 'gaben', 'talente', 'stimme', 'kunst'] },
+  finance:      { label: 'Finanzen & Geld',                        keywords: ['finanzen', 'geld', 'einkommen', 'wohlstand', 'reichtum', 'schulden', 'investition', 'vermögen', 'arm', 'reich'] },
+  career:       { label: 'Karriere & Berufung',                    keywords: ['karriere', 'berufung', 'job', 'wechsel', 'beförderung', 'studium', 'ausbildung', 'sinn', 'orientierung'] },
+  lifephases:   { label: 'Lebensphasen',                           keywords: ['lebensphase', 'übergang', 'veränderung', 'abschnitt', 'zukunft', 'vergangenheit', 'transformation', 'neuanfang'] },
+  partnership:  { label: 'Beziehung & Partnerschaft',              keywords: ['beziehung', 'partner', 'partnerschaft', 'liebe', 'ehe', 'trennung', 'romantik', 'intimität', 'bindung'] },
+}
+
+// Daily question limits
+function getDailyLimit(plan, purchasedAnalyses) {
+  if (plan === 'annual') return 10
+  // monthly: 2 base + 2 per purchased analysis
+  const baseLimit = 2
+  const extras = (purchasedAnalyses || []).length * 2
+  return baseLimit + extras
+}
+
+// Which topics the user may ask about
+function getAllowedTopics(plan, purchasedAnalyses) {
+  const topics = ['base']
+  if (plan === 'annual') {
+    // Annual gets all topics
+    topics.push(...Object.keys(TOPIC_META).filter(k => k !== 'base'))
+  } else {
+    // Monthly: only purchased analyses
+    for (const a of (purchasedAnalyses || [])) {
+      if (TOPIC_META[a]) topics.push(a)
+    }
+  }
+  return topics
+}
+
 async function requireAuth(req, res, next) {
   const token = req.headers.authorization?.split(' ')[1]
   if (!token) return res.status(401).json({ error: 'Nicht angemeldet' })
@@ -77,6 +114,30 @@ async function requireAuth(req, res, next) {
   req.user = user
   next()
 }
+
+// GET /api/chat/status — returns limit, used, remaining, allowedTopics
+router.get('/status', requireAuth, async (req, res) => {
+  const { data: profile } = await supabase.from('profiles').select('subscription_plan, purchased_analyses').eq('id', req.user.id).single()
+  if (!profile) return res.status(400).json({ error: 'Profil nicht gefunden' })
+
+  const plan = profile.subscription_plan || 'monthly'
+  const purchased = profile.purchased_analyses || []
+  const limit = getDailyLimit(plan, purchased)
+  const allowedTopics = getAllowedTopics(plan, purchased)
+
+  const todayStr = new Date().toISOString().split('T')[0]
+  const { data: usage } = await supabase.from('maya_chat_usage').select('count').eq('user_id', req.user.id).eq('usage_date', todayStr).single()
+  const used = usage?.count || 0
+
+  res.json({
+    limit,
+    used,
+    remaining: Math.max(0, limit - used),
+    allowedTopics,
+    allowedTopicLabels: allowedTopics.map(t => TOPIC_META[t].label),
+    plan,
+  })
+})
 
 router.post('/', requireAuth, async (req, res) => {
   try {
@@ -88,11 +149,49 @@ router.post('/', requireAuth, async (req, res) => {
     const { data: profile } = await supabase.from('profiles').select('*').eq('id', req.user.id).single()
     if (!profile) return res.status(400).json({ error: 'Profil nicht gefunden' })
 
-    const kinData = profile.birth_date ? calculateKin(profile.birth_date) : null
+    const plan = profile.subscription_plan || 'monthly'
+    const purchased = profile.purchased_analyses || []
+    const limit = getDailyLimit(plan, purchased)
+    const allowedTopics = getAllowedTopics(plan, purchased)
 
+    // Check daily usage
+    const todayStr = new Date().toISOString().split('T')[0]
+    const { data: usage } = await supabase.from('maya_chat_usage').select('count').eq('user_id', req.user.id).eq('usage_date', todayStr).single()
+    const usedToday = usage?.count || 0
+
+    if (usedToday >= limit) {
+      return res.status(429).json({
+        error: 'DAILY_LIMIT_REACHED',
+        limit,
+        used: usedToday,
+        message: plan === 'annual'
+          ? `Du hast heute bereits ${limit} Fragen gestellt. Dein Tageslimit ist erreicht. Morgen stehen dir wieder ${limit} Fragen zur Verfügung.`
+          : `Du hast heute dein Limit von ${limit} Frage${limit === 1 ? '' : 'n'} erreicht. Mit jeder gebuchten Analyse erhältst du 2 zusätzliche Fragen pro Tag. Beim Jahrestarif sind es 10 Fragen täglich.`,
+      })
+    }
+
+    const kinData = profile.birth_date ? calculateKin(profile.birth_date) : null
     const today = new Date()
-    const todayStr = today.toISOString().split('T')[0]
-    const todayKin = calculateKin(todayStr)
+    const todayKin = calculateKin(today.toISOString().split('T')[0])
+
+    // Build topic restriction rules for the system prompt
+    const allowedLabels = allowedTopics.map(t => TOPIC_META[t].label)
+    const blockedTopics = Object.entries(TOPIC_META)
+      .filter(([k]) => !allowedTopics.includes(k))
+      .map(([, v]) => v.label)
+
+    const topicRules = blockedTopics.length > 0
+      ? `\nINHALTLICHE GRENZEN (strikt einzuhalten):
+Du darfst NUR zu diesen Themen antworten: ${allowedLabels.join(', ')}.
+Zu diesen Themen darfst du NICHT antworten: ${blockedTopics.join(', ')}.
+Wenn eine Frage ein gesperrtes Thema berührt, erkläre kurz und freundlich, dass dieses Thema nicht im aktuellen Paket enthalten ist, und nenne das konkrete gebuchte Paket, das es freischalten würde. Mache keine inhaltliche Aussage zu dem Thema.
+
+PROFIL-GRENZEN (strikt einzuhalten):
+Du analysierst AUSSCHLIESSLICH ${profile.name || 'den Nutzer'} und deren/dessen Profil.
+Wenn nach dem Profil, dem Kin oder der Energie einer anderen Person gefragt wird (z.B. "Mein Freund hat Kin 56...", "Was ist mit meiner Mutter..."), antworte: Du bist ausschließlich auf das Profil von ${profile.name || 'dem Nutzer'} ausgerichtet und gibst keine Einschätzungen zu anderen Personen.`
+      : `\nPROFIL-GRENZEN (strikt einzuhalten):
+Du analysierst AUSSCHLIESSLICH ${profile.name || 'den Nutzer'} und deren/dessen Profil.
+Wenn nach dem Profil, dem Kin oder der Energie einer anderen Person gefragt wird, antworte: Du bist ausschließlich auf das Profil von ${profile.name || 'dem Nutzer'} ausgerichtet und gibst keine Einschätzungen zu anderen Personen.`
 
     const systemPrompt = `Du bist MAYA, eine tiefgründige KI-Beraterin, spezialisiert auf den Maya Tzolkin-Kalender (Dreamspell-System). Du kennst das vollständige Profil des Nutzers und gibst persönliche, präzise Antworten auf Deutsch.
 
@@ -109,8 +208,9 @@ Geburtsdatum: ${profile.birth_date}
 ` : 'Kein Geburtsdatum hinterlegt.'}
 
 HEUTIGE ENERGIE:
-Datum: ${todayStr}
+Datum: ${today.toISOString().split('T')[0]}
 Heutiges Kin: Kin ${todayKin.kin} – ${todayKin.tone} ${todayKin.seal}
+${topicRules}
 
 GESPRÄCHSREGELN:
 - Sprich ${profile.name || 'den Nutzer'} immer mit Vornamen an
@@ -130,7 +230,18 @@ GESPRÄCHSREGELN:
       messages: messages.map(m => ({ role: m.role, content: m.content })),
     })
 
-    res.json({ reply: response.content[0].text })
+    // Increment daily usage (upsert)
+    await supabase.from('maya_chat_usage').upsert({
+      user_id: req.user.id,
+      usage_date: todayStr,
+      count: usedToday + 1,
+    }, { onConflict: 'user_id,usage_date' })
+
+    res.json({
+      reply: response.content[0].text,
+      remaining: Math.max(0, limit - usedToday - 1),
+      limit,
+    })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
