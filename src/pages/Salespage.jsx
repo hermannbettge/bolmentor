@@ -361,7 +361,7 @@ export default function Salespage() {
                 <P small>Wenn du verstehen willst, wie die Maya-Energie sich in einem bestimmten Bereich auswirkt: Business, Gesundheit, Finanzen, Karriere, Beziehungen — buchst du diesen Bereich einmalig und hast lebenslangen Zugang.</P>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                {['Business-Analyse','Gesundheitsanalyse','Familienanalyse','Selbstausdruck-Analyse','Finanzanalyse','Karriere-Analyse','Lebensphasen-Analyse','Beziehungsanalyse','Partnerschaftsanalyse'].map((item, i) => (
+                {['Business-Analyse','Gesundheitsanalyse','Familienanalyse','Selbstausdruck-Analyse','Finanzanalyse','Karriere-Analyse','Lebensphasen-Analyse','Beziehungsanalyse','Partnerschaftsanalyse','Einzel-Ereignisse'].map((item, i) => (
                   <div key={i} style={{ backgroundColor: CREAM, padding: '10px 14px', borderRadius: '2px', fontSize: '0.8rem', color: TEXT_MID, fontWeight: 400 }}>
                     <span style={{ color: COPPER, marginRight: '8px', fontSize: '0.6rem' }}>◆</span>{item}
                   </div>
