@@ -1,6 +1,18 @@
 import { Link } from 'react-router-dom'
+import { redirectToCustomerPortal } from '../lib/stripe.js'
+import { useAuth } from '../context/AuthContext.jsx'
 
 export default function Footer() {
+  const { user } = useAuth()
+
+  async function handleCancel() {
+    try {
+      await redirectToCustomerPortal()
+    } catch (e) {
+      alert(e.message)
+    }
+  }
+
   return (
     <footer style={{
       backgroundColor: 'var(--color-bg-deep)',
@@ -29,6 +41,11 @@ export default function Footer() {
           <a href="mailto:hallo@bewusstsein-ohne-limit.de" style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textDecoration: 'none' }}>
             Kontakt
           </a>
+          {user && (
+            <button onClick={handleCancel} style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textDecoration: 'none', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit' }}>
+              Mitgliedschaft kündigen
+            </button>
+          )}
         </div>
 
         <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', margin: 0 }}>
