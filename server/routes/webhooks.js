@@ -44,6 +44,10 @@ router.post('/thrivecart', async (req, res) => {
     const body = JSON.parse(req.body.toString())
     const { customer, product_id, event } = body
 
+    // Support lookup via product tags array or direct product_id string
+    const tags = body.product?.tags || body.tags || []
+    const lookupKey = tags.find(t => PRODUCT_MAP[t]) || product_id
+
     if (event !== 'order.success' && event !== 'subscription.new') {
       return res.json({ received: true })
     }
@@ -65,7 +69,7 @@ router.post('/thrivecart', async (req, res) => {
 
     if (!profile) return res.json({ received: true })
 
-    const mapping = PRODUCT_MAP[product_id]
+    const mapping = PRODUCT_MAP[lookupKey]
     if (!mapping) {
       console.warn('ThriveCart: Unbekanntes Produkt', product_id)
       return res.json({ received: true })
