@@ -509,7 +509,7 @@ export default function Salespage() {
                 ))}
               </div>
               <div style={{ marginTop: 'auto', paddingTop: '32px' }}>
-                <PillButton to="/meine-analysen" variant="outline">Analysen ansehen →</PillButton>
+                <PillButton to="/zusatzanalysen" variant="outline">Analysen ansehen →</PillButton>
               </div>
             </div>
           </div>

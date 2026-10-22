@@ -18,6 +18,7 @@ import PartnerschaftsanalysePage from './pages/PartnerschaftsanalysePage.jsx'
 import Kalender from './pages/Kalender.jsx'
 import MayaInfo from './pages/MayaInfo.jsx'
 import Checkout from './pages/Checkout.jsx'
+import ZusatzanalysenPage from './pages/ZusatzanalysenPage.jsx'
 
 function ProtectedRoute({ children }) {
   const { user, profile, loading } = useAuth()
@@ -47,6 +48,7 @@ function AppRoutes() {
         <Route path="/registrieren" element={<Registrieren />} />
         <Route path="/impressum" element={<Impressum />} />
         <Route path="/datenschutz" element={<Datenschutz />} />
+        <Route path="/zusatzanalysen" element={<ZusatzanalysenPage />} />
 
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/tagesenergie" element={<ProtectedRoute><Tagesenergie /></ProtectedRoute>} />
