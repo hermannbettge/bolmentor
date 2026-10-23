@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { PRICES } from '../lib/stripe.js'
+import { useAuth } from '../hooks/useAuth.jsx'
 
 const isIntro = new Date() < new Date('2027-01-01T00:00:00Z')
 const SINGLE_PRICE = isIntro ? 7 : 9
@@ -22,6 +22,8 @@ const ALL_ANALYSES = [
 
 export default function CheckoutModal({ onClose, preselected = null, mode = 'analysis' }) {
   const navigate = useNavigate()
+  const { profile } = useAuth()
+  const hasMembership = profile?.membership_active || profile?.is_admin
   const [selected, setSelected] = useState(new Set(preselected ? [preselected] : []))
   const [tab, setTab] = useState(mode === 'annual' ? 'annual' : 'monthly')
 
@@ -44,7 +46,10 @@ export default function CheckoutModal({ onClose, preselected = null, mode = 'ana
     }
   }
 
-  const total = selected.size * SINGLE_PRICE
+  const MEMBERSHIP_PRICE = isIntro ? 17 : 27
+  const analysisTotal = selected.size * SINGLE_PRICE
+  const membershipRequired = !hasMembership && selected.size > 0
+  const total = membershipRequired ? analysisTotal + MEMBERSHIP_PRICE : analysisTotal
   const annualSaving = Math.round(total * 12 - ANNUAL_PRICE)
 
   return (
@@ -102,12 +107,30 @@ export default function CheckoutModal({ onClose, preselected = null, mode = 'ana
 
             {/* Total */}
             <div style={{ backgroundColor: 'rgba(42,32,24,0.06)', borderRadius: '8px', padding: '16px', marginBottom: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+              {membershipRequired && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', paddingBottom: '8px', borderBottom: '1px solid rgba(42,32,24,0.1)' }}>
+                  <span style={{ fontSize: '0.82rem', color: '#5A4E42' }}>Monatsmitgliedschaft (erforderlich)</span>
+                  <span style={{ fontSize: '0.82rem', color: '#5A4E42' }}>{MEMBERSHIP_PRICE} € / Mon.</span>
+                </div>
+              )}
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: membershipRequired ? '8px' : '6px' }}>
                 <span style={{ fontSize: '0.85rem', color: '#5A4E42' }}>{selected.size} Analyse{selected.size !== 1 ? 'n' : ''} gewählt</span>
-                <span style={{ fontSize: '0.95rem', fontWeight: 600, color: '#2A2018' }}>{total} € / Monat</span>
+                <span style={{ fontSize: '0.85rem', color: '#5A4E42' }}>{analysisTotal} € / Mon.</span>
               </div>
-              {selected.size >= 3 && (
-                <div style={{ fontSize: '0.75rem', color: '#A0522D', fontWeight: 500 }}>
+              {membershipRequired && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid rgba(42,32,24,0.1)' }}>
+                  <span style={{ fontSize: '0.92rem', fontWeight: 600, color: '#2A2018' }}>Gesamt</span>
+                  <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#2A2018' }}>{total} € / Monat</span>
+                </div>
+              )}
+              {!membershipRequired && selected.size > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '0.92rem', fontWeight: 600, color: '#2A2018' }}>Gesamt</span>
+                  <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#2A2018' }}>{total} € / Monat</span>
+                </div>
+              )}
+              {selected.size >= 2 && (
+                <div style={{ fontSize: '0.75rem', color: '#A0522D', fontWeight: 500, marginTop: '8px' }}>
                   Tipp: Mit dem Jahrespaket sparst du ca. {annualSaving > 0 ? `${annualSaving} €` : 'deutlich'} im Jahr und erhältst alle 10 Analysen.
                 </div>
               )}

@@ -9,33 +9,57 @@ function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY)
 }
 
-// Maps Stripe price IDs to what they unlock (both current and 2027 prices)
-const PRICE_MAP = {
-  [process.env.STRIPE_PRICE_MEMBERSHIP_MONTHLY]:      { type: 'membership', plan: 'monthly' },
-  [process.env.STRIPE_PRICE_MEMBERSHIP_MONTHLY_2027]: { type: 'membership', plan: 'monthly' },
-  [process.env.STRIPE_PRICE_MEMBERSHIP_ANNUAL]:       { type: 'membership', plan: 'annual' },
-  [process.env.STRIPE_PRICE_MEMBERSHIP_ANNUAL_2027]:  { type: 'membership', plan: 'annual' },
-  [process.env.STRIPE_PRICE_BUSINESS]:           { type: 'analysis', key: 'business' },
-  [process.env.STRIPE_PRICE_BUSINESS_2027]:      { type: 'analysis', key: 'business' },
-  [process.env.STRIPE_PRICE_HEALTH]:             { type: 'analysis', key: 'health' },
-  [process.env.STRIPE_PRICE_HEALTH_2027]:        { type: 'analysis', key: 'health' },
-  [process.env.STRIPE_PRICE_FAMILY]:             { type: 'analysis', key: 'family' },
-  [process.env.STRIPE_PRICE_FAMILY_2027]:        { type: 'analysis', key: 'family' },
-  [process.env.STRIPE_PRICE_SELFEXPRESSION]:     { type: 'analysis', key: 'selfexpression' },
-  [process.env.STRIPE_PRICE_SELFEXPRESSION_2027]:{ type: 'analysis', key: 'selfexpression' },
-  [process.env.STRIPE_PRICE_FINANCE]:            { type: 'analysis', key: 'finance' },
-  [process.env.STRIPE_PRICE_FINANCE_2027]:       { type: 'analysis', key: 'finance' },
-  [process.env.STRIPE_PRICE_CAREER]:             { type: 'analysis', key: 'career' },
-  [process.env.STRIPE_PRICE_CAREER_2027]:        { type: 'analysis', key: 'career' },
-  [process.env.STRIPE_PRICE_LIFEPHASES]:         { type: 'analysis', key: 'lifephases' },
-  [process.env.STRIPE_PRICE_LIFEPHASES_2027]:    { type: 'analysis', key: 'lifephases' },
-  [process.env.STRIPE_PRICE_PARTNERSHIP]:        { type: 'analysis', key: 'partnership' },
-  [process.env.STRIPE_PRICE_PARTNERSHIP_2027]:   { type: 'analysis', key: 'partnership' },
-  [process.env.STRIPE_PRICE_EVENTS]:             { type: 'analysis', key: 'events' },
-  [process.env.STRIPE_PRICE_EVENTS_2027]:        { type: 'analysis', key: 'events' },
-  [process.env.STRIPE_PRICE_RELATIONSHIP]:       { type: 'analysis', key: 'relationship' },
-  [process.env.STRIPE_PRICE_RELATIONSHIP_2027]:  { type: 'analysis', key: 'relationship' },
+function isAfter2027() {
+  return new Date() >= new Date('2027-01-01T00:00:00Z')
 }
+
+// Maps product key to Stripe price ID (picks 2027 price if after cutoff)
+const PRODUCT_KEY_MAP = {
+  membershipMonthly: () => isAfter2027()
+    ? process.env.STRIPE_PRICE_MEMBERSHIP_MONTHLY_2027 || process.env.STRIPE_PRICE_MEMBERSHIP_MONTHLY
+    : process.env.STRIPE_PRICE_MEMBERSHIP_MONTHLY,
+  membershipAnnual: () => isAfter2027()
+    ? process.env.STRIPE_PRICE_MEMBERSHIP_ANNUAL_2027 || process.env.STRIPE_PRICE_MEMBERSHIP_ANNUAL
+    : process.env.STRIPE_PRICE_MEMBERSHIP_ANNUAL,
+  business: () => isAfter2027() ? process.env.STRIPE_PRICE_BUSINESS_2027 || process.env.STRIPE_PRICE_BUSINESS : process.env.STRIPE_PRICE_BUSINESS,
+  health: () => isAfter2027() ? process.env.STRIPE_PRICE_HEALTH_2027 || process.env.STRIPE_PRICE_HEALTH : process.env.STRIPE_PRICE_HEALTH,
+  family: () => isAfter2027() ? process.env.STRIPE_PRICE_FAMILY_2027 || process.env.STRIPE_PRICE_FAMILY : process.env.STRIPE_PRICE_FAMILY,
+  selfexpression: () => isAfter2027() ? process.env.STRIPE_PRICE_SELFEXPRESSION_2027 || process.env.STRIPE_PRICE_SELFEXPRESSION : process.env.STRIPE_PRICE_SELFEXPRESSION,
+  finance: () => isAfter2027() ? process.env.STRIPE_PRICE_FINANCE_2027 || process.env.STRIPE_PRICE_FINANCE : process.env.STRIPE_PRICE_FINANCE,
+  career: () => isAfter2027() ? process.env.STRIPE_PRICE_CAREER_2027 || process.env.STRIPE_PRICE_CAREER : process.env.STRIPE_PRICE_CAREER,
+  lifephases: () => isAfter2027() ? process.env.STRIPE_PRICE_LIFEPHASES_2027 || process.env.STRIPE_PRICE_LIFEPHASES : process.env.STRIPE_PRICE_LIFEPHASES,
+  partnership: () => isAfter2027() ? process.env.STRIPE_PRICE_PARTNERSHIP_2027 || process.env.STRIPE_PRICE_PARTNERSHIP : process.env.STRIPE_PRICE_PARTNERSHIP,
+  events: () => isAfter2027() ? process.env.STRIPE_PRICE_EVENTS_2027 || process.env.STRIPE_PRICE_EVENTS : process.env.STRIPE_PRICE_EVENTS,
+  relationship: () => isAfter2027() ? process.env.STRIPE_PRICE_RELATIONSHIP_2027 || process.env.STRIPE_PRICE_RELATIONSHIP : process.env.STRIPE_PRICE_RELATIONSHIP,
+  yearly_select: () => process.env.STRIPE_PRICE_YEARLY_SELECT,
+}
+
+// What a product key unlocks
+const PRODUCT_META = {
+  membershipMonthly: { type: 'membership', plan: 'monthly' },
+  membershipAnnual:  { type: 'membership', plan: 'annual' },
+  business:          { type: 'analysis', key: 'business' },
+  health:            { type: 'analysis', key: 'health' },
+  family:            { type: 'analysis', key: 'family' },
+  selfexpression:    { type: 'analysis', key: 'selfexpression' },
+  finance:           { type: 'analysis', key: 'finance' },
+  career:            { type: 'analysis', key: 'career' },
+  lifephases:        { type: 'analysis', key: 'lifephases' },
+  partnership:       { type: 'analysis', key: 'partnership' },
+  events:            { type: 'analysis', key: 'events' },
+  relationship:      { type: 'analysis', key: 'relationship' },
+  yearly_select:     { type: 'analysis', key: 'yearly_select' },
+}
+
+// Also keep reverse map for webhook/claim-session (price ID → meta)
+const PRICE_MAP = {}
+function buildPriceMap() {
+  for (const [key, priceFn] of Object.entries(PRODUCT_KEY_MAP)) {
+    const priceId = priceFn()
+    if (priceId) PRICE_MAP[priceId] = PRODUCT_META[key]
+  }
+}
+buildPriceMap()
 
 // Middleware: require authenticated user
 async function requireAuth(req, res, next) {
@@ -51,14 +75,17 @@ async function requireAuth(req, res, next) {
 router.post('/create-checkout-session', requireAuth, async (req, res) => {
   try {
     const stripe = getStripe()
-    const { priceId, successUrl, cancelUrl } = req.body
+    const { productKey, successUrl, cancelUrl } = req.body
 
-    if (!priceId) return res.status(400).json({ error: 'priceId fehlt' })
+    if (!productKey) return res.status(400).json({ error: 'productKey fehlt' })
 
-    const mapping = PRICE_MAP[priceId]
-    if (!mapping) return res.status(400).json({ error: 'Unbekanntes Produkt' })
+    const priceFn = PRODUCT_KEY_MAP[productKey]
+    if (!priceFn) return res.status(400).json({ error: 'Unbekanntes Produkt' })
+    const priceId = priceFn()
+    if (!priceId) return res.status(500).json({ error: `Stripe-Preis für "${productKey}" nicht konfiguriert. Bitte wende dich an den Support.` })
 
-    const isSubscription = mapping.plan === 'monthly'
+    const meta = PRODUCT_META[productKey]
+    const isSubscription = meta.type === 'membership'
 
     const session = await stripe.checkout.sessions.create({
       mode: isSubscription ? 'subscription' : 'payment',
@@ -68,7 +95,7 @@ router.post('/create-checkout-session', requireAuth, async (req, res) => {
       customer_email: req.user.email,
       metadata: {
         user_id: req.user.id,
-        price_id: priceId,
+        product_key: productKey,
       },
       allow_promotion_codes: true,
     })
@@ -84,14 +111,17 @@ router.post('/create-checkout-session', requireAuth, async (req, res) => {
 router.post('/guest-checkout', async (req, res) => {
   try {
     const stripe = getStripe()
-    const { priceId } = req.body
-    if (!priceId) return res.status(400).json({ error: 'priceId fehlt' })
+    const { productKey } = req.body
+    if (!productKey) return res.status(400).json({ error: 'productKey fehlt' })
 
-    const mapping = PRICE_MAP[priceId]
-    if (!mapping) return res.status(400).json({ error: 'Unbekanntes Produkt' })
+    const priceFn = PRODUCT_KEY_MAP[productKey]
+    if (!priceFn) return res.status(400).json({ error: 'Unbekanntes Produkt' })
+    const priceId = priceFn()
+    if (!priceId) return res.status(500).json({ error: `Stripe-Preis für "${productKey}" nicht konfiguriert. Bitte wende dich an den Support.` })
 
+    const meta = PRODUCT_META[productKey]
     const appUrl = process.env.APP_URL || 'http://localhost:5173'
-    const isSubscription = mapping.type === 'membership'
+    const isSubscription = meta.type === 'membership'
 
     const session = await stripe.checkout.sessions.create({
       mode: isSubscription ? 'subscription' : 'payment',

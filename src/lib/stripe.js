@@ -1,10 +1,10 @@
 import { supabase } from './supabase.js'
 
-export async function redirectToGuestCheckout(priceId) {
+export async function redirectToGuestCheckout(productKey) {
   const res = await fetch('/api/stripe/guest-checkout', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ priceId }),
+    body: JSON.stringify({ productKey }),
   })
   if (!res.ok) {
     const err = await res.json()
@@ -14,7 +14,7 @@ export async function redirectToGuestCheckout(priceId) {
   window.location.href = url
 }
 
-export async function redirectToCheckout(priceId) {
+export async function redirectToCheckout(productKey) {
   const { data: { session } } = await supabase.auth.getSession()
   const res = await fetch('/api/stripe/create-checkout-session', {
     method: 'POST',
@@ -22,7 +22,7 @@ export async function redirectToCheckout(priceId) {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${session.access_token}`,
     },
-    body: JSON.stringify({ priceId }),
+    body: JSON.stringify({ productKey }),
   })
   if (!res.ok) {
     const err = await res.json()
@@ -49,21 +49,3 @@ export async function redirectToCustomerPortal() {
   window.location.href = url
 }
 
-function pick(current, future) {
-  return new Date() >= new Date('2027-01-01T00:00:00Z') ? (future || current) : current
-}
-
-export const PRICES = {
-  membershipMonthly: pick(import.meta.env.VITE_STRIPE_PRICE_MEMBERSHIP_MONTHLY, import.meta.env.VITE_STRIPE_PRICE_MEMBERSHIP_MONTHLY_2027),
-  membershipAnnual:  pick(import.meta.env.VITE_STRIPE_PRICE_MEMBERSHIP_ANNUAL,  import.meta.env.VITE_STRIPE_PRICE_MEMBERSHIP_ANNUAL_2027),
-  business:          pick(import.meta.env.VITE_STRIPE_PRICE_BUSINESS,        import.meta.env.VITE_STRIPE_PRICE_BUSINESS_2027),
-  health:            pick(import.meta.env.VITE_STRIPE_PRICE_HEALTH,          import.meta.env.VITE_STRIPE_PRICE_HEALTH_2027),
-  family:            pick(import.meta.env.VITE_STRIPE_PRICE_FAMILY,          import.meta.env.VITE_STRIPE_PRICE_FAMILY_2027),
-  selfexpression:    pick(import.meta.env.VITE_STRIPE_PRICE_SELFEXPRESSION,  import.meta.env.VITE_STRIPE_PRICE_SELFEXPRESSION_2027),
-  finance:           pick(import.meta.env.VITE_STRIPE_PRICE_FINANCE,         import.meta.env.VITE_STRIPE_PRICE_FINANCE_2027),
-  career:            pick(import.meta.env.VITE_STRIPE_PRICE_CAREER,          import.meta.env.VITE_STRIPE_PRICE_CAREER_2027),
-  lifephases:        pick(import.meta.env.VITE_STRIPE_PRICE_LIFEPHASES,      import.meta.env.VITE_STRIPE_PRICE_LIFEPHASES_2027),
-  partnership:       pick(import.meta.env.VITE_STRIPE_PRICE_PARTNERSHIP,     import.meta.env.VITE_STRIPE_PRICE_PARTNERSHIP_2027),
-  events:            pick(import.meta.env.VITE_STRIPE_PRICE_EVENTS,          import.meta.env.VITE_STRIPE_PRICE_EVENTS_2027),
-  relationship:      pick(import.meta.env.VITE_STRIPE_PRICE_RELATIONSHIP,    import.meta.env.VITE_STRIPE_PRICE_RELATIONSHIP_2027),
-}

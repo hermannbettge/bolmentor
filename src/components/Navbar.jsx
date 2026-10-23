@@ -53,7 +53,7 @@ export default function Navbar() {
                 <Link to="/login" style={{ color: 'var(--color-text-muted)', fontSize: '0.78rem', textDecoration: 'none' }}>
                   Anmelden
                 </Link>
-                <Link to="/#pricing" style={{
+                <a href="/#pricing" style={{
                   backgroundColor: 'var(--color-gold)',
                   color: '#000',
                   padding: '6px 10px',
@@ -64,7 +64,7 @@ export default function Navbar() {
                   whiteSpace: 'nowrap',
                 }}>
                   Starten
-                </Link>
+                </a>
               </>
             )}
           </div>
@@ -85,7 +85,7 @@ export default function Navbar() {
                 <Link to="/login" style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textDecoration: 'none' }}>
                   Anmelden
                 </Link>
-                <Link to="/#pricing" style={{
+                <a href="/#pricing" style={{
                   backgroundColor: 'var(--color-gold)',
                   color: '#000',
                   padding: '8px 18px',
@@ -95,7 +95,7 @@ export default function Navbar() {
                   textDecoration: 'none',
                 }}>
                   Jetzt starten
-                </Link>
+                </a>
               </>
             )}
           </div>
