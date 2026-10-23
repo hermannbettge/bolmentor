@@ -99,9 +99,20 @@ router.post('/users/:id/reset-password', requireAdmin, async (req, res) => {
 
 // User löschen
 router.delete('/users/:id', requireAdmin, async (req, res) => {
-  const { error } = await supabase.auth.admin.deleteUser(req.params.id)
-  if (error) return res.status(500).json({ error: error.message })
-  res.json({ success: true })
+  const id = req.params.id
+  try {
+    // Delete dependent data first to avoid FK constraint errors
+    await supabase.from('analyses').delete().eq('user_id', id)
+    await supabase.from('maya_chats').delete().eq('user_id', id)
+    await supabase.from('events').delete().eq('user_id', id)
+    await supabase.from('profiles').delete().eq('id', id)
+
+    const { error } = await supabase.auth.admin.deleteUser(id)
+    if (error) return res.status(500).json({ error: error.message || JSON.stringify(error) })
+    res.json({ success: true })
+  } catch (e) {
+    res.status(500).json({ error: e.message || 'Unbekannter Fehler beim Löschen' })
+  }
 })
 
 // Analyses eines Users
