@@ -481,7 +481,7 @@ export default function Salespage() {
             <div style={{ backgroundColor: DEEP, padding: '40px 32px', display: 'flex', flexDirection: 'column' }}>
               <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: COPPER_LIGHT, marginBottom: '20px' }}>Mitgliedschaft</div>
               <div style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontSize: '2.8rem', fontWeight: 400, color: CREAM, lineHeight: 1 }}>17 €</div>
-              <div style={{ color: 'rgba(244,239,230,0.55)', fontSize: '0.78rem', marginBottom: '4px', marginTop: '4px' }}>pro Monat</div>
+              <div style={{ color: 'rgba(244,239,230,0.85)', fontSize: '0.78rem', marginBottom: '4px', marginTop: '4px' }}>pro Monat</div>
               <div style={{ color: COPPER_LIGHT, fontSize: '0.78rem', marginBottom: '32px' }}>danach 27 €/Monat</div>
               <Line dark />
               <div style={{ paddingTop: '24px' }}>
@@ -512,7 +512,7 @@ export default function Salespage() {
               </div>
               <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: COPPER_LIGHT, marginBottom: '20px' }}>Jahrestarif</div>
               <div style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontSize: '2.8rem', fontWeight: 400, color: CREAM, lineHeight: 1 }}>{jahresPreis}</div>
-              <div style={{ color: 'rgba(244,239,230,0.55)', fontSize: '0.78rem', marginBottom: '4px', marginTop: '4px' }}>pro Jahr{isIntroPrice ? ' · Einführungspreis bis 31.12.2026' : ''}</div>
+              <div style={{ color: 'rgba(244,239,230,0.85)', fontSize: '0.78rem', marginBottom: '4px', marginTop: '4px' }}>pro Jahr{isIntroPrice ? ' · Einführungspreis bis 31.12.2026' : ''}</div>
               <div style={{ color: COPPER_LIGHT, fontSize: '0.78rem', marginBottom: '32px' }}>{jahresMonat}</div>
               <Line dark />
               <div style={{ paddingTop: '24px' }}>
