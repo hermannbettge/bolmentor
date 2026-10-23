@@ -280,7 +280,7 @@ export default function Salespage() {
 
           <PillButton to="/registrieren" variant="copper">Jetzt starten · 17 € im ersten Monat →</PillButton>
           <p style={{ color: TEXT_LIGHT, fontSize: '0.78rem', marginTop: '14px' }}>
-            Einführungspreis Oktober 2026 · Danach 27 €/Monat · Jederzeit kündbar
+            Einführungspreis gültig bis 31.12.2026 · Danach 27 €/Monat<br />Jederzeit kündbar
           </p>
         </div>
       </section>
@@ -479,7 +479,7 @@ export default function Salespage() {
           {/* Intro-Preis Banner */}
           <div style={{ backgroundColor: COPPER, borderRadius: '2px', padding: '14px 24px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
             <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#FFF8F2' }}>Einführungspreis</div>
-            <div style={{ color: '#FFF8F2', fontSize: '0.88rem', fontWeight: 300 }}>Im Oktober 2026 startest du für <strong>17 €</strong> statt 27 €. Ab dem 1. November 2026 gilt der reguläre Preis von 27 €/Monat.</div>
+            <div style={{ color: '#FFF8F2', fontSize: '0.88rem', fontWeight: 300 }}>Starte für <strong>17 €</strong> statt 27 €. Der Einführungspreis gilt bis einschließlich 31. Dezember 2026. Ab dem 1. Januar 2027 gilt der reguläre Preis von 27 €/Monat.</div>
           </div>
 
           <div style={{ ...grid3, marginTop: '8px' }}>
@@ -582,7 +582,7 @@ export default function Salespage() {
           <div style={{ marginTop: '40px', display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <PillButton to="/registrieren" variant="copper">Jetzt starten · 17 € im ersten Monat →</PillButton>
           </div>
-          <p style={{ color: TEXT_LIGHT, fontSize: '0.78rem', marginTop: '14px' }}>Einführungspreis Oktober 2026 · Danach 27 €/Monat · Jederzeit kündbar</p>
+          <p style={{ color: TEXT_LIGHT, fontSize: '0.78rem', marginTop: '14px' }}>Einführungspreis gültig bis 31.12.2026 · Danach 27 €/Monat<br />Jederzeit kündbar</p>
         </div>
       </section>
 
