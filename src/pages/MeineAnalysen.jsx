@@ -19,7 +19,6 @@ const ANALYSES = [
   { key: 'finance', icon: '💰', title: 'Finanzanalyse', description: 'Dein Verhältnis zu Geld und Überfluss' },
   { key: 'career', icon: '🎯', title: 'Karriere-Analyse', description: 'Dein beruflicher Weg und deine Berufung' },
   { key: 'lifephases', icon: '📅', title: 'Lebensphasen', description: 'Die wichtigsten Jahre deines Lebens' },
-  { key: 'partnership', icon: '💫', title: 'Partnerschaftsanalyse', description: 'Du und dein Partner · Dynamik & Kompatibilität' },
   { key: 'relationship', icon: '❤️', title: 'Beziehungsmuster', description: 'Deine eigenen Bindungsstile und Beziehungsmuster' },
 ]
 
@@ -129,7 +128,7 @@ export default function MeineAnalysen() {
               Du und {profile.partner_first_name || 'dein Partner'} als Paar
             </p>
             <button
-              onClick={() => navigate('/analyse/partnership')}
+              onClick={() => navigate('/analyse/partnerschaft')}
               style={{ backgroundColor: 'var(--color-gold)', color: '#000', border: 'none', borderRadius: '4px', padding: '8px 16px', fontSize: '0.82rem', fontWeight: 500, cursor: 'pointer' }}
             >
               {!checked ? '…' : existingTypes.has('partnership_compatibility') ? 'Analyse anzeigen' : 'Analyse erstellen'}
