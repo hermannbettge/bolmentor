@@ -103,14 +103,13 @@ export default function Profil() {
   const [eventMsg, setEventMsg] = useState('')
 
   function calcMaxEvents() {
+    if (profile?.is_admin) return 999
     if (profile?.max_events_override != null) return profile.max_events_override
-    if (profile?.is_admin) return 12
     if (profile?.subscription_plan === 'annual') return 12
+    if ((profile?.purchased_analyses || []).includes('events')) return 12
     const start = profile?.membership_start || profile?.created_at
     const months = start ? Math.floor((Date.now() - new Date(start).getTime()) / (1000 * 60 * 60 * 24 * 30.44)) : 0
-    const base = Math.min(2, months + 1)
-    const extraModules = (profile?.purchased_analyses || []).filter(k => k !== 'compatibility').length
-    return Math.min(12, base + extraModules)
+    return Math.min(2, months + 1)
   }
   const maxEvents = calcMaxEvents()
 
@@ -318,8 +317,12 @@ export default function Profil() {
         <Section title="Meine Ereignisse (für Ereignis-Analysen)">
           <p style={{ color: 'var(--text-2)', fontSize: '0.83rem', lineHeight: 1.7, marginBottom: '20px' }}>
             Analysiere alles, dem du ein Datum zuordnen kannst: ein Land, ein Job-Start, eine Beziehung, ein Kauf, ein Unternehmen.
-            {' '}Aktuell <strong>{maxEvents}</strong> Slot{maxEvents !== 1 ? 's' : ''} freigeschaltet
-            {profile?.subscription_plan === 'annual' || profile?.is_admin ? ' (alle 12 freigeschaltet)' : ` — Grundmodul: 2, +1 pro gebuchtem Zusatzmodul, oder Jahrestarif für sofort 12.`}
+            {profile?.is_admin
+              ? ' Unbegrenzter Zugriff (Admin).'
+              : maxEvents === 12
+                ? <> Aktuell <strong>12 Slots</strong> freigeschaltet.</>
+                : <> Aktuell <strong>{maxEvents}</strong> Slot{maxEvents !== 1 ? 's' : ''} freigeschaltet — im 2. Monat wird Slot 2 freigeschaltet. Ereignis-Erweiterung oder Jahrestarif für sofort 12.</>
+            }
           </p>
 
           {events.map(ev => (
@@ -338,12 +341,14 @@ export default function Profil() {
 
           {events.length < maxEvents && !showEventForm && (
             <button onClick={() => setShowEventForm(true)} style={{ border: '1px dashed var(--accent)', color: 'var(--accent)', background: 'transparent', borderRadius: '3px', padding: '10px 20px', fontSize: '0.82rem', cursor: 'pointer', width: '100%', marginTop: '8px', fontFamily: 'Inter, sans-serif' }}>
-              + Ereignis hinzufügen ({events.length}/{maxEvents})
+              + Ereignis hinzufügen ({events.length}/{profile?.is_admin ? '∞' : maxEvents})
             </button>
           )}
           {events.length >= maxEvents && !showEventForm && (
             <div style={{ fontSize: '0.8rem', color: 'var(--text-2)', marginTop: '8px', textAlign: 'center', padding: '10px' }}>
-              Alle {maxEvents} Slots belegt — nächster Slot nächsten Monat.
+              {maxEvents <= 2
+                ? `Slot ${maxEvents} belegt — Ereignis-Erweiterung buchen oder auf Jahrestarif wechseln für 12 Slots.`
+                : `Alle ${maxEvents} Slots belegt.`}
             </div>
           )}
 

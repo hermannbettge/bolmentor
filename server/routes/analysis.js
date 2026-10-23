@@ -832,11 +832,30 @@ Mindestens 3500 Wörter. Sei außergewöhnlich konkret und nenne beide Partner b
   }
 })
 
+function getEventLimit(profile) {
+  if (profile.is_admin) return Infinity
+  if (profile.subscription_plan === 'annual') return 12
+  if ((profile.purchased_analyses || []).includes('events')) return 12
+  const start = profile.membership_start || profile.created_at
+  const months = start ? Math.floor((Date.now() - new Date(start).getTime()) / (1000 * 60 * 60 * 24 * 30.44)) : 0
+  return Math.min(2, months + 1)
+}
+
 // Event analysis — analyse any entity by its "birth date" (country, job, relationship, etc.)
 router.post('/event/:eventId', requireAuth, async (req, res) => {
   try {
     const profile = await getProfile(req.user.id)
     checkMembership(profile)
+
+    // Check event slot limit
+    const limit = getEventLimit(profile)
+    const { count } = await supabase
+      .from('user_events')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', req.user.id)
+    if (count >= limit) {
+      return res.status(403).json({ error: `Du hast dein Limit von ${limit} Ereignis${limit === 1 ? '' : 'sen'} erreicht.` })
+    }
 
     const { eventId } = req.params
     const { data: event, error: evErr } = await supabase
