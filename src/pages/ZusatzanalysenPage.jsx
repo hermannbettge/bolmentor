@@ -128,7 +128,7 @@ export default function ZusatzanalysenPage() {
             Tauche tiefer ein.
           </h1>
           <p style={{ fontSize: '1rem', fontWeight: 300, lineHeight: 1.85, color: TEXT_MID, maxWidth: '560px', marginBottom: '0' }}>
-            Jede Analyse beleuchtet einen spezifischen Lebensbereich. Einmalig buchbar, lebenslanger Zugang. Du kannst einzelne Bereiche wählen oder alles auf einmal buchen.
+            Jede Analyse beleuchtet einen spezifischen Lebensbereich. Als monatliches Abo buchbar, jederzeit kündbar. Du kannst einzelne Bereiche wählen oder alles auf einmal buchen.
           </p>
         </div>
       </section>
@@ -145,14 +145,14 @@ export default function ZusatzanalysenPage() {
                 Das Komplettpaket.
               </h2>
               <p style={{ fontSize: '0.95rem', fontWeight: 300, lineHeight: 1.85, color: 'rgba(244,239,230,0.7)', marginBottom: '0' }}>
-                Alle 8 Analysen auf einen Schlag. Business, Gesundheit, Familie, Selbstausdruck, Finanzen, Karriere, Lebensphasen und Beziehungen. Du sparst gegenüber der Einzelbuchung und hast lebenslangen Zugang zu allen Bereichen.
+                Alle 9 Analysen auf einen Schlag. Business, Gesundheit, Familie, Selbstausdruck, Finanzen, Karriere, Lebensphasen, Beziehungsmuster und Partnerschaft. Im Jahrestarif inklusive — jederzeit kündbar.
               </p>
             </div>
             <div style={{ backgroundColor: 'rgba(244,239,230,0.05)', border: `1px solid ${GOLD_LIGHT}`, borderRadius: '4px', padding: '32px 28px' }}>
               <div style={{ fontSize: '0.72rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.14em', color: GOLD_LIGHT, marginBottom: '12px' }}>Komplettpaket</div>
-              <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.5rem', color: CREAM, marginBottom: '8px' }}>Alle 8 Analysen</div>
+              <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.5rem', color: CREAM, marginBottom: '8px' }}>Alle 9 Analysen</div>
               <div style={{ fontSize: '0.82rem', color: 'rgba(244,239,230,0.5)', marginBottom: '24px', lineHeight: 1.6 }}>
-                Einmalig · Lebenslanger Zugang
+                Im Jahrestarif inklusive · Jederzeit kündbar
               </div>
               <button
                 onClick={goToAll}
@@ -216,7 +216,7 @@ export default function ZusatzanalysenPage() {
                   ))}
                 </div>
                 <div style={{ borderTop: `1px solid rgba(42,32,24,0.08)`, paddingTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ fontSize: '0.78rem', color: TEXT_LIGHT }}>Einmalig · Lebenslanger Zugang</div>
+                  <div style={{ fontSize: '0.78rem', color: TEXT_LIGHT }}>Monatlich · Jederzeit kündbar</div>
                   <button
                     onClick={() => goToCheckout(a.key)}
                     style={{
