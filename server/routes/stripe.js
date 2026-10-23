@@ -23,6 +23,7 @@ const PRICE_MAP = {
   [process.env.STRIPE_PRICE_LIFEPHASES]:         { type: 'analysis', key: 'lifephases' },
   [process.env.STRIPE_PRICE_PARTNERSHIP]:        { type: 'analysis', key: 'partnership' },
   [process.env.STRIPE_PRICE_EVENTS]:             { type: 'analysis', key: 'events' },
+  [process.env.STRIPE_PRICE_RELATIONSHIP]:       { type: 'analysis', key: 'relationship' },
 }
 
 // Middleware: require authenticated user

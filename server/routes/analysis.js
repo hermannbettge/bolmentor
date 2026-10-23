@@ -444,6 +444,29 @@ Tiefe Partnerschaftsanalyse, jeder Abschnitt 4–6 Absätze:
 
 Mindestens 3000 Wörter.`,
 
+    relationship: `Du bist ein weltklasse Maya-Kalender-Experte und Beziehungscoach. Erstelle eine vollständige Beziehungsanalyse auf Deutsch für ${name} — fokussiert auf ihre/seine eigenen Beziehungsmuster, Bindungsstile und wie sie/er in Beziehungen agiert.
+${base}
+${SYSTEM_RULES}
+
+Tiefe Beziehungsanalyse der eigenen Muster, jeder Abschnitt 4–6 Absätze:
+
+## DEINE BEZIEHUNGSENERGIE-SIGNATUR
+## DEIN BINDUNGSSTIL & ATTACHMENT-MUSTER
+## DEINE TIEFSTEN BEZIEHUNGSBEDÜRFNISSE
+## WIE DU LIEBE GIBST UND EMPFÄNGST
+## DEINE KOMMUNIKATION IN BEZIEHUNGEN
+## DEINE TYPISCHEN BEZIEHUNGSMUSTER & ZYKLEN
+## DEINE BEZIEHUNGSSABOTAGE — UNBEWUSSTE MUSTER
+## VERTRAUEN, NÄHE & VERLETZLICHKEIT
+## KONFLIKTE & WIE DU SIE ERLEBST
+## DEINE GRENZEN IN BEZIEHUNGEN
+## WAS DICH IN BEZIEHUNGEN WACHSEN LÄSST
+## DEINE IDEALE BEZIEHUNGSDYNAMIK
+## HEILUNG ALTER BEZIEHUNGSWUNDEN
+## DEINE BEZIEHUNGS-AFFIRMATION
+
+Mindestens 3000 Wörter.`,
+
   }
 
   return prompts[type]
@@ -619,7 +642,7 @@ router.post('/monthly', requireAuth, async (req, res) => {
 })
 
 // Special analyses
-const SPECIAL_TYPES = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership']
+const SPECIAL_TYPES = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership', 'relationship']
 
 SPECIAL_TYPES.forEach(type => {
   router.post(`/${type}`, requireAuth, async (req, res) => {
@@ -694,7 +717,7 @@ Ton: Direkt, konkret, praxisnah. Kein Allgemeinplatz. Sprich ${profile.name} dir
 Länge: 300–380 Wörter gesamt.`
 }
 
-const DAILY_DOMAIN_TYPES = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership']
+const DAILY_DOMAIN_TYPES = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership', 'relationship']
 
 DAILY_DOMAIN_TYPES.forEach(type => {
   // GET: check if a domain daily exists for a given date (default: today)
@@ -742,7 +765,7 @@ DAILY_DOMAIN_TYPES.forEach(type => {
 })
 
 // Yearly analyses
-const YEARLY_TYPES = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership']
+const YEARLY_TYPES = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership', 'relationship']
 
 YEARLY_TYPES.forEach(type => {
   router.post(`/${type}/yearly`, requireAuth, async (req, res) => {

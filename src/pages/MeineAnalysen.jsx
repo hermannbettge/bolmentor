@@ -19,7 +19,8 @@ const ANALYSES = [
   { key: 'finance', icon: '💰', title: 'Finanzanalyse', description: 'Dein Verhältnis zu Geld und Überfluss' },
   { key: 'career', icon: '🎯', title: 'Karriere-Analyse', description: 'Dein beruflicher Weg und deine Berufung' },
   { key: 'lifephases', icon: '📅', title: 'Lebensphasen', description: 'Die wichtigsten Jahre deines Lebens' },
-  { key: 'partnership', icon: '💫', title: 'Beziehungsanalyse', description: 'Du in Beziehungen' },
+  { key: 'partnership', icon: '💫', title: 'Partnerschaftsanalyse', description: 'Du und dein Partner — Dynamik & Kompatibilität' },
+  { key: 'relationship', icon: '❤️', title: 'Beziehungsmuster', description: 'Deine eigenen Bindungsstile und Beziehungsmuster' },
 ]
 
 

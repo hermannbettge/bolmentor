@@ -5,7 +5,8 @@ import { useTheme } from '../hooks/useTheme.jsx'
 const ANALYSE_LABELS = {
   business: 'Business', health: 'Gesundheit', family: 'Familie',
   selfexpression: 'Selbstausdruck', finance: 'Finanzen', career: 'Karriere',
-  lifephases: 'Lebensphasen', partnership: 'Beziehungsanalyse',
+  lifephases: 'Lebensphasen', partnership: 'Partnerschaftsanalyse',
+  relationship: 'Beziehungsmuster',
 }
 
 function NavItem({ to, label, indent = false }) {
