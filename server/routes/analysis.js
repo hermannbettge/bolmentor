@@ -108,9 +108,12 @@ function checkMembership(profile) {
 }
 
 function checkAnnualPlan(profile) {
-  if (profile.subscription_plan !== 'annual') {
-    throw new Error('Die Jahresanalyse ist nur im Jahrestarif verfügbar')
-  }
+  if (
+    profile.is_admin ||
+    profile.subscription_plan === 'annual' ||
+    (profile.purchased_analyses || []).includes('yearly_select')
+  ) return
+  throw new Error('Die Jahresanalyse ist nur im Jahrestarif verfügbar')
 }
 
 // Check purchased analysis
