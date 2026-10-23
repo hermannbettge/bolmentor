@@ -21,7 +21,7 @@ import Checkout from './pages/Checkout.jsx'
 import ZusatzanalysenPage from './pages/ZusatzanalysenPage.jsx'
 import MayaKI from './pages/MayaKI.jsx'
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute({ children, requireMembership = false }) {
   const { user, profile, loading } = useAuth()
 
   if (loading) {
@@ -36,7 +36,10 @@ function ProtectedRoute({ children }) {
 
   if (!user) return <Navigate to="/login" replace />
 
-  // Allow access even without active membership (for profile management)
+  if (requireMembership && profile && !profile.membership_active && !profile.is_admin) {
+    return <Navigate to={`/checkout?product=membershipMonthly`} replace />
+  }
+
   return children
 }
 
@@ -51,19 +54,19 @@ function AppRoutes() {
         <Route path="/datenschutz" element={<Datenschutz />} />
         <Route path="/zusatzanalysen" element={<ZusatzanalysenPage />} />
 
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/tagesenergie" element={<ProtectedRoute><Tagesenergie /></ProtectedRoute>} />
-        <Route path="/kalender" element={<ProtectedRoute><Kalender /></ProtectedRoute>} />
-        <Route path="/monatsanalyse" element={<ProtectedRoute><Monatsanalyse /></ProtectedRoute>} />
-        <Route path="/analysen" element={<ProtectedRoute><MeineAnalysen /></ProtectedRoute>} />
+        <Route path="/dashboard" element={<ProtectedRoute requireMembership><Dashboard /></ProtectedRoute>} />
+        <Route path="/tagesenergie" element={<ProtectedRoute requireMembership><Tagesenergie /></ProtectedRoute>} />
+        <Route path="/kalender" element={<ProtectedRoute requireMembership><Kalender /></ProtectedRoute>} />
+        <Route path="/monatsanalyse" element={<ProtectedRoute requireMembership><Monatsanalyse /></ProtectedRoute>} />
+        <Route path="/analysen" element={<ProtectedRoute requireMembership><MeineAnalysen /></ProtectedRoute>} />
         <Route path="/profil" element={<ProtectedRoute><Profil /></ProtectedRoute>} />
-        <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
-        <Route path="/analyse/event/:eventId" element={<ProtectedRoute><AnalyseEvent /></ProtectedRoute>} />
-        <Route path="/analyse/partnerschaft" element={<ProtectedRoute><PartnerschaftsanalysePage /></ProtectedRoute>} />
-        <Route path="/analyse/:type" element={<ProtectedRoute><AnalysePage /></ProtectedRoute>} />
-        <Route path="/maya-kalender" element={<ProtectedRoute><MayaInfo /></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute requireMembership><Admin /></ProtectedRoute>} />
+        <Route path="/analyse/event/:eventId" element={<ProtectedRoute requireMembership><AnalyseEvent /></ProtectedRoute>} />
+        <Route path="/analyse/partnerschaft" element={<ProtectedRoute requireMembership><PartnerschaftsanalysePage /></ProtectedRoute>} />
+        <Route path="/analyse/:type" element={<ProtectedRoute requireMembership><AnalysePage /></ProtectedRoute>} />
+        <Route path="/maya-kalender" element={<ProtectedRoute requireMembership><MayaInfo /></ProtectedRoute>} />
         <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-        <Route path="/maya-ki" element={<ProtectedRoute><MayaKI /></ProtectedRoute>} />
+        <Route path="/maya-ki" element={<ProtectedRoute requireMembership><MayaKI /></ProtectedRoute>} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
