@@ -360,14 +360,14 @@ export default function Salespage() {
                 icon: '◇',
                 title: 'Ereignis-Analysen',
                 desc: 'Analysiere alles mit einem Datum: Beziehungen, Unternehmensstart, Verträge, wichtige Entscheidungen.',
-                detail: 'Bis zu 2 Ereignisse inklusive · Erweiterbar',
+                detail: '1 Ereignis im 1. Monat, +1 pro Monat · Im Jahrestarif sofort 12 · Erweiterbar',
               },
             ].map((card, i) => (
               <div key={i} style={{ backgroundColor: DEEP, padding: '32px 28px', borderRadius: '2px' }}>
                 <div style={{ fontSize: '1.6rem', color: COPPER_LIGHT, marginBottom: '16px' }}>{card.icon}</div>
                 <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: CREAM, marginBottom: '12px', lineHeight: 1.4 }}>{card.title}</div>
                 <p style={{ color: 'rgba(244,239,230,0.65)', fontSize: '0.88rem', lineHeight: 1.75, margin: '0 0 16px', fontWeight: 300 }}>{card.desc}</p>
-                <div style={{ fontSize: '0.72rem', color: 'rgba(196,120,74,0.7)', borderTop: '1px solid rgba(244,239,230,0.08)', paddingTop: '14px', lineHeight: 1.6 }}>{card.detail}</div>
+                <div style={{ fontSize: '0.72rem', color: COPPER_LIGHT, borderTop: '1px solid rgba(244,239,230,0.08)', paddingTop: '14px', lineHeight: 1.6 }}>{card.detail}</div>
               </div>
             ))}
           </div>
