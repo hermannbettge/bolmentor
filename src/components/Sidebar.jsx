@@ -5,8 +5,8 @@ import { useTheme } from '../hooks/useTheme.jsx'
 const ANALYSE_LABELS = {
   business: 'Business', health: 'Gesundheit', family: 'Familie',
   selfexpression: 'Selbstausdruck', finance: 'Finanzen', career: 'Karriere',
-  lifephases: 'Lebensphasen', partnership: 'Partnerschaftsanalyse',
-  relationship: 'Beziehungsmuster',
+  lifephases: 'Lebensphasen', partnership: 'Partnerschaftsmuster',
+  relationship: 'Beziehungsmuster', events: 'Ereignis-Analysen',
 }
 
 function NavItem({ to, label, indent = false }) {
@@ -104,7 +104,7 @@ export default function Sidebar() {
               <NavItem key={key} to={`/analyse/${key}`} label={ANALYSE_LABELS[key]} indent />
             ))}
             {purchased.includes('partnership') && profile?.partner_birth_date && (
-              <NavItem to="/analyse/partnerschaft" label="Partnerschaftsanalyse" indent />
+              <NavItem to="/analyse/partnerschaft" label="Partner-Kompatibilität" indent />
             )}
           </>
         )}
