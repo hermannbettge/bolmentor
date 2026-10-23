@@ -154,6 +154,17 @@ export default function Admin() {
 
   function closeModal() { setModal(null) }
 
+  async function setPlan(userId, plan) {
+    try {
+      const updated = await apiCall(`/users/${userId}/plan`, 'PATCH', { plan })
+      setMsg(`Tarif auf ${plan === 'annual' ? 'Jahrestarif' : 'Monatstarif'} gesetzt.`)
+      await loadAll()
+      if (selectedUser?.id === userId) setSelectedUser(u => ({ ...u, subscription_plan: plan }))
+    } catch (e) {
+      setError(e.message)
+    }
+  }
+
   async function toggleMembership(userId, active) {
     try {
       await apiCall(`/users/${userId}/membership`, 'PATCH', { active, months: active ? 1 : null })
@@ -407,7 +418,7 @@ export default function Admin() {
                   <div style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-2)', marginBottom: '12px' }}>
                     Mitgliedschaft
                   </div>
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
                     <button
                       onClick={() => toggleMembership(selectedUser.id, true)}
                       style={{ flex: 1, padding: '10px', backgroundColor: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', color: '#22c55e', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem', fontWeight: selectedUser.membership_active ? 600 : 400 }}
@@ -419,6 +430,21 @@ export default function Admin() {
                       style={{ flex: 1, padding: '10px', backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem', fontWeight: !selectedUser.membership_active ? 600 : 400 }}
                     >
                       Deaktivieren
+                    </button>
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-2)', marginBottom: '6px' }}>Tarif</div>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      onClick={() => setPlan(selectedUser.id, 'monthly')}
+                      style={{ flex: 1, padding: '9px', backgroundColor: selectedUser.subscription_plan === 'monthly' ? 'rgba(var(--accent-rgb,184,151,90),0.2)' : 'var(--bg-deep)', border: selectedUser.subscription_plan === 'monthly' ? '1px solid rgba(var(--accent-rgb,184,151,90),0.6)' : '1px solid var(--border)', color: selectedUser.subscription_plan === 'monthly' ? 'var(--accent)' : 'var(--text-2)', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem', fontWeight: selectedUser.subscription_plan === 'monthly' ? 600 : 400 }}
+                    >
+                      Monatstarif
+                    </button>
+                    <button
+                      onClick={() => setPlan(selectedUser.id, 'annual')}
+                      style={{ flex: 1, padding: '9px', backgroundColor: selectedUser.subscription_plan === 'annual' ? 'rgba(var(--accent-rgb,184,151,90),0.2)' : 'var(--bg-deep)', border: selectedUser.subscription_plan === 'annual' ? '1px solid rgba(var(--accent-rgb,184,151,90),0.6)' : '1px solid var(--border)', color: selectedUser.subscription_plan === 'annual' ? 'var(--accent)' : 'var(--text-2)', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem', fontWeight: selectedUser.subscription_plan === 'annual' ? 600 : 400 }}
+                    >
+                      Jahrestarif
                     </button>
                   </div>
                 </div>

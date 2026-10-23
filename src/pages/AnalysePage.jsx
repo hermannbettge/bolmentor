@@ -280,7 +280,7 @@ export default function AnalysePage() {
         )}
 
         {/* Yearly Analysis Section */}
-        {hasYearly && !checking && profile?.subscription_plan !== 'annual' && (
+        {hasYearly && !checking && profile?.subscription_plan !== 'annual' && !profile?.is_admin && (
           <div style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid var(--border)' }}>
             <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '8px' }}>Jahresanalyse</div>
             <p style={{ color: TEXT_LIGHT, fontSize: '0.9rem', lineHeight: 1.7, marginBottom: '16px' }}>

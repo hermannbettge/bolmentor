@@ -22,7 +22,7 @@ async function requireAdmin(req, res, next) {
 router.get('/users', requireAdmin, async (req, res) => {
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, name, birth_date, membership_active, membership_start, membership_end, purchased_analyses, is_admin, created_at, max_events_override')
+    .select('id, name, birth_date, membership_active, membership_start, membership_end, purchased_analyses, is_admin, created_at, max_events_override, subscription_plan')
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
   if (error) return res.status(500).json({ error: error.message })
@@ -36,6 +36,18 @@ router.get('/users/trash', requireAdmin, async (req, res) => {
     .select('id, name, birth_date, membership_active, membership_start, created_at, deleted_at, deleted_snapshot')
     .not('deleted_at', 'is', null)
     .order('deleted_at', { ascending: false })
+  if (error) return res.status(500).json({ error: error.message })
+  res.json(data)
+})
+
+// Tarif eines Users setzen (monthly / annual)
+router.patch('/users/:id/plan', requireAdmin, async (req, res) => {
+  const { plan } = req.body // 'monthly' | 'annual'
+  if (!['monthly', 'annual'].includes(plan)) return res.status(400).json({ error: 'Ungültiger Tarif' })
+  const { data, error } = await supabase.from('profiles').update({
+    subscription_plan: plan,
+    updated_at: new Date().toISOString(),
+  }).eq('id', req.params.id).select().single()
   if (error) return res.status(500).json({ error: error.message })
   res.json(data)
 })
