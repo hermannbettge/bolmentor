@@ -473,7 +473,7 @@ export default function Salespage() {
           {/* Intro-Preis Banner */}
           <div style={{ backgroundColor: COPPER, borderRadius: '2px', padding: '14px 24px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
             <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#FFF8F2' }}>Einführungspreis</div>
-            <div style={{ color: '#FFF8F2', fontSize: '0.88rem', fontWeight: 300 }}>Starte für <strong>17 €</strong> statt 27 €. Der Einführungspreis gilt bis einschließlich 31. Dezember 2026. Ab dem 1. Januar 2027 gilt der reguläre Preis von 27 €/Monat.</div>
+            <div style={{ color: '#FFF8F2', fontSize: '0.88rem', fontWeight: 300 }}>Starte für <strong>17 €</strong> statt 27 €. Der Einführungspreis gilt bis einschließlich 31. Dezember 2026.<br />Ab dem 1. Januar 2027 gilt der reguläre Preis von 27 €/Monat.</div>
           </div>
 
           <div style={{ ...grid3, marginTop: '8px' }}>
