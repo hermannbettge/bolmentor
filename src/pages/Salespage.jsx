@@ -481,7 +481,7 @@ export default function Salespage() {
             <div style={{ backgroundColor: DEEP, padding: '40px 32px', display: 'flex', flexDirection: 'column' }}>
               <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: COPPER_LIGHT, marginBottom: '20px' }}>Mitgliedschaft</div>
               <div style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontSize: '2.8rem', fontWeight: 400, color: CREAM, lineHeight: 1 }}>17 €</div>
-              <div style={{ color: 'rgba(244,239,230,0.35)', fontSize: '0.78rem', marginBottom: '4px', marginTop: '4px' }}>pro Monat</div>
+              <div style={{ color: 'rgba(244,239,230,0.55)', fontSize: '0.78rem', marginBottom: '4px', marginTop: '4px' }}>pro Monat</div>
               <div style={{ color: COPPER_LIGHT, fontSize: '0.78rem', marginBottom: '32px' }}>danach 27 €/Monat</div>
               <Line dark />
               <div style={{ paddingTop: '24px' }}>
@@ -489,13 +489,13 @@ export default function Salespage() {
                   'Tägliche Energieanalyse',
                   'Monatliche Tiefenanalyse',
                   'Energiekalender (Heute)',
-                  '2 Ereignis-Analysen inklusive',
-                  'Maya KI — persönliche Beraterin',
+                  '1 Ereignis im 1. Monat, +1 pro Monat',
+                  'Maya KI, persönliche Beraterin',
                   'PDF-Download jeder Analyse',
                   'Persönliches Maya-Profil',
                   'Jederzeit kündbar',
                 ].map((item, i) => (
-                  <div key={i} style={{ color: 'rgba(244,239,230,0.7)', fontWeight: 300, fontSize: '0.88rem', marginBottom: '11px', display: 'flex', gap: '12px' }}>
+                  <div key={i} style={{ color: 'rgba(244,239,230,0.9)', fontWeight: 300, fontSize: '0.88rem', marginBottom: '11px', display: 'flex', gap: '12px' }}>
                     <span style={{ color: COPPER_LIGHT, flexShrink: 0 }}>·</span> {item}
                   </div>
                 ))}
@@ -512,7 +512,7 @@ export default function Salespage() {
               </div>
               <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: COPPER_LIGHT, marginBottom: '20px' }}>Jahrestarif</div>
               <div style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontSize: '2.8rem', fontWeight: 400, color: CREAM, lineHeight: 1 }}>{jahresPreis}</div>
-              <div style={{ color: 'rgba(244,239,230,0.35)', fontSize: '0.78rem', marginBottom: '4px', marginTop: '4px' }}>pro Jahr{isIntroPrice ? ' · Einführungspreis bis 31.10.' : ''}</div>
+              <div style={{ color: 'rgba(244,239,230,0.55)', fontSize: '0.78rem', marginBottom: '4px', marginTop: '4px' }}>pro Jahr{isIntroPrice ? ' · Einführungspreis bis 31.12.2026' : ''}</div>
               <div style={{ color: COPPER_LIGHT, fontSize: '0.78rem', marginBottom: '32px' }}>{jahresMonat}</div>
               <Line dark />
               <div style={{ paddingTop: '24px' }}>
