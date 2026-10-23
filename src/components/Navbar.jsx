@@ -53,7 +53,7 @@ export default function Navbar() {
                 <Link to="/login" style={{ color: 'var(--color-text-muted)', fontSize: '0.78rem', textDecoration: 'none' }}>
                   Anmelden
                 </Link>
-                <Link to="/registrieren" style={{
+                <Link to={`/registrieren?redirect=${encodeURIComponent('/checkout?product=membershipMonthly')}`} style={{
                   backgroundColor: 'var(--color-gold)',
                   color: '#000',
                   padding: '6px 10px',
@@ -85,7 +85,7 @@ export default function Navbar() {
                 <Link to="/login" style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textDecoration: 'none' }}>
                   Anmelden
                 </Link>
-                <Link to="/registrieren" style={{
+                <Link to={`/registrieren?redirect=${encodeURIComponent('/checkout?product=membershipMonthly')}`} style={{
                   backgroundColor: 'var(--color-gold)',
                   color: '#000',
                   padding: '8px 18px',
