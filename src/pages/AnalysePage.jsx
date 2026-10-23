@@ -37,6 +37,9 @@ export default function AnalysePage() {
   const now = new Date()
   const currentYear = now.getMonth() >= 9 ? now.getFullYear() + 1 : now.getFullYear()
   const hasYearly = true
+  const canSelectYear = profile?.is_admin || profile?.subscription_plan === 'annual' || (profile?.purchased_analyses || []).includes('yearly_select')
+  const yearOptions = [currentYear - 1, currentYear, currentYear + 1]
+  const [selectedYear, setSelectedYear] = useState(currentYear)
 
   const label = LABELS[type] || type
   const hasPurchased = profile?.is_admin || profile?.purchased_analyses?.includes(type)
@@ -56,7 +59,14 @@ export default function AnalysePage() {
     setChecking(true)
     setYearlyChecking(true)
     setDailyChecking(true)
+    setSelectedYear(currentYear)
   }, [type])
+
+  // Reset yearly analysis when year changes
+  useEffect(() => {
+    setYearlyAnalysis(null)
+    setYearlyChecking(true)
+  }, [selectedYear])
 
   useEffect(() => {
     if (checking) checkExisting()
@@ -140,7 +150,7 @@ export default function AnalysePage() {
         .from('analyses')
         .select('content, created_at')
         .eq('user_id', user.id)
-        .eq('type', `${type}_yearly_${currentYear}`)
+        .eq('type', `${type}_yearly_${selectedYear}`)
         .order('created_at', { ascending: false })
         .limit(1)
         .single()
@@ -157,7 +167,7 @@ export default function AnalysePage() {
       const res = await fetch(`/api/analysis/${type}/yearly`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
-        body: JSON.stringify({ year: currentYear }),
+        body: JSON.stringify({ year: selectedYear }),
       })
       if (!res.ok) { const e = await res.json(); throw new Error(e.error) }
       const data = await res.json()
@@ -280,11 +290,11 @@ export default function AnalysePage() {
         )}
 
         {/* Yearly Analysis Section */}
-        {hasYearly && !checking && profile?.subscription_plan !== 'annual' && !profile?.is_admin && (
+        {hasYearly && !checking && !canSelectYear && (
           <div style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid var(--border)' }}>
             <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '8px' }}>Jahresanalyse</div>
             <p style={{ color: TEXT_LIGHT, fontSize: '0.9rem', lineHeight: 1.7, marginBottom: '16px' }}>
-              Die Jahresanalyse ist exklusiv im Jahrestarif verfügbar. Erhalte eine detaillierte Monat-für-Monat-Analyse für {new Date().getFullYear()}.
+              Die Jahresanalyse ist exklusiv im Jahrestarif verfügbar. Erhalte eine detaillierte Monat-für-Monat-Analyse für {currentYear}.
             </p>
             <a href="/analysen" style={{ display: 'inline-block', border: '1px solid var(--accent)', color: COPPER, borderRadius: '40px', padding: '10px 24px', fontSize: '0.85rem', textDecoration: 'none' }}>
               Zum Jahrestarif wechseln →
@@ -292,14 +302,23 @@ export default function AnalysePage() {
           </div>
         )}
 
-        {hasYearly && !checking && profile?.subscription_plan === 'annual' && (
+        {hasYearly && !checking && canSelectYear && (
           <div style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid var(--border)' }}>
             <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '8px' }}>
               Jahresanalyse
             </div>
-            <h2 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: '1.6rem', color: TEXT, margin: '0 0 24px' }}>
-              {label} {currentYear} · Monat für Monat
-            </h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
+              <h2 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: '1.6rem', color: TEXT, margin: 0 }}>
+                {label} · Monat für Monat
+              </h2>
+              <select
+                value={selectedYear}
+                onChange={e => setSelectedYear(Number(e.target.value))}
+                style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '8px 14px', color: 'var(--text-1)', fontSize: '0.88rem', fontFamily: 'Inter, sans-serif', cursor: 'pointer' }}
+              >
+                {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
+              </select>
+            </div>
 
             {yearlyChecking ? (
               <div style={{ color: TEXT_LIGHT, fontSize: '0.88rem' }}>Wird geladen…</div>
@@ -319,14 +338,14 @@ export default function AnalysePage() {
             ) : (
               <div>
                 <p style={{ color: TEXT_LIGHT, fontSize: '0.9rem', marginBottom: '20px', lineHeight: 1.7 }}>
-                  Erhalte eine detaillierte Monat-für-Monat-Analyse deiner {label.toLowerCase()} für {currentYear}. Erfahre, welche Monate besonders kraftvoll sind, wo du innehalten solltest und welche Themen dich das ganze Jahr begleiten.
+                  Erhalte eine detaillierte Monat-für-Monat-Analyse deiner {label.toLowerCase()} für {selectedYear}. Erfahre, welche Monate besonders kraftvoll sind, wo du innehalten solltest und welche Themen dich das ganze Jahr begleiten.
                 </p>
                 <button
                   onClick={createYearly}
                   disabled={yearlyLoading}
                   style={{ backgroundColor: 'transparent', border: '1px solid var(--accent)', color: COPPER, borderRadius: '40px', padding: '13px 32px', fontWeight: 500, fontSize: '0.85rem', cursor: yearlyLoading ? 'not-allowed' : 'pointer', opacity: yearlyLoading ? 0.7 : 1 }}
                 >
-                  {yearlyLoading ? `Jahresanalyse ${currentYear} wird erstellt…` : `Jahresanalyse ${currentYear} erstellen`}
+                  {yearlyLoading ? `Jahresanalyse ${selectedYear} wird erstellt…` : `Jahresanalyse ${selectedYear} erstellen`}
                 </button>
               </div>
             )}

@@ -14,6 +14,7 @@ const ANALYSIS_TYPES = [
   { key: 'partnership', label: 'Partnerschaftsanalyse' },
   { key: 'relationship', label: 'Beziehungsmuster' },
   { key: 'events', label: 'Ereignis-Analysen' },
+  { key: 'yearly_select', label: 'Jahres-Auswahl' },
 ]
 
 async function apiCall(path, method = 'GET', body = null) {
