@@ -10,7 +10,7 @@ import { redirectToCustomerPortal } from '../lib/stripe.js'
 const ANALYSE_LABELS = {
   business: 'Business-Analyse', health: 'Gesundheitsanalyse', family: 'Familienanalyse',
   selfexpression: 'Selbstausdruck-Analyse', finance: 'Finanzanalyse', career: 'Karriere-Analyse',
-  lifephases: 'Lebensphasen-Analyse', partnership: 'Partnerschaftsanalyse / Beziehungsanalyse',
+  lifephases: 'Lebensphasen-Analyse', partnership: 'Partnerschaftsanalyse', relationship: 'Beziehungsmuster',
 }
 
 function Field({ label, value, onChange, type = 'text', placeholder = '', required = false }) {

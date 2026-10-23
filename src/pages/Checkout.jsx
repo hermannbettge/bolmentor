@@ -13,7 +13,8 @@ const PRODUCTS = [
   { key: 'finance',          label: 'Finanzanalyse', price: 'Einmalig', desc: 'Deine Beziehung zu Geld und Wohlstand' },
   { key: 'career',           label: 'Karriere-Analyse', price: 'Einmalig', desc: 'Berufung, Timing und optimale Karriereschritte' },
   { key: 'lifephases',       label: 'Lebensphasen-Analyse', price: 'Einmalig', desc: 'Deine aktuellen und kommenden Lebensphasen' },
-  { key: 'partnership',      label: 'Partnerschaftsanalyse', price: 'Einmalig', desc: 'Partnerschaft, Liebe und Beziehungsdynamik' },
+  { key: 'relationship',     label: 'Beziehungsmuster',      price: 'Monatlich', desc: 'Eigene Bindungsstile und Beziehungsmuster' },
+  { key: 'partnership',      label: 'Partnerschaftsanalyse', price: 'Monatlich', desc: 'Du und dein Partner — Kompatibilität & Dynamik' },
 ]
 
 export default function Checkout() {

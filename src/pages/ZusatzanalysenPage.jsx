@@ -60,12 +60,20 @@ const ANALYSES = [
     highlights: ['Aktuelle Lebensphase verstehen', 'Kommende Übergänge erkennen', 'Vergangenes integrieren'],
   },
   {
+    key: 'relationship',
+    icon: '❤️',
+    title: 'Beziehungsmuster',
+    subtitle: 'Deine eigenen Bindungsstile und Beziehungsmuster',
+    description: 'Beziehungsmuster wiederholen sich — bis man sie versteht. Die Analyse zeigt, wie du in Beziehungen wirkst, was du unbewusst anziehst und was dir in einer Verbindung wirklich Erfüllung bringt.',
+    highlights: ['Dein Bindungsstil verstehen', 'Unbewusste Muster erkennen', 'Tiefe und Erfüllung in Beziehungen'],
+  },
+  {
     key: 'partnership',
     icon: '💫',
-    title: 'Beziehungsanalyse',
-    subtitle: 'Du in Beziehungen und Partnerschaft',
-    description: 'Beziehungsmuster wiederholen sich — bis man sie versteht. Die Analyse zeigt, wie du in Beziehungen wirkst, was du unbewusst anziehst und was dir in einer Partnerschaft wirklich Erfüllung bringt.',
-    highlights: ['Dein Muster in Beziehungen', 'Was du unbewusst anziehst', 'Erfüllung und Tiefe in Partnerschaften'],
+    title: 'Partnerschaftsanalyse',
+    subtitle: 'Du und dein Partner — Dynamik & Kompatibilität',
+    description: 'Wie harmonieren zwei Energien miteinander? Die Partnerschaftsanalyse vergleicht dein Maya-Kin mit dem deines Partners und zeigt eure Stärken, Spannungsfelder und das gemeinsame Wachstumspotenzial.',
+    highlights: ['Energetische Kompatibilität', 'Gemeinsame Stärken & Herausforderungen', 'Wachstumspotenzial als Paar'],
   },
 ]
 

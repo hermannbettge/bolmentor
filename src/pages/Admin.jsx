@@ -11,7 +11,8 @@ const ANALYSIS_TYPES = [
   { key: 'finance', label: 'Finanzen' },
   { key: 'career', label: 'Karriere' },
   { key: 'lifephases', label: 'Lebensphasen' },
-  { key: 'partnership', label: 'Partnerschaftsanalyse / Beziehung' },
+  { key: 'partnership', label: 'Partnerschaftsanalyse' },
+  { key: 'relationship', label: 'Beziehungsmuster' },
 ]
 
 async function apiCall(path, method = 'GET', body = null) {
