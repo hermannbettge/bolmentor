@@ -13,12 +13,17 @@ async function fulfillOrder(userId, priceId) {
   }
 
   if (mapping.type === 'membership') {
-    await supabase.from('profiles').update({
+    const updateData = {
       membership_active: true,
       membership_start: new Date().toISOString(),
       subscription_plan: mapping.plan,
       updated_at: new Date().toISOString(),
-    }).eq('id', userId)
+    }
+    // Annual plan includes all analyses
+    if (mapping.plan === 'annual') {
+      updateData.purchased_analyses = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership']
+    }
+    await supabase.from('profiles').update(updateData).eq('id', userId)
   } else if (mapping.type === 'analysis') {
     const { data: profile } = await supabase
       .from('profiles').select('purchased_analyses').eq('id', userId).single()
@@ -30,6 +35,18 @@ async function fulfillOrder(userId, priceId) {
       }).eq('id', userId)
     }
   }
+}
+
+async function revokeAnalysis(userId, priceId) {
+  const mapping = PRICE_MAP[priceId]
+  if (!mapping || mapping.type !== 'analysis') return
+  const { data: profile } = await supabase
+    .from('profiles').select('purchased_analyses').eq('id', userId).single()
+  const current = profile?.purchased_analyses || []
+  await supabase.from('profiles').update({
+    purchased_analyses: current.filter(k => k !== mapping.key),
+    updated_at: new Date().toISOString(),
+  }).eq('id', userId)
 }
 
 router.post('/', async (req, res) => {
@@ -77,9 +94,8 @@ router.post('/', async (req, res) => {
       case 'customer.subscription.updated': {
         const subscription = event.data.object
         const customerId = subscription.customer
-        const priceId = subscription.items?.data?.[0]?.price?.id
+        const items = subscription.items?.data || []
 
-        // Find user by stripe_customer_id
         const { data: profile } = await supabase
           .from('profiles')
           .select('id')
@@ -92,13 +108,20 @@ router.post('/', async (req, res) => {
         }
 
         if (subscription.status === 'active' || subscription.status === 'trialing') {
-          await fulfillOrder(profile.id, priceId)
+          for (const item of items) {
+            await fulfillOrder(profile.id, item.price?.id)
+          }
         } else if (subscription.status === 'canceled' || subscription.status === 'unpaid') {
-          await supabase.from('profiles').update({
-            membership_active: false,
-            subscription_plan: null,
-            updated_at: new Date().toISOString(),
-          }).eq('id', profile.id)
+          const mapping = PRICE_MAP[items[0]?.price?.id]
+          if (mapping?.type === 'membership') {
+            await supabase.from('profiles').update({
+              membership_active: false,
+              subscription_plan: null,
+              updated_at: new Date().toISOString(),
+            }).eq('id', profile.id)
+          } else if (mapping?.type === 'analysis') {
+            await revokeAnalysis(profile.id, items[0]?.price?.id)
+          }
         }
         break
       }
@@ -106,19 +129,25 @@ router.post('/', async (req, res) => {
       case 'customer.subscription.deleted': {
         const subscription = event.data.object
         const customerId = subscription.customer
+        const items = subscription.items?.data || []
 
         const { data: profile } = await supabase
           .from('profiles')
-          .select('id')
+          .select('id, purchased_analyses')
           .eq('stripe_customer_id', customerId)
           .single()
 
-        if (profile) {
+        if (!profile) break
+
+        const mapping = PRICE_MAP[items[0]?.price?.id]
+        if (mapping?.type === 'membership') {
           await supabase.from('profiles').update({
             membership_active: false,
             subscription_plan: null,
             updated_at: new Date().toISOString(),
           }).eq('id', profile.id)
+        } else if (mapping?.type === 'analysis') {
+          await revokeAnalysis(profile.id, items[0]?.price?.id)
         }
         break
       }
