@@ -278,7 +278,7 @@ export default function Salespage() {
             </P>
           </div>
 
-          <PillButton to="/registrieren" variant="copper">Jetzt starten · 17 € / Monat →</PillButton>
+          <PillButton to="/registrieren?redirect=/checkout?product=membershipMonthly" variant="copper">Jetzt starten · 17 € / Monat →</PillButton>
           <p style={{ color: TEXT_LIGHT, fontSize: '0.78rem', marginTop: '14px' }}>
             Einführungspreis gültig bis 31.12.2026 · Danach 27 €/Monat<br />Jederzeit kündbar
           </p>
@@ -321,7 +321,7 @@ export default function Salespage() {
               <H2 dark>Das Muster lesen. Mit dem ältesten Bewusstseinssystem der Welt.</H2>
               <P dark>Die Maya haben vor über 5.000 Jahren kein Zeitsystem entwickelt, sondern ein Bewusstseinssystem. Dein Geburtsdatum ergibt eine einzigartige Kombination aus Sonnensiegel und galaktischem Ton. Diese Kombination beschreibt, was dich antreibt, was dich blockiert und welches Thema sich durch dein ganzes Leben zieht.</P>
               <div style={{ marginTop: '32px' }}>
-                <PillButton to="/registrieren" variant="outline">Jetzt Zugang sichern →</PillButton>
+                <PillButton to="/registrieren?redirect=/checkout?product=membershipMonthly" variant="outline">Jetzt Zugang sichern →</PillButton>
               </div>
             </div>
             <div>
@@ -434,7 +434,7 @@ export default function Salespage() {
                 ))}
               </div>
               <div style={{ marginTop: '36px' }}>
-                <PillButton to="/registrieren" variant="copper">Jetzt ausprobieren →</PillButton>
+                <PillButton to="/registrieren?redirect=/checkout?product=membershipMonthly" variant="copper">Jetzt ausprobieren →</PillButton>
               </div>
             </div>
             <div style={{ backgroundColor: DEEP, borderRadius: '4px', padding: m ? '24px' : '40px', fontFamily: 'Inter, sans-serif' }}>
@@ -501,7 +501,7 @@ export default function Salespage() {
                 ))}
               </div>
               <div style={{ marginTop: 'auto', paddingTop: '32px' }}>
-                <PillButton to="/registrieren" variant="copper">Jetzt starten →</PillButton>
+                <PillButton to="/registrieren?redirect=/checkout?product=membershipMonthly" variant="copper">Jetzt starten →</PillButton>
               </div>
             </div>
 
@@ -530,7 +530,7 @@ export default function Salespage() {
                 ))}
               </div>
               <div style={{ marginTop: 'auto', paddingTop: '32px' }}>
-                <PillButton to="/registrieren" variant="copper">Jahrestarif wählen →</PillButton>
+                <PillButton to="/registrieren?redirect=/checkout?product=membershipAnnual" variant="copper">Jahrestarif wählen →</PillButton>
               </div>
             </div>
 
@@ -574,7 +574,7 @@ export default function Salespage() {
             Die spannendere Frage ist, welches Muster heute noch dafür sorgt, dass bestimmte Situationen immer wieder ähnlich verlaufen.<br />Genau dort beginnt der nächste Schritt.
           </P>
           <div style={{ marginTop: '40px', display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <PillButton to="/registrieren" variant="copper">Jetzt starten · 17 € / Monat →</PillButton>
+            <PillButton to="/registrieren?redirect=/checkout?product=membershipMonthly" variant="copper">Jetzt starten · 17 € / Monat →</PillButton>
           </div>
           <p style={{ color: TEXT_LIGHT, fontSize: '0.78rem', marginTop: '14px' }}>Einführungspreis gültig bis 31.12.2026 · Danach 27 €/Monat<br />Jederzeit kündbar</p>
         </div>

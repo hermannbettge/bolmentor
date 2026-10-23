@@ -104,7 +104,7 @@ export default function ZusatzanalysenPage() {
     if (user) {
       navigate(`/checkout?product=${key}`)
     } else {
-      navigate('/registrieren')
+      navigate(`/registrieren?redirect=/checkout?product=${key}`)
     }
   }
 
@@ -112,7 +112,7 @@ export default function ZusatzanalysenPage() {
     if (user) {
       navigate('/analysen')
     } else {
-      navigate('/registrieren')
+      navigate('/registrieren?redirect=/checkout?product=membershipAnnual')
     }
   }
 

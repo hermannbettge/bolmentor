@@ -142,6 +142,18 @@ export default function Admin() {
     }
   }
 
+  async function deleteUser(userId, userName) {
+    if (!window.confirm(`Nutzer "${userName || userId.slice(0,8)}" dauerhaft löschen? Diese Aktion kann nicht rückgängig gemacht werden.`)) return
+    try {
+      await apiCall(`/users/${userId}`, 'DELETE')
+      setMsg('Nutzer gelöscht.')
+      setSelectedUser(null)
+      await loadUsers()
+    } catch (e) {
+      setError(e.message)
+    }
+  }
+
   if (loading) return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-deep)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)' }}>
       Laden…
@@ -314,6 +326,12 @@ export default function Admin() {
                     style={{ padding: '10px', backgroundColor: 'var(--bg-deep)', border: '1px solid var(--border)', color: 'var(--text-2)', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem', textAlign: 'left' }}
                   >
                     Passwort-Reset senden
+                  </button>
+                  <button
+                    onClick={() => deleteUser(selectedUser.id, selectedUser.name)}
+                    style={{ padding: '10px', backgroundColor: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem', textAlign: 'left' }}
+                  >
+                    Nutzer dauerhaft löschen
                   </button>
                 </div>
               </div>

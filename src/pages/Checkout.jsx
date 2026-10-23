@@ -4,17 +4,18 @@ import { redirectToCheckout, PRICES } from '../lib/stripe.js'
 import { useAuth } from '../hooks/useAuth.jsx'
 
 const PRODUCTS = [
-  { key: 'membershipMonthly', label: 'Monatsmitgliedschaft', price: '17 € / Monat', desc: 'Erster Monat 17 €, danach 27 € / Monat' },
-  { key: 'membershipAnnual',  label: 'Jahrestarif', price: '197 € / Jahr', desc: 'Entspricht 16,42 € / Monat — du sparst über 100 €' },
-  { key: 'business',         label: 'Business-Analyse', price: 'Einmalig', desc: 'Deine Chancen, Risiken und optimale Strategie im Beruf' },
-  { key: 'health',           label: 'Gesundheitsanalyse', price: 'Einmalig', desc: 'Deine körperlichen und energetischen Muster' },
-  { key: 'family',           label: 'Familienanalyse', price: 'Einmalig', desc: 'Dynamiken und Themen in deiner Familie' },
-  { key: 'selfexpression',   label: 'Selbstausdruck-Analyse', price: 'Einmalig', desc: 'Deine Gaben und authentische Ausdrucksweise' },
-  { key: 'finance',          label: 'Finanzanalyse', price: 'Einmalig', desc: 'Deine Beziehung zu Geld und Wohlstand' },
-  { key: 'career',           label: 'Karriere-Analyse', price: 'Einmalig', desc: 'Berufung, Timing und optimale Karriereschritte' },
-  { key: 'lifephases',       label: 'Lebensphasen-Analyse', price: 'Einmalig', desc: 'Deine aktuellen und kommenden Lebensphasen' },
-  { key: 'relationship',     label: 'Beziehungsmuster',      price: 'Monatlich', desc: 'Eigene Bindungsstile und Beziehungsmuster' },
-  { key: 'partnership',      label: 'Partnerschaftsanalyse', price: 'Monatlich', desc: 'Du und dein Partner — Kompatibilität & Dynamik' },
+  { key: 'membershipMonthly', label: 'Monatsmitgliedschaft', price: '17 € / Monat', desc: 'Einführungspreis bis 31.12.2026, danach 27 € / Monat. Jederzeit kündbar.' },
+  { key: 'membershipAnnual',  label: 'Jahrestarif', price: '170 € / Jahr', desc: 'Einführungspreis bis 31.12.2026 (entspricht 14,17 € / Monat). Danach 270 € / Jahr.' },
+  { key: 'business',         label: 'Business-Analyse', price: '9 € / Monat', desc: 'Deine Chancen, Risiken und optimale Strategie im Beruf. Jederzeit kündbar.' },
+  { key: 'health',           label: 'Gesundheitsanalyse', price: '9 € / Monat', desc: 'Deine körperlichen und energetischen Muster. Jederzeit kündbar.' },
+  { key: 'family',           label: 'Familienanalyse', price: '9 € / Monat', desc: 'Dynamiken und Themen in deiner Familie. Jederzeit kündbar.' },
+  { key: 'selfexpression',   label: 'Selbstausdruck-Analyse', price: '9 € / Monat', desc: 'Deine Gaben und authentische Ausdrucksweise. Jederzeit kündbar.' },
+  { key: 'finance',          label: 'Finanzanalyse', price: '9 € / Monat', desc: 'Deine Beziehung zu Geld und Wohlstand. Jederzeit kündbar.' },
+  { key: 'career',           label: 'Karriere-Analyse', price: '9 € / Monat', desc: 'Berufung, Timing und optimale Karriereschritte. Jederzeit kündbar.' },
+  { key: 'lifephases',       label: 'Lebensphasen-Analyse', price: '9 € / Monat', desc: 'Deine aktuellen und kommenden Lebensphasen. Jederzeit kündbar.' },
+  { key: 'relationship',     label: 'Beziehungsmuster', price: '9 € / Monat', desc: 'Eigene Bindungsstile und Beziehungsmuster. Jederzeit kündbar.' },
+  { key: 'partnership',      label: 'Partnerschaftsanalyse', price: '9 € / Monat', desc: 'Du und dein Partner, Kompatibilität und Dynamik. Jederzeit kündbar.' },
+  { key: 'events',           label: 'Ereignis-Analysen', price: '9 € / Monat', desc: 'Wichtige Daten in deinem Leben verstehen und einordnen. Jederzeit kündbar.' },
 ]
 
 export default function Checkout() {

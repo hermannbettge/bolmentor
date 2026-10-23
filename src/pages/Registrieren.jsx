@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
 
 const inputStyle = {
@@ -29,6 +29,7 @@ function validateBirthDate(dateStr) {
 export default function Registrieren() {
   const { signUp } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -56,7 +57,8 @@ export default function Registrieren() {
       const parts = birthDate.split('.')
       const isoDate = `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`
       await signUp(email, password, name, isoDate)
-      navigate('/dashboard')
+      const redirect = searchParams.get('redirect')
+      navigate(redirect || '/dashboard')
     } catch (err) {
       setError(err.message === 'User already registered'
         ? 'Diese E-Mail-Adresse ist bereits registriert.'
