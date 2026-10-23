@@ -48,6 +48,30 @@ function Badge({ active }) {
   )
 }
 
+function ConfirmModal({ message, onConfirm, onCancel }) {
+  return (
+    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px' }}>
+      <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '4px', padding: '32px', maxWidth: '420px', width: '100%' }}>
+        <p style={{ color: 'var(--text-1)', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: '28px' }}>{message}</p>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            onClick={onCancel}
+            style={{ flex: 1, padding: '12px', backgroundColor: 'var(--bg-deep)', border: '1px solid var(--border)', color: 'var(--text-2)', cursor: 'pointer', borderRadius: '2px', fontSize: '0.88rem' }}
+          >
+            Abbrechen
+          </button>
+          <button
+            onClick={onConfirm}
+            style={{ flex: 1, padding: '12px', backgroundColor: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.4)', color: '#ef4444', cursor: 'pointer', borderRadius: '2px', fontSize: '0.88rem', fontWeight: 600 }}
+          >
+            Löschen
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function Admin() {
   const { user, profile } = useAuth()
   const navigate = useNavigate()
@@ -56,6 +80,7 @@ export default function Admin() {
   const [selectedUser, setSelectedUser] = useState(null)
   const [msg, setMsg] = useState('')
   const [error, setError] = useState('')
+  const [confirmDelete, setConfirmDelete] = useState(null)
 
   useEffect(() => {
     if (profile && !profile.is_admin) navigate('/')
@@ -142,15 +167,16 @@ export default function Admin() {
     }
   }
 
-  async function deleteUser(userId, userName) {
-    if (!window.confirm(`Nutzer "${userName || userId.slice(0,8)}" dauerhaft löschen? Diese Aktion kann nicht rückgängig gemacht werden.`)) return
+  async function deleteUser(userId) {
     try {
       await apiCall(`/users/${userId}`, 'DELETE')
       setMsg('Nutzer gelöscht.')
       setSelectedUser(null)
+      setConfirmDelete(null)
       await loadUsers()
     } catch (e) {
-      setError(e.message)
+      setError(e.message || 'Löschen fehlgeschlagen.')
+      setConfirmDelete(null)
     }
   }
 
@@ -161,6 +187,7 @@ export default function Admin() {
   )
 
   return (
+    <>
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-deep)', color: 'var(--text-1)', fontFamily: 'Inter, sans-serif' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
         <div style={{ marginBottom: '40px' }}>
@@ -328,7 +355,7 @@ export default function Admin() {
                     Passwort-Reset senden
                   </button>
                   <button
-                    onClick={() => deleteUser(selectedUser.id, selectedUser.name)}
+                    onClick={() => setConfirmDelete(selectedUser)}
                     style={{ padding: '10px', backgroundColor: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem', textAlign: 'left' }}
                   >
                     Nutzer dauerhaft löschen
@@ -352,5 +379,14 @@ export default function Admin() {
         </div>
       </div>
     </div>
+
+    {confirmDelete && (
+      <ConfirmModal
+        message={`Nutzer "${confirmDelete.name || confirmDelete.id.slice(0,8)}" dauerhaft löschen? Diese Aktion kann nicht rückgängig gemacht werden.`}
+        onConfirm={() => deleteUser(confirmDelete.id)}
+        onCancel={() => setConfirmDelete(null)}
+      />
+    )}
+    </>
   )
 }
