@@ -109,7 +109,7 @@ export default function Profil() {
     if ((profile?.purchased_analyses || []).includes('events')) return 12
     const start = profile?.membership_start || profile?.created_at
     const months = start ? Math.floor((Date.now() - new Date(start).getTime()) / (1000 * 60 * 60 * 24 * 30.44)) : 0
-    return Math.min(2, months + 1)
+    return Math.min(11, months + 1)
   }
   const maxEvents = calcMaxEvents()
 
@@ -321,7 +321,7 @@ export default function Profil() {
               ? ' Unbegrenzter Zugriff (Admin).'
               : maxEvents === 12
                 ? <> Aktuell <strong>12 Slots</strong> freigeschaltet.</>
-                : <> Aktuell <strong>{maxEvents}</strong> Slot{maxEvents !== 1 ? 's' : ''} freigeschaltet — im 2. Monat wird Slot 2 freigeschaltet. Ereignis-Erweiterung oder Jahrestarif für sofort 12.</>
+                : <> Aktuell <strong>{maxEvents}</strong> Slot{maxEvents !== 1 ? 's' : ''} freigeschaltet — jeden Monat kommt ein weiterer dazu (max. 11). Ereignis-Erweiterung oder Jahrestarif für sofort 12.</>
             }
           </p>
 
@@ -346,9 +346,9 @@ export default function Profil() {
           )}
           {events.length >= maxEvents && !showEventForm && (
             <div style={{ fontSize: '0.8rem', color: 'var(--text-2)', marginTop: '8px', textAlign: 'center', padding: '10px' }}>
-              {maxEvents <= 2
-                ? `Slot ${maxEvents} belegt — Ereignis-Erweiterung buchen oder auf Jahrestarif wechseln für 12 Slots.`
-                : `Alle ${maxEvents} Slots belegt.`}
+              {maxEvents < 12
+                ? `Alle ${maxEvents} Slots belegt — nächster Slot im nächsten Monat, oder Ereignis-Erweiterung / Jahrestarif für sofort 12.`
+                : `Alle 12 Slots belegt.`}
             </div>
           )}
 

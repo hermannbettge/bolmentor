@@ -838,7 +838,7 @@ function getEventLimit(profile) {
   if ((profile.purchased_analyses || []).includes('events')) return 12
   const start = profile.membership_start || profile.created_at
   const months = start ? Math.floor((Date.now() - new Date(start).getTime()) / (1000 * 60 * 60 * 24 * 30.44)) : 0
-  return Math.min(2, months + 1)
+  return Math.min(11, months + 1)
 }
 
 // Event analysis — analyse any entity by its "birth date" (country, job, relationship, etc.)
