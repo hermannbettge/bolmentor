@@ -20,7 +20,7 @@ export default function Impressum() {
 
         <h2 style={{ color: 'var(--color-gold)', fontWeight: 400, fontSize: '1.1rem', margin: '32px 0 16px' }}>Kontakt</h2>
         <p>
-          Telefon: 01728572121<br />
+          Telefon: 040 33481648<br />
           E-Mail: <a href="mailto:support@bewusstsein-ohne-limit.de" style={{ color: 'var(--color-gold)', textDecoration: 'none' }}>support@bewusstsein-ohne-limit.de</a>
         </p>
 
