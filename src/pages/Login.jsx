@@ -94,9 +94,9 @@ export default function Login() {
           </form>
 
           <div style={{ marginTop: '24px', textAlign: 'center' }}>
-            <Link to="/registrieren" style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textDecoration: 'none' }}>
+            <a href="/#pricing" style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textDecoration: 'none' }}>
               Noch kein Konto? <span style={{ color: 'var(--color-gold)' }}>Jetzt registrieren</span>
-            </Link>
+            </a>
           </div>
           <div style={{ marginTop: '12px', textAlign: 'center' }}>
             <a href="mailto:support@bewusstsein-ohne-limit.de" style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', textDecoration: 'none' }}>

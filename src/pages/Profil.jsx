@@ -416,7 +416,7 @@ export default function Profil() {
               </div>
             </div>
           )}
-          {profile?.subscription_plan && (
+          {profile?.membership_active && profile?.subscription_plan && (
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
               <span style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>Tarif</span>
               <span style={{ color: 'var(--text-1)', fontSize: '0.9rem' }}>{profile.subscription_plan === 'annual' ? 'Jahrestarif' : 'Monatsmitgliedschaft'}</span>
