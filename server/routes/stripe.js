@@ -9,21 +9,32 @@ function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY)
 }
 
-// Maps Stripe price IDs to what they unlock
-// Set these env vars with your actual Stripe price IDs
+// Maps Stripe price IDs to what they unlock (both current and 2027 prices)
 const PRICE_MAP = {
-  [process.env.STRIPE_PRICE_MEMBERSHIP_MONTHLY]: { type: 'membership', plan: 'monthly' },
-  [process.env.STRIPE_PRICE_MEMBERSHIP_ANNUAL]:  { type: 'membership', plan: 'annual' },
+  [process.env.STRIPE_PRICE_MEMBERSHIP_MONTHLY]:      { type: 'membership', plan: 'monthly' },
+  [process.env.STRIPE_PRICE_MEMBERSHIP_MONTHLY_2027]: { type: 'membership', plan: 'monthly' },
+  [process.env.STRIPE_PRICE_MEMBERSHIP_ANNUAL]:       { type: 'membership', plan: 'annual' },
+  [process.env.STRIPE_PRICE_MEMBERSHIP_ANNUAL_2027]:  { type: 'membership', plan: 'annual' },
   [process.env.STRIPE_PRICE_BUSINESS]:           { type: 'analysis', key: 'business' },
+  [process.env.STRIPE_PRICE_BUSINESS_2027]:      { type: 'analysis', key: 'business' },
   [process.env.STRIPE_PRICE_HEALTH]:             { type: 'analysis', key: 'health' },
+  [process.env.STRIPE_PRICE_HEALTH_2027]:        { type: 'analysis', key: 'health' },
   [process.env.STRIPE_PRICE_FAMILY]:             { type: 'analysis', key: 'family' },
+  [process.env.STRIPE_PRICE_FAMILY_2027]:        { type: 'analysis', key: 'family' },
   [process.env.STRIPE_PRICE_SELFEXPRESSION]:     { type: 'analysis', key: 'selfexpression' },
+  [process.env.STRIPE_PRICE_SELFEXPRESSION_2027]:{ type: 'analysis', key: 'selfexpression' },
   [process.env.STRIPE_PRICE_FINANCE]:            { type: 'analysis', key: 'finance' },
+  [process.env.STRIPE_PRICE_FINANCE_2027]:       { type: 'analysis', key: 'finance' },
   [process.env.STRIPE_PRICE_CAREER]:             { type: 'analysis', key: 'career' },
+  [process.env.STRIPE_PRICE_CAREER_2027]:        { type: 'analysis', key: 'career' },
   [process.env.STRIPE_PRICE_LIFEPHASES]:         { type: 'analysis', key: 'lifephases' },
+  [process.env.STRIPE_PRICE_LIFEPHASES_2027]:    { type: 'analysis', key: 'lifephases' },
   [process.env.STRIPE_PRICE_PARTNERSHIP]:        { type: 'analysis', key: 'partnership' },
+  [process.env.STRIPE_PRICE_PARTNERSHIP_2027]:   { type: 'analysis', key: 'partnership' },
   [process.env.STRIPE_PRICE_EVENTS]:             { type: 'analysis', key: 'events' },
+  [process.env.STRIPE_PRICE_EVENTS_2027]:        { type: 'analysis', key: 'events' },
   [process.env.STRIPE_PRICE_RELATIONSHIP]:       { type: 'analysis', key: 'relationship' },
+  [process.env.STRIPE_PRICE_RELATIONSHIP_2027]:  { type: 'analysis', key: 'relationship' },
 }
 
 // Middleware: require authenticated user

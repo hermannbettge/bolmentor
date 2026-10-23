@@ -35,16 +35,21 @@ export async function redirectToCustomerPortal() {
   window.location.href = url
 }
 
-// Price IDs come from env vars (set in Vite as VITE_STRIPE_PRICE_*)
+function pick(current, future) {
+  return new Date() >= new Date('2027-01-01T00:00:00Z') ? (future || current) : current
+}
+
 export const PRICES = {
-  membershipMonthly: import.meta.env.VITE_STRIPE_PRICE_MEMBERSHIP_MONTHLY,
-  membershipAnnual:  import.meta.env.VITE_STRIPE_PRICE_MEMBERSHIP_ANNUAL,
-  business:          import.meta.env.VITE_STRIPE_PRICE_BUSINESS,
-  health:            import.meta.env.VITE_STRIPE_PRICE_HEALTH,
-  family:            import.meta.env.VITE_STRIPE_PRICE_FAMILY,
-  selfexpression:    import.meta.env.VITE_STRIPE_PRICE_SELFEXPRESSION,
-  finance:           import.meta.env.VITE_STRIPE_PRICE_FINANCE,
-  career:            import.meta.env.VITE_STRIPE_PRICE_CAREER,
-  lifephases:        import.meta.env.VITE_STRIPE_PRICE_LIFEPHASES,
-  partnership:       import.meta.env.VITE_STRIPE_PRICE_PARTNERSHIP,
+  membershipMonthly: pick(import.meta.env.VITE_STRIPE_PRICE_MEMBERSHIP_MONTHLY, import.meta.env.VITE_STRIPE_PRICE_MEMBERSHIP_MONTHLY_2027),
+  membershipAnnual:  pick(import.meta.env.VITE_STRIPE_PRICE_MEMBERSHIP_ANNUAL,  import.meta.env.VITE_STRIPE_PRICE_MEMBERSHIP_ANNUAL_2027),
+  business:          pick(import.meta.env.VITE_STRIPE_PRICE_BUSINESS,        import.meta.env.VITE_STRIPE_PRICE_BUSINESS_2027),
+  health:            pick(import.meta.env.VITE_STRIPE_PRICE_HEALTH,          import.meta.env.VITE_STRIPE_PRICE_HEALTH_2027),
+  family:            pick(import.meta.env.VITE_STRIPE_PRICE_FAMILY,          import.meta.env.VITE_STRIPE_PRICE_FAMILY_2027),
+  selfexpression:    pick(import.meta.env.VITE_STRIPE_PRICE_SELFEXPRESSION,  import.meta.env.VITE_STRIPE_PRICE_SELFEXPRESSION_2027),
+  finance:           pick(import.meta.env.VITE_STRIPE_PRICE_FINANCE,         import.meta.env.VITE_STRIPE_PRICE_FINANCE_2027),
+  career:            pick(import.meta.env.VITE_STRIPE_PRICE_CAREER,          import.meta.env.VITE_STRIPE_PRICE_CAREER_2027),
+  lifephases:        pick(import.meta.env.VITE_STRIPE_PRICE_LIFEPHASES,      import.meta.env.VITE_STRIPE_PRICE_LIFEPHASES_2027),
+  partnership:       pick(import.meta.env.VITE_STRIPE_PRICE_PARTNERSHIP,     import.meta.env.VITE_STRIPE_PRICE_PARTNERSHIP_2027),
+  events:            pick(import.meta.env.VITE_STRIPE_PRICE_EVENTS,          import.meta.env.VITE_STRIPE_PRICE_EVENTS_2027),
+  relationship:      pick(import.meta.env.VITE_STRIPE_PRICE_RELATIONSHIP,    import.meta.env.VITE_STRIPE_PRICE_RELATIONSHIP_2027),
 }
