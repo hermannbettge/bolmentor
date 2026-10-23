@@ -77,30 +77,32 @@ function P({ children, dark = false, small = false }) {
   )
 }
 
-function PillButton({ to, children, variant = 'dark' }) {
+function PillButton({ to, onClick, children, variant = 'dark' }) {
   const styles = {
     dark: { bg: DEEP, color: CREAM, border: 'none' },
     outline: { bg: 'transparent', color: CREAM, border: `1px solid rgba(244,239,230,0.4)` },
     copper: { bg: COPPER, color: '#FFF8F2', border: 'none' },
   }
   const s = styles[variant]
-  return (
-    <Link to={to} style={{
-      display: 'inline-block',
-      backgroundColor: s.bg,
-      color: s.color,
-      border: s.border,
-      padding: '14px 32px',
-      borderRadius: '40px',
-      fontSize: '0.82rem',
-      fontWeight: 500,
-      letterSpacing: '0.06em',
-      textDecoration: 'none',
-      transition: 'opacity 0.2s',
-    }}>
-      {children}
-    </Link>
-  )
+  const shared = {
+    display: 'inline-block',
+    backgroundColor: s.bg,
+    color: s.color,
+    border: s.border,
+    padding: '14px 32px',
+    borderRadius: '40px',
+    fontSize: '0.82rem',
+    fontWeight: 500,
+    letterSpacing: '0.06em',
+    textDecoration: 'none',
+    transition: 'opacity 0.2s',
+    cursor: 'pointer',
+    fontFamily: 'Inter, sans-serif',
+  }
+  if (onClick) {
+    return <button onClick={onClick} style={shared}>{children}</button>
+  }
+  return <Link to={to} style={shared}>{children}</Link>
 }
 
 function Line({ dark = false }) {
@@ -278,7 +280,7 @@ export default function Salespage() {
             </P>
           </div>
 
-          <PillButton to={`/registrieren?redirect=${encodeURIComponent("/checkout?product=membershipMonthly")}`} variant="copper">Jetzt starten · 17 € / Monat →</PillButton>
+          <PillButton onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })} variant="copper">ab 17 € / Monat · Jetzt Zugang sichern →</PillButton>
           <p style={{ color: TEXT_LIGHT, fontSize: '0.78rem', marginTop: '14px' }}>
             Einführungspreis gültig bis 31.12.2026 · Danach 27 €/Monat<br />Jederzeit kündbar
           </p>
@@ -321,7 +323,7 @@ export default function Salespage() {
               <H2 dark>Das Muster lesen. Mit dem ältesten Bewusstseinssystem der Welt.</H2>
               <P dark>Die Maya haben vor über 5.000 Jahren kein Zeitsystem entwickelt, sondern ein Bewusstseinssystem. Dein Geburtsdatum ergibt eine einzigartige Kombination aus Sonnensiegel und galaktischem Ton. Diese Kombination beschreibt, was dich antreibt, was dich blockiert und welches Thema sich durch dein ganzes Leben zieht.</P>
               <div style={{ marginTop: '32px' }}>
-                <PillButton to={`/registrieren?redirect=${encodeURIComponent("/checkout?product=membershipMonthly")}`} variant="outline">Jetzt Zugang sichern →</PillButton>
+                <PillButton onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })} variant="outline">Jetzt Zugang sichern →</PillButton>
               </div>
             </div>
             <div>
@@ -434,7 +436,7 @@ export default function Salespage() {
                 ))}
               </div>
               <div style={{ marginTop: '36px' }}>
-                <PillButton to={`/registrieren?redirect=${encodeURIComponent("/checkout?product=membershipMonthly")}`} variant="copper">Jetzt ausprobieren →</PillButton>
+                <PillButton onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })} variant="copper">Jetzt ausprobieren →</PillButton>
               </div>
             </div>
             <div style={{ backgroundColor: DEEP, borderRadius: '4px', padding: m ? '24px' : '40px', fontFamily: 'Inter, sans-serif' }}>
@@ -465,7 +467,7 @@ export default function Salespage() {
       </section>
 
       {/* 6. CTA — Preistabelle */}
-      <section style={{ backgroundColor: SAND }}>
+      <section id="pricing" style={{ backgroundColor: SAND }}>
         <div style={sectionPad}>
           <Tag>Dein Zugang</Tag>
           <H2>Wähle deinen Einstieg.</H2>
@@ -501,7 +503,7 @@ export default function Salespage() {
                 ))}
               </div>
               <div style={{ marginTop: 'auto', paddingTop: '32px' }}>
-                <PillButton to={`/registrieren?redirect=${encodeURIComponent("/checkout?product=membershipMonthly")}`} variant="copper">Jetzt starten →</PillButton>
+                <PillButton to="/checkout?product=membershipMonthly" variant="copper">Jetzt starten →</PillButton>
               </div>
             </div>
 
@@ -530,7 +532,7 @@ export default function Salespage() {
                 ))}
               </div>
               <div style={{ marginTop: 'auto', paddingTop: '32px' }}>
-                <PillButton to={`/registrieren?redirect=${encodeURIComponent("/checkout?product=membershipAnnual")}`} variant="copper">Jahrestarif wählen →</PillButton>
+                <PillButton to="/checkout?product=membershipAnnual" variant="copper">Jahrestarif wählen →</PillButton>
               </div>
             </div>
 
@@ -574,7 +576,7 @@ export default function Salespage() {
             Die spannendere Frage ist, welches Muster heute noch dafür sorgt, dass bestimmte Situationen immer wieder ähnlich verlaufen.<br />Genau dort beginnt der nächste Schritt.
           </P>
           <div style={{ marginTop: '40px', display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <PillButton to={`/registrieren?redirect=${encodeURIComponent("/checkout?product=membershipMonthly")}`} variant="copper">Jetzt starten · 17 € / Monat →</PillButton>
+            <PillButton onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })} variant="copper">ab 17 € / Monat · Jetzt Zugang sichern →</PillButton>
           </div>
           <p style={{ color: TEXT_LIGHT, fontSize: '0.78rem', marginTop: '14px' }}>Einführungspreis gültig bis 31.12.2026 · Danach 27 €/Monat<br />Jederzeit kündbar</p>
         </div>

@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { useIsMobile } from '../hooks/useIsMobile.js'
+import CheckoutModal from '../components/CheckoutModal.jsx'
 
 const ANALYSES = [
   {
@@ -99,21 +101,14 @@ export default function ZusatzanalysenPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
   const m = useIsMobile()
+  const [modal, setModal] = useState(null)
 
   function goToCheckout(key) {
-    if (user) {
-      navigate(`/checkout?product=${key}`)
-    } else {
-      navigate(`/registrieren?redirect=${encodeURIComponent(`/checkout?product=${key}`)}`)
-    }
+    setModal({ preselected: key, mode: 'analysis' })
   }
 
   function goToAll() {
-    if (user) {
-      navigate('/analysen')
-    } else {
-      navigate(`/registrieren?redirect=${encodeURIComponent('/checkout?product=membershipAnnual')}`)
-    }
+    setModal({ preselected: null, mode: 'annual' })
   }
 
   const pad = { maxWidth: '1000px', margin: '0 auto', padding: m ? '48px 20px' : '80px 40px' }
@@ -125,6 +120,7 @@ export default function ZusatzanalysenPage() {
 
   return (
     <div style={{ fontFamily: 'Inter, sans-serif', backgroundColor: CREAM, minHeight: '100vh' }}>
+      {modal && <CheckoutModal preselected={modal.preselected} mode={modal.mode} onClose={() => setModal(null)} />}
 
       {/* Header */}
       <section style={{ backgroundColor: CREAM, borderBottom: `1px solid rgba(42,32,24,0.08)` }}>
