@@ -27,7 +27,7 @@ function validateBirthDate(dateStr) {
 }
 
 export default function Registrieren() {
-  const { signUp } = useAuth()
+  const { signUp, refreshProfile } = useAuth()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [name, setName] = useState('')
@@ -60,16 +60,22 @@ export default function Registrieren() {
 
       const stripeSession = searchParams.get('stripe_session')
       if (stripeSession && data?.session?.access_token) {
-        try {
-          await fetch('/api/stripe/claim-session', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${data.session.access_token}`,
-            },
-            body: JSON.stringify({ session_id: stripeSession }),
-          })
-        } catch {}
+        const claimRes = await fetch('/api/stripe/claim-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${data.session.access_token}`,
+          },
+          body: JSON.stringify({ session_id: stripeSession }),
+        })
+        if (!claimRes.ok) {
+          const claimErr = await claimRes.json().catch(() => ({}))
+          setError(claimErr.error || 'Zahlung konnte nicht zugeordnet werden. Bitte wende dich an den Support.')
+          setLoading(false)
+          return
+        }
+        // Reload profile so membership_active is up to date before navigation
+        await refreshProfile()
       }
 
       const redirect = searchParams.get('redirect')
