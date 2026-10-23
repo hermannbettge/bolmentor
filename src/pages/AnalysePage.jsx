@@ -219,7 +219,7 @@ export default function AnalysePage() {
               Tagesenergie
             </div>
             <h2 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: '1.6rem', color: TEXT, margin: '0 0 20px' }}>
-              {label} — Tagesenergie
+              {label} · Tagesenergie
             </h2>
 
             {/* Date picker */}
@@ -298,7 +298,7 @@ export default function AnalysePage() {
               Jahresanalyse
             </div>
             <h2 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: '1.6rem', color: TEXT, margin: '0 0 24px' }}>
-              {label} {currentYear} — Monat für Monat
+              {label} {currentYear} · Monat für Monat
             </h2>
 
             {yearlyChecking ? (

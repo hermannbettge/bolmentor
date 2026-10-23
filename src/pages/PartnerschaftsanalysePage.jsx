@@ -148,7 +148,7 @@ export default function PartnerschaftsanalysePage() {
               Tagesenergie
             </div>
             <h2 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: '1.6rem', color: TEXT, margin: '0 0 20px' }}>
-              Partnerschaftsenergie — Tagesenergie
+              Partnerschaftsenergie · Tagesenergie
             </h2>
 
             {/* Date picker */}

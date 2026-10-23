@@ -65,5 +65,5 @@ export const REGEN_LEGEND = [
   { symbol: '✦✦', label: 'Wichtiger Regenerationstag', desc: 'Bewusst pausieren, wenig planen' },
   { symbol: '✦✦✦', label: 'Starker Regenerationstag', desc: 'Rückzug empfohlen, kein Stress' },
   { symbol: '✦✦✦✦', label: 'Sehr starker Regenerationstag', desc: 'Unbedingt Ruhe einplanen' },
-  { symbol: '〰', label: 'Sturmwelle · Heilwelle', desc: '13-tägige Regenerationsperiode — ideale Zeit für Urlaub, Auszeit, Heilung' },
+  { symbol: '〰', label: 'Sturmwelle · Heilwelle', desc: '13-tägige Regenerationsperiode, ideale Zeit für Urlaub, Auszeit und Heilung' },
 ]

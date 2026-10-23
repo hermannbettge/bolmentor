@@ -321,7 +321,7 @@ export default function Profil() {
               ? ' Unbegrenzter Zugriff (Admin).'
               : maxEvents === 12
                 ? <> Aktuell <strong>12 Slots</strong> freigeschaltet.</>
-                : <> Aktuell <strong>{maxEvents}</strong> Slot{maxEvents !== 1 ? 's' : ''} freigeschaltet — jeden Monat kommt ein weiterer dazu (max. 11). Ereignis-Erweiterung oder Jahrestarif für sofort 12.</>
+                : <> Aktuell <strong>{maxEvents}</strong> Slot{maxEvents !== 1 ? 's' : ''} freigeschaltet. Jeden Monat kommt ein weiterer dazu (max. 11). Ereignis-Erweiterung oder Jahrestarif für sofort 12.</>
             }
           </p>
 
@@ -347,7 +347,7 @@ export default function Profil() {
           {events.length >= maxEvents && !showEventForm && (
             <div style={{ fontSize: '0.8rem', color: 'var(--text-2)', marginTop: '8px', textAlign: 'center', padding: '10px' }}>
               {maxEvents < 12
-                ? `Alle ${maxEvents} Slots belegt — nächster Slot im nächsten Monat, oder Ereignis-Erweiterung / Jahrestarif für sofort 12.`
+                ? `Alle ${maxEvents} Slots belegt. Nächster Slot im nächsten Monat, oder Ereignis-Erweiterung / Jahrestarif für sofort 12.`
                 : `Alle 12 Slots belegt.`}
             </div>
           )}

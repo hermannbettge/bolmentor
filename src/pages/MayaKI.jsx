@@ -158,7 +158,7 @@ export default function MayaKI() {
             <div style={{ backgroundColor: 'var(--color-bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: m ? '20px' : '28px', marginBottom: '24px' }}>
               <div style={{ fontSize: '1.5rem', marginBottom: '12px' }}>☽</div>
               <p style={{ color: 'var(--color-text-primary)', fontWeight: 300, lineHeight: 1.8, fontSize: '0.95rem', margin: '0 0 8px' }}>
-                Hallo {name}. Ich bin Maya — deine persönliche KI-Beraterin auf Basis deines Maya-Profils.
+                Hallo {name}. Ich bin Maya, deine persönliche KI-Beraterin auf Basis deines Maya-Profils.
               </p>
               <p style={{ color: 'var(--color-text-muted)', fontWeight: 300, lineHeight: 1.8, fontSize: '0.88rem', margin: '0 0 12px' }}>
                 Ich kenne dein Sonnensiegel, deinen galaktischen Ton und die Energie des heutigen Tages. Stell mir alles, was dich beschäftigt.
