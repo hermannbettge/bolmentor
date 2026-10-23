@@ -380,7 +380,7 @@ export default function Salespage() {
                 <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.3rem', color: TEXT, marginBottom: '12px', lineHeight: 1.4 }}>
                   Tiefe Analysen für jeden Lebensbereich.
                 </div>
-                <P small>Wenn du verstehen willst, wie die Maya-Energie sich in einem bestimmten Bereich auswirkt (Business, Gesundheit, Finanzen, Karriere, Beziehungen), buchst du diesen Bereich einmalig und hast lebenslangen Zugang.</P>
+                <P small>Wenn du verstehen willst, wie die Maya-Energie sich in einem bestimmten Bereich auswirkt (Business, Gesundheit, Finanzen, Karriere, Beziehungen), buchst du diesen Bereich als monatliches Abo dazu — und kannst jederzeit kündigen.</P>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: m ? '1fr' : '1fr 1fr', gap: '8px' }}>
                 {['Business-Analyse','Gesundheitsanalyse','Familienanalyse','Selbstausdruck-Analyse','Finanzanalyse','Karriere-Analyse','Lebensphasen-Analyse','Beziehungsmuster','Partnerschaftsanalyse','Einzel-Ereignisse'].map((item, i) => (
