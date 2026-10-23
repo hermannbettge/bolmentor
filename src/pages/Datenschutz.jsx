@@ -21,7 +21,7 @@ export default function Datenschutz() {
           Hermann Bettge<br />
           [Straße und Hausnummer]<br />
           20000 Hamburg<br />
-          E-Mail: <a href="mailto:hallo@bewusstsein-ohne-limit.de" style={{ color: 'var(--color-gold)', textDecoration: 'none' }}>hallo@bewusstsein-ohne-limit.de</a>
+          E-Mail: <a href="mailto:support@bewusstsein-ohne-limit.de" style={{ color: 'var(--color-gold)', textDecoration: 'none' }}>support@bewusstsein-ohne-limit.de</a>
         </p>
       </Section>
 
@@ -98,7 +98,7 @@ export default function Datenschutz() {
           <li><strong>Datenübertragbarkeit</strong> (Art. 20 DSGVO): Du kannst deine Daten in einem gängigen Format erhalten</li>
         </ul>
         <p style={{ marginTop: '12px' }}>
-          Zur Ausübung deiner Rechte wende dich an: <a href="mailto:hallo@bewusstsein-ohne-limit.de" style={{ color: 'var(--color-gold)', textDecoration: 'none' }}>hallo@bewusstsein-ohne-limit.de</a>
+          Zur Ausübung deiner Rechte wende dich an: <a href="mailto:support@bewusstsein-ohne-limit.de" style={{ color: 'var(--color-gold)', textDecoration: 'none' }}>support@bewusstsein-ohne-limit.de</a>
         </p>
       </Section>
 

@@ -99,7 +99,7 @@ export default function Login() {
             </Link>
           </div>
           <div style={{ marginTop: '12px', textAlign: 'center' }}>
-            <a href="mailto:hallo@bewusstsein-ohne-limit.de" style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', textDecoration: 'none' }}>
+            <a href="mailto:support@bewusstsein-ohne-limit.de" style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', textDecoration: 'none' }}>
               Passwort vergessen?
             </a>
           </div>

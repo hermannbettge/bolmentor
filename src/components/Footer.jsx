@@ -38,7 +38,7 @@ export default function Footer() {
           <Link to="/datenschutz" style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textDecoration: 'none' }}>
             Datenschutz
           </Link>
-          <a href="mailto:hallo@bewusstsein-ohne-limit.de" style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textDecoration: 'none' }}>
+          <a href="mailto:support@bewusstsein-ohne-limit.de" style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textDecoration: 'none' }}>
             Kontakt
           </a>
           {user && (
