@@ -13,33 +13,32 @@ export default function Impressum() {
 
         <p>
           Hermann Bettge<br />
-          [Straße und Hausnummer]<br />
-          20000 Hamburg
+          Bewusstsein.ohne.Limit<br />
+          Poßmoorweg 14B<br />
+          22301 Hamburg
         </p>
 
         <h2 style={{ color: 'var(--color-gold)', fontWeight: 400, fontSize: '1.1rem', margin: '32px 0 16px' }}>Kontakt</h2>
         <p>
-          E-Mail: <a href="mailto:hallo@bewusstsein-ohne-limit.de" style={{ color: 'var(--color-gold)', textDecoration: 'none' }}>hallo@bewusstsein-ohne-limit.de</a>
+          Telefon: 01728572121<br />
+          E-Mail: <a href="mailto:support@bewusstsein-ohne-limit.de" style={{ color: 'var(--color-gold)', textDecoration: 'none' }}>support@bewusstsein-ohne-limit.de</a>
         </p>
+
+        <h2 style={{ color: 'var(--color-gold)', fontWeight: 400, fontSize: '1.1rem', margin: '32px 0 16px' }}>Wirtschaftsidentifikationsnummer</h2>
+        <p>DE238099705</p>
 
         <h2 style={{ color: 'var(--color-gold)', fontWeight: 400, fontSize: '1.1rem', margin: '32px 0 16px' }}>
           Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV
         </h2>
         <p>
           Hermann Bettge<br />
-          [Adresse wie oben]<br />
-          20000 Hamburg
+          Poßmoorweg 14B<br />
+          22301 Hamburg
         </p>
 
-        <h2 style={{ color: 'var(--color-gold)', fontWeight: 400, fontSize: '1.1rem', margin: '32px 0 16px' }}>EU-Streitschlichtung</h2>
+        <h2 style={{ color: 'var(--color-gold)', fontWeight: 400, fontSize: '1.1rem', margin: '32px 0 16px' }}>Verbraucherstreitbeilegung</h2>
         <p>
-          Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung bereit:{' '}
-          <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-gold)', textDecoration: 'none' }}>
-            https://ec.europa.eu/consumers/odr/
-          </a>
-        </p>
-        <p>
-          Wir sind nicht verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
+          Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
         </p>
 
         <h2 style={{ color: 'var(--color-gold)', fontWeight: 400, fontSize: '1.1rem', margin: '32px 0 16px' }}>Haftungsausschluss</h2>
