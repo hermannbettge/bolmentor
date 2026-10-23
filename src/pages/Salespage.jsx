@@ -552,13 +552,13 @@ export default function Salespage() {
                   'Beziehungsmuster',
                   'Partnerschaftsanalyse',
                 ].map((item, i) => (
-                  <div key={i} style={{ color: TEXT_MID, fontWeight: 300, fontSize: '0.88rem', marginBottom: '10px', display: 'flex', gap: '12px' }}>
+                  <div key={i} style={{ color: TEXT, fontWeight: 400, fontSize: '0.88rem', marginBottom: '10px', display: 'flex', gap: '12px' }}>
                     <span style={{ color: COPPER, flexShrink: 0, fontSize: '0.6rem', marginTop: '5px' }}>◆</span> {item}
                   </div>
                 ))}
               </div>
               <div style={{ marginTop: 'auto', paddingTop: '32px' }}>
-                <PillButton to="/zusatzanalysen" variant="outline">Analysen ansehen →</PillButton>
+                <PillButton to="/zusatzanalysen" variant="dark">Analysen ansehen →</PillButton>
               </div>
             </div>
           </div>
