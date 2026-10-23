@@ -6,7 +6,7 @@ const ANALYSE_LABELS = {
   business: 'Business', health: 'Gesundheit', family: 'Familie',
   selfexpression: 'Selbstausdruck', finance: 'Finanzen', career: 'Karriere',
   lifephases: 'Lebensphasen', partnership: 'Partnerschaftsmuster',
-  relationship: 'Beziehungsmuster', events: 'Ereignis-Analysen',
+  relationship: 'Beziehungsmuster', events: 'Ereignisse',
 }
 
 function NavItem({ to, label, indent = false }) {
