@@ -18,12 +18,24 @@ async function requireAdmin(req, res, next) {
   next()
 }
 
-// Alle User auflisten
+// Alle aktiven User auflisten (ohne soft-deleted)
 router.get('/users', requireAdmin, async (req, res) => {
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, name, birth_date, membership_active, membership_start, membership_end, purchased_analyses, is_admin, created_at')
+    .select('id, name, birth_date, membership_active, membership_start, membership_end, purchased_analyses, is_admin, created_at, max_events_override')
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
+  if (error) return res.status(500).json({ error: error.message })
+  res.json(data)
+})
+
+// Papierkorb: soft-deleted User auflisten
+router.get('/users/trash', requireAdmin, async (req, res) => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, name, birth_date, membership_active, membership_start, created_at, deleted_at, deleted_snapshot')
+    .not('deleted_at', 'is', null)
+    .order('deleted_at', { ascending: false })
   if (error) return res.status(500).json({ error: error.message })
   res.json(data)
 })
@@ -97,11 +109,68 @@ router.post('/users/:id/reset-password', requireAdmin, async (req, res) => {
   res.json({ success: true })
 })
 
-// User löschen
+// Soft-Delete: User in Papierkorb verschieben (Zugang sperren, Daten behalten)
 router.delete('/users/:id', requireAdmin, async (req, res) => {
   const id = req.params.id
   try {
-    // Delete dependent data first to avoid FK constraint errors
+    // Load current profile as snapshot
+    const { data: profile } = await supabase.from('profiles').select('*').eq('id', id).single()
+    if (!profile) return res.status(404).json({ error: 'Nutzer nicht gefunden' })
+
+    // Ban the auth user so they cannot log in
+    const { error: banError } = await supabase.auth.admin.updateUserById(id, { ban_duration: '876600h' })
+    if (banError) return res.status(500).json({ error: banError.message || JSON.stringify(banError) })
+
+    // Mark as soft-deleted in profile
+    const { error: updateError } = await supabase.from('profiles').update({
+      deleted_at: new Date().toISOString(),
+      deleted_snapshot: profile,
+      membership_active: false,
+      updated_at: new Date().toISOString(),
+    }).eq('id', id)
+    if (updateError) return res.status(500).json({ error: updateError.message })
+
+    res.json({ success: true })
+  } catch (e) {
+    res.status(500).json({ error: e.message || 'Unbekannter Fehler beim Löschen' })
+  }
+})
+
+// Restore: User aus Papierkorb wiederherstellen
+router.post('/users/:id/restore', requireAdmin, async (req, res) => {
+  const id = req.params.id
+  try {
+    const { data: profile } = await supabase.from('profiles').select('deleted_snapshot').eq('id', id).single()
+    if (!profile?.deleted_snapshot) return res.status(404).json({ error: 'Kein Snapshot gefunden' })
+
+    const snap = profile.deleted_snapshot
+
+    // Unban the auth user
+    const { error: unbanError } = await supabase.auth.admin.updateUserById(id, { ban_duration: 'none' })
+    if (unbanError) return res.status(500).json({ error: unbanError.message || JSON.stringify(unbanError) })
+
+    // Restore profile from snapshot
+    const { error: restoreError } = await supabase.from('profiles').update({
+      deleted_at: null,
+      deleted_snapshot: null,
+      membership_active: snap.membership_active ?? false,
+      membership_start: snap.membership_start ?? null,
+      subscription_plan: snap.subscription_plan ?? null,
+      purchased_analyses: snap.purchased_analyses ?? [],
+      updated_at: new Date().toISOString(),
+    }).eq('id', id)
+    if (restoreError) return res.status(500).json({ error: restoreError.message })
+
+    res.json({ success: true })
+  } catch (e) {
+    res.status(500).json({ error: e.message || 'Unbekannter Fehler beim Wiederherstellen' })
+  }
+})
+
+// Permanent-Delete: endgültig löschen (nur aus Papierkorb heraus)
+router.delete('/users/:id/permanent', requireAdmin, async (req, res) => {
+  const id = req.params.id
+  try {
     await supabase.from('analyses').delete().eq('user_id', id)
     await supabase.from('maya_chats').delete().eq('user_id', id)
     await supabase.from('events').delete().eq('user_id', id)
@@ -111,7 +180,7 @@ router.delete('/users/:id', requireAdmin, async (req, res) => {
     if (error) return res.status(500).json({ error: error.message || JSON.stringify(error) })
     res.json({ success: true })
   } catch (e) {
-    res.status(500).json({ error: e.message || 'Unbekannter Fehler beim Löschen' })
+    res.status(500).json({ error: e.message || 'Unbekannter Fehler beim endgültigen Löschen' })
   }
 })
 
