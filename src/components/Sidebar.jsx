@@ -8,6 +8,8 @@ const ANALYSE_LABELS = {
   lifephases: 'Lebensphasen', relationship: 'Beziehungsmuster', events: 'Ereignisse',
 }
 
+const ANALYSE_ORDER = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'relationship', 'events']
+
 function NavItem({ to, label, indent = false }) {
   return (
     <NavLink
@@ -99,11 +101,14 @@ export default function Sidebar() {
             <div style={{ padding: '14px 24px 4px', fontSize: '0.63rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: 'var(--accent-dim)' }}>
               Meine Analysen
             </div>
-            {purchased.filter(k => k !== 'compatibility' && ANALYSE_LABELS[k]).map(key => (
+            {ANALYSE_ORDER.filter(k => purchased.includes(k) && k !== 'events').map(key => (
               <NavItem key={key} to={`/analyse/${key}`} label={ANALYSE_LABELS[key]} indent />
             ))}
             {purchased.includes('partnership') && profile?.partner_birth_date && (
               <NavItem to="/analyse/partnerschaft" label="Partnerschaftsanalyse" indent />
+            )}
+            {purchased.includes('events') && (
+              <NavItem to="/analyse/events" label="Ereignisse" indent />
             )}
           </>
         )}
