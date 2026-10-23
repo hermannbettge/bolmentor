@@ -107,6 +107,12 @@ function checkMembership(profile) {
   if (!profile.membership_active) throw new Error('Keine aktive Mitgliedschaft')
 }
 
+function checkAnnualPlan(profile) {
+  if (profile.subscription_plan !== 'annual') {
+    throw new Error('Die Jahresanalyse ist nur im Jahrestarif verfügbar')
+  }
+}
+
 // Check purchased analysis
 function checkPurchased(profile, type) {
   if (!profile.purchased_analyses?.includes(type)) {
@@ -743,6 +749,7 @@ YEARLY_TYPES.forEach(type => {
     try {
       const profile = await getProfile(req.user.id)
       checkMembership(profile)
+      checkAnnualPlan(profile)
       checkPurchased(profile, type)
 
       const year = req.body.year || new Date().getFullYear()

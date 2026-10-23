@@ -280,7 +280,19 @@ export default function AnalysePage() {
         )}
 
         {/* Yearly Analysis Section */}
-        {hasYearly && !checking && (
+        {hasYearly && !checking && profile?.subscription_plan !== 'annual' && (
+          <div style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid var(--border)' }}>
+            <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '8px' }}>Jahresanalyse</div>
+            <p style={{ color: TEXT_LIGHT, fontSize: '0.9rem', lineHeight: 1.7, marginBottom: '16px' }}>
+              Die Jahresanalyse ist exklusiv im Jahrestarif verfügbar. Erhalte eine detaillierte Monat-für-Monat-Analyse für {new Date().getFullYear()}.
+            </p>
+            <a href="/analysen" style={{ display: 'inline-block', border: '1px solid var(--accent)', color: COPPER, borderRadius: '40px', padding: '10px 24px', fontSize: '0.85rem', textDecoration: 'none' }}>
+              Zum Jahrestarif wechseln →
+            </a>
+          </div>
+        )}
+
+        {hasYearly && !checking && profile?.subscription_plan === 'annual' && (
           <div style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid var(--border)' }}>
             <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '8px' }}>
               Jahresanalyse
