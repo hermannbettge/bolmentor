@@ -102,7 +102,7 @@ export default function Kalender() {
           </div>
         </div>
 
-        {/* Legend — Energietypen */}
+        {/* Legend — Energietypen (Punkte) */}
         <div style={{ display: 'flex', gap: '16px', marginBottom: '10px', flexWrap: 'wrap' }}>
           {Object.entries(ENERGY).map(([k, e]) => (
             <div key={k} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -112,9 +112,25 @@ export default function Kalender() {
           ))}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#FFD700' }} />
-            <span style={{ color: 'var(--text-2)', fontSize: '0.75rem' }}>Persönlicher Kraft-Tag</span>
+            <span style={{ color: 'var(--text-2)', fontSize: '0.75rem' }}>Kraft-Tag</span>
           </div>
         </div>
+
+        {/* Legend — Rahmenfarben */}
+        <div style={{ display: 'flex', gap: '14px', marginBottom: '10px', flexWrap: 'wrap' }}>
+          {[
+            { border: '2px solid #FFD700', label: 'Geburtstags-Resonanz' },
+            { border: '2px solid var(--accent)', label: 'Siegel-Resonanz' },
+            { border: '2px solid #7B9ED9', label: 'Ton-Resonanz' },
+            { border: '1px dashed var(--accent)', label: 'Wellen-Resonanz' },
+          ].map((item, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+              <div style={{ width: '18px', height: '14px', borderRadius: '3px', border: item.border }} />
+              <span style={{ color: 'var(--text-2)', fontSize: '0.72rem' }}>{item.label}</span>
+            </div>
+          ))}
+        </div>
+
         {/* Legend — Regenerationstage */}
         <div style={{ display: 'flex', gap: '16px', marginBottom: '20px', flexWrap: 'wrap' }}>
           {REGEN_LEGEND.map((item, i) => (
