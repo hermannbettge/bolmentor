@@ -10,6 +10,7 @@ import { redirectToCustomerPortal } from '../lib/stripe.js'
 const ANALYSE_LABELS = {
   business: 'Business-Analyse', health: 'Gesundheitsanalyse', family: 'Familienanalyse',
   selfexpression: 'Selbstausdruck-Analyse', finance: 'Finanzanalyse', career: 'Karriere-Analyse',
+  events: 'Ereignisse', yearly_select: 'Jahres-Auswahl',
   lifephases: 'Lebensphasen-Analyse', partnership: 'Partnerschaftsanalyse', relationship: 'Beziehungsmuster',
 }
 
