@@ -3,19 +3,23 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 import { redirectToCheckout, PRICES } from '../lib/stripe.js'
 import { useAuth } from '../hooks/useAuth.jsx'
 
+const isIntro = new Date() < new Date('2027-01-01T00:00:00Z')
+const analysisPrice = isIntro ? '7 € / Monat' : '9 € / Monat'
+const analysisNote = isIntro ? 'Einführungspreis bis 31.12.2026, danach 9 € / Monat. Jederzeit kündbar.' : '9 € / Monat. Jederzeit kündbar.'
+
 const PRODUCTS = [
-  { key: 'membershipMonthly', label: 'Monatsmitgliedschaft', price: '17 € / Monat', desc: 'Einführungspreis bis 31.12.2026, danach 27 € / Monat. Jederzeit kündbar.' },
-  { key: 'membershipAnnual',  label: 'Jahrestarif', price: '170 € / Jahr', desc: 'Einführungspreis bis 31.12.2026 (entspricht 14,17 € / Monat). Danach 270 € / Jahr.' },
-  { key: 'business',         label: 'Business-Analyse', price: '9 € / Monat', desc: 'Deine Chancen, Risiken und optimale Strategie im Beruf. Jederzeit kündbar.' },
-  { key: 'health',           label: 'Gesundheitsanalyse', price: '9 € / Monat', desc: 'Deine körperlichen und energetischen Muster. Jederzeit kündbar.' },
-  { key: 'family',           label: 'Familienanalyse', price: '9 € / Monat', desc: 'Dynamiken und Themen in deiner Familie. Jederzeit kündbar.' },
-  { key: 'selfexpression',   label: 'Selbstausdruck-Analyse', price: '9 € / Monat', desc: 'Deine Gaben und authentische Ausdrucksweise. Jederzeit kündbar.' },
-  { key: 'finance',          label: 'Finanzanalyse', price: '9 € / Monat', desc: 'Deine Beziehung zu Geld und Wohlstand. Jederzeit kündbar.' },
-  { key: 'career',           label: 'Karriere-Analyse', price: '9 € / Monat', desc: 'Berufung, Timing und optimale Karriereschritte. Jederzeit kündbar.' },
-  { key: 'lifephases',       label: 'Lebensphasen-Analyse', price: '9 € / Monat', desc: 'Deine aktuellen und kommenden Lebensphasen. Jederzeit kündbar.' },
-  { key: 'relationship',     label: 'Beziehungsmuster', price: '9 € / Monat', desc: 'Eigene Bindungsstile und Beziehungsmuster. Jederzeit kündbar.' },
-  { key: 'partnership',      label: 'Partnerschaftsanalyse', price: '9 € / Monat', desc: 'Du und dein Partner, Kompatibilität und Dynamik. Jederzeit kündbar.' },
-  { key: 'events',           label: 'Ereignis-Analysen', price: '9 € / Monat', desc: 'Wichtige Daten in deinem Leben verstehen und einordnen. Jederzeit kündbar.' },
+  { key: 'membershipMonthly', label: 'Monatsmitgliedschaft', price: isIntro ? '17 € / Monat' : '27 € / Monat', desc: isIntro ? 'Einführungspreis bis 31.12.2026, danach 27 € / Monat. Jederzeit kündbar.' : '27 € / Monat. Jederzeit kündbar.' },
+  { key: 'membershipAnnual',  label: 'Jahrestarif', price: isIntro ? '170 € / Jahr' : '270 € / Jahr', desc: isIntro ? 'Einführungspreis bis 31.12.2026 (14,17 € / Monat). Danach 270 € / Jahr.' : '270 € / Jahr (22,50 € / Monat).' },
+  { key: 'business',         label: 'Business-Analyse', price: analysisPrice, desc: analysisNote },
+  { key: 'health',           label: 'Gesundheitsanalyse', price: analysisPrice, desc: analysisNote },
+  { key: 'family',           label: 'Familienanalyse', price: analysisPrice, desc: analysisNote },
+  { key: 'selfexpression',   label: 'Selbstausdruck-Analyse', price: analysisPrice, desc: analysisNote },
+  { key: 'finance',          label: 'Finanzanalyse', price: analysisPrice, desc: analysisNote },
+  { key: 'career',           label: 'Karriere-Analyse', price: analysisPrice, desc: analysisNote },
+  { key: 'lifephases',       label: 'Lebensphasen-Analyse', price: analysisPrice, desc: analysisNote },
+  { key: 'relationship',     label: 'Beziehungsmuster', price: analysisPrice, desc: analysisNote },
+  { key: 'partnership',      label: 'Partnerschaftsanalyse', price: analysisPrice, desc: analysisNote },
+  { key: 'events',           label: 'Ereignis-Analysen', price: analysisPrice, desc: analysisNote },
 ]
 
 export default function Checkout() {

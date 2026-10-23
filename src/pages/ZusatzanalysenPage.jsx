@@ -225,7 +225,10 @@ export default function ZusatzanalysenPage() {
                 </div>
                 <div style={{ borderTop: `1px solid rgba(42,32,24,0.08)`, paddingTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
-                    <div style={{ fontSize: '0.85rem', fontWeight: 500, color: TEXT }}>9 € / Monat <span style={{ fontSize: '0.72rem', color: GOLD, fontWeight: 600 }}>bis 31.12.2026</span></div>
+                    {new Date() < new Date('2027-01-01T00:00:00Z')
+                      ? <div style={{ fontSize: '0.85rem', fontWeight: 500, color: TEXT }}>7 € / Monat <span style={{ fontSize: '0.72rem', color: GOLD, fontWeight: 600 }}>bis 31.12.2026</span></div>
+                      : <div style={{ fontSize: '0.85rem', fontWeight: 500, color: TEXT }}>9 € / Monat</div>
+                    }
                     <div style={{ fontSize: '0.72rem', color: TEXT_LIGHT, marginTop: '2px' }}>Monatlich · Jederzeit kündbar</div>
                   </div>
                   <button
