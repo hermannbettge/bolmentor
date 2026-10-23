@@ -278,7 +278,7 @@ export default function Salespage() {
             </P>
           </div>
 
-          <PillButton to="/registrieren" variant="copper">Jetzt starten · 17 € im ersten Monat →</PillButton>
+          <PillButton to="/registrieren" variant="copper">Jetzt starten · 17 € / Monat →</PillButton>
           <p style={{ color: TEXT_LIGHT, fontSize: '0.78rem', marginTop: '14px' }}>
             Einführungspreis gültig bis 31.12.2026 · Danach 27 €/Monat<br />Jederzeit kündbar
           </p>
@@ -487,7 +487,7 @@ export default function Salespage() {
             <div style={{ backgroundColor: DEEP, padding: '40px 32px', display: 'flex', flexDirection: 'column' }}>
               <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: COPPER_LIGHT, marginBottom: '20px' }}>Mitgliedschaft</div>
               <div style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontSize: '2.8rem', fontWeight: 400, color: CREAM, lineHeight: 1 }}>17 €</div>
-              <div style={{ color: 'rgba(244,239,230,0.35)', fontSize: '0.78rem', marginBottom: '4px', marginTop: '4px' }}>im ersten Monat</div>
+              <div style={{ color: 'rgba(244,239,230,0.35)', fontSize: '0.78rem', marginBottom: '4px', marginTop: '4px' }}>pro Monat</div>
               <div style={{ color: COPPER_LIGHT, fontSize: '0.78rem', marginBottom: '32px' }}>danach 27 €/Monat</div>
               <Line dark />
               <div style={{ paddingTop: '24px' }}>
@@ -580,7 +580,7 @@ export default function Salespage() {
             Die spannendere Frage ist, welches Muster heute noch dafür sorgt, dass bestimmte Situationen immer wieder ähnlich verlaufen.<br />Genau dort beginnt der nächste Schritt.
           </P>
           <div style={{ marginTop: '40px', display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <PillButton to="/registrieren" variant="copper">Jetzt starten · 17 € im ersten Monat →</PillButton>
+            <PillButton to="/registrieren" variant="copper">Jetzt starten · 17 € / Monat →</PillButton>
           </div>
           <p style={{ color: TEXT_LIGHT, fontSize: '0.78rem', marginTop: '14px' }}>Einführungspreis gültig bis 31.12.2026 · Danach 27 €/Monat<br />Jederzeit kündbar</p>
         </div>
