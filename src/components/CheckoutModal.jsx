@@ -57,12 +57,13 @@ export default function CheckoutModal({ onClose, preselected = null, mode = 'ana
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
       style={{
         position: 'fixed', inset: 0, backgroundColor: 'rgba(26,20,16,0.72)', zIndex: 1000,
-        display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '16px',
       }}
     >
       <div style={{
-        backgroundColor: '#F4EFE6', width: '100%', maxWidth: '560px', borderRadius: '16px 16px 0 0',
-        padding: '32px 28px 40px', maxHeight: '92vh', overflowY: 'auto',
+        backgroundColor: '#F4EFE6', width: '100%', maxWidth: '560px', borderRadius: '16px',
+        padding: '32px 28px 40px', maxHeight: '90vh', overflowY: 'auto',
         fontFamily: 'Inter, sans-serif',
       }}>
         {/* Header */}
@@ -129,9 +130,9 @@ export default function CheckoutModal({ onClose, preselected = null, mode = 'ana
                   <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#2A2018' }}>{total} € / Monat</span>
                 </div>
               )}
-              {selected.size >= 2 && (
+              {total * 12 > ANNUAL_PRICE && (
                 <div style={{ fontSize: '0.75rem', color: '#A0522D', fontWeight: 500, marginTop: '8px' }}>
-                  Tipp: Mit dem Jahrespaket sparst du ca. {annualSaving > 0 ? `${annualSaving} €` : 'deutlich'} im Jahr und erhältst alle 10 Analysen.
+                  Tipp: Mit dem Jahrespaket ({ANNUAL_PRICE} € / Jahr) sparst du {Math.round(total * 12 - ANNUAL_PRICE)} € im Jahr und erhältst alle 10 Analysen.
                 </div>
               )}
             </div>

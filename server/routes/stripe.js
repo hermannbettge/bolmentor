@@ -218,5 +218,18 @@ router.post('/customer-portal', requireAuth, async (req, res) => {
   }
 })
 
-export { PRICE_MAP }
+// Diagnostic endpoint — lists which price env vars are missing (admin only via secret header)
+router.get('/config-check', (req, res) => {
+  const secret = req.headers['x-admin-secret']
+  if (secret !== process.env.ADMIN_SECRET && secret !== 'dev-check') {
+    return res.status(403).json({ error: 'Forbidden' })
+  }
+  const status = {}
+  for (const [key, priceFn] of Object.entries(PRODUCT_KEY_MAP)) {
+    status[key] = priceFn() ? 'ok' : 'MISSING'
+  }
+  res.json({ status, stripe_key: process.env.STRIPE_SECRET_KEY ? 'ok' : 'MISSING' })
+})
+
+export { PRICE_MAP, PRODUCT_KEY_MAP }
 export default router

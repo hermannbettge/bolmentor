@@ -39,11 +39,13 @@ export default function Checkout() {
   async function handleCheckout() {
     setLoading(true)
     setError('')
+    // Non-members buying an analysis must get membership first
+    const keyToCheckout = (isAnalysis && !hasMembership) ? 'membershipMonthly' : productKey
     try {
       if (user) {
-        await redirectToCheckout(productKey)
+        await redirectToCheckout(keyToCheckout)
       } else {
-        await redirectToGuestCheckout(productKey)
+        await redirectToGuestCheckout(keyToCheckout)
       }
     } catch (e) {
       setError(e.message)
