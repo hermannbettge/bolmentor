@@ -269,7 +269,7 @@ export default function Salespage() {
           </div>
 
           <Hero>
-            Du arbeitest an dir. Aber dieselben Muster kommen trotzdem immer wieder zurück.
+            Du arbeitest an dir.<br />Aber dieselben Muster<br />kommen trotzdem<br />immer wieder zurück.
           </Hero>
 
           <div style={{ maxWidth: '600px', margin: '0 auto 40px' }}>
