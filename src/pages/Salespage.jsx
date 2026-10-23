@@ -586,27 +586,27 @@ export default function Salespage() {
           <Tag>Häufige Fragen</Tag>
           <FaqItem
             question="Was genau ist der Maya Kalender?"
-            answer="Der Maya Tzolkin ist ein 260-tägiger Zyklus aus 20 Sonnensiegeln und 13 galaktischen Tönen. Er beschreibt keine Zukunft, er beschreibt Muster. Dein Geburtsdatum ergibt eine einzigartige Kombination, die zeigt, wie du in der Welt wirkst und welche Themen dich begleiten."
+            answer="Der Maya Tzolkin ist ein 260-tägiger Zyklus aus 20 Sonnensiegeln und 13 galaktischen Tönen. Er ist kein Horoskop und keine Wahrsagerei. Er beschreibt Muster. Die Energie, unter der du geboren wurdest, hinterlässt eine Prägung. Diese Prägung zeigt sich in deiner Art zu denken, zu fühlen und zu handeln. Wenn du weißt, welche Energie dich antreibt, erkennst du auch, warum bestimmte Situationen immer wieder auftauchen. Dein Geburtsdatum ergibt eine einzigartige Kombination aus Siegel und Ton. Diese Kombination ist dein persönliches Maya-Kin und der Ausgangspunkt für alle Analysen in MAYA."
           />
           <FaqItem
             question="Wie wird meine Analyse erstellt?"
-            answer="Auf Basis deines Geburtsdatums berechnen wir dein persönliches Kin. Eine KI, die mit einem umfangreichen Maya-Wissenssystem arbeitet, erstellt daraus deine Analyse. Täglich neu, monatlich vertieft, jährlich zusammengefasst."
+            answer="Wir berechnen dein persönliches Kin aus deinem Geburtsdatum. Eine KI, die mit einem tiefen Maya-Wissenssystem arbeitet, erstellt daraus deine Analyse. Die Sprache ist direkt und persönlich, kein generischer Text. Die tägliche Analyse erscheint jeden Morgen neu, die monatliche Tiefenanalyse geht weiter in die Tiefe und die Jahresanalyse fasst die wichtigsten Themen deines Lebenszyklus zusammen."
           />
           <FaqItem
             question="Was ist der Unterschied zwischen Monatsmitgliedschaft und Jahrestarif?"
-            answer="Im Jahrestarif bekommst du vollen Zugang zum Energiekalender (Tagesanalysen für jedes Datum, nicht nur heute), 12 statt 2 Ereignis-Analysen, Jahresanalysen für alle Lebensbereiche und 2 Monate geschenkt gegenüber dem monatlichen Preis."
+            answer="Die Monatsmitgliedschaft gibt dir Zugang zur täglichen Energie, deiner Kernanalyse und dem Energiekalender für heute. Im Jahrestarif siehst du den vollständigen Energiekalender für jedes beliebige Datum, hast sofort 12 Ereignis-Analysen zur Verfügung, bekommst Jahresanalysen für alle Lebensbereiche freigeschaltet und zahlst gegenüber dem monatlichen Preis zwei Monate weniger."
           />
           <FaqItem
             question="Was sind Ereignis-Analysen?"
-            answer="Du kannst jedem Datum, das für dich bedeutsam war oder ist, eine Maya-Analyse zuordnen. Eine Beziehung, ein Unternehmensstart, ein Vertrag, ein Umzug. Die Analyse zeigt, welche Energie damals aktiv war und was das heute bedeutet."
+            answer="Manche Daten bleiben. Der erste Tag in einem neuen Job, eine Begegnung, die alles verändert hat, ein Vertrag, den du unterschrieben hast. Bei einer Ereignis-Analyse gibst du dieses Datum ein und MAYA zeigt dir, welche Energie damals aktiv war und was das für heute bedeutet. Im Grundtarif bekommst du jeden Monat einen weiteren Slot, im Jahrestarif sind es sofort 12."
           />
           <FaqItem
             question="Ist das Esoterik?"
-            answer="Der Maya Kalender ist ein über 5.000 Jahre altes System. Ob du es als spirituelles Werkzeug nutzt oder einfach als Spiegel für dein Verhalten, das entscheidest du. Viele Mitglieder haben keinen esoterischen Hintergrund."
+            answer="Das kommt darauf an, was du darunter verstehst. Der Maya Tzolkin ist ein über 5.000 Jahre altes Zeitsystem. Manche nutzen es spirituell, andere nutzen es als Orientierungsrahmen. Beides ist in Ordnung. MAYA zwingt dir keine Weltsicht auf. Viele unserer Mitglieder haben keinen esoterischen Hintergrund und nutzen die Analysen einfach als Spiegel für sich selbst."
           />
           <FaqItem
             question="Wie kann ich kündigen?"
-            answer="Jederzeit mit einem Klick in deinem Profil. Keine Fristen, keine Hürden. Deine erstellten Analysen bleiben bis zum Ende des gebuchten Zeitraums abrufbar."
+            answer="Du kannst jederzeit in deinem Profil kündigen, ohne Formulare oder Wartezeit. Die Kündigung gilt zum Ende des laufenden Abrechnungszeitraums. Deine bisher erstellten Analysen bleiben bis dahin vollständig abrufbar."
           />
           <Line />
         </div>
