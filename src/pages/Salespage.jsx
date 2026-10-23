@@ -399,17 +399,11 @@ export default function Salespage() {
         <div style={sectionPad}>
           <Tag dark>Stimmen</Tag>
           <div style={grid3}>
-            {[
-              { name: 'Sarah M., 34', role: 'Unternehmerin, Hamburg', quote: 'Ich habe vieles über mich gewusst. Die Maya Analyse hat mir gezeigt, warum es trotzdem immer wieder gleich läuft. Das hat etwas in mir geöffnet.' },
-              { name: 'Thomas K., 41', role: 'Führungskraft, München', quote: 'Ich war skeptisch. Dann habe ich die erste Analyse gelesen und das Gefühl gehabt, dass jemand beschreibt, wie ich wirklich funktioniere. Nicht wie ich sein sollte.' },
-              { name: 'Julia R., 29', role: 'Coach, Berlin', quote: 'Der Energiekalender ist ein Orientierungspunkt geworden. Bevor ich größere Entscheidungen treffe, schaue ich rein. Es hilft mehr als ich erwartet hätte.' },
-            ].map((t, i) => (
-              <div key={i} style={{ backgroundColor: 'rgba(244,239,230,0.05)', padding: m ? '28px 20px' : '36px 28px', borderLeft: (!m && i > 0) ? '1px solid rgba(244,239,230,0.08)' : 'none', borderTop: (m && i > 0) ? '1px solid rgba(244,239,230,0.08)' : 'none' }}>
-                <p style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontSize: '1rem', color: 'rgba(244,239,230,0.8)', lineHeight: 1.75, margin: '0 0 24px' }}>
-                  „{t.quote}"
+            {[1, 2, 3].map((_, i) => (
+              <div key={i} style={{ backgroundColor: 'rgba(244,239,230,0.05)', padding: m ? '28px 20px' : '36px 28px', borderLeft: (!m && i > 0) ? '1px solid rgba(244,239,230,0.08)' : 'none', borderTop: (m && i > 0) ? '1px solid rgba(244,239,230,0.08)' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '140px' }}>
+                <p style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontSize: '1rem', color: 'rgba(244,239,230,0.3)', lineHeight: 1.75, margin: 0, textAlign: 'center' }}>
+                  Hier könnte deine Stimme stehen.
                 </p>
-                <div style={{ color: 'rgba(244,239,230,0.5)', fontSize: '0.8rem', fontWeight: 500 }}>{t.name}</div>
-                <div style={{ color: 'rgba(244,239,230,0.3)', fontSize: '0.75rem', marginTop: '2px' }}>{t.role}</div>
               </div>
             ))}
           </div>
