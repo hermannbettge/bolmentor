@@ -85,7 +85,7 @@ export default function AnalyseEvent() {
   )
 
   return (
-    <div style={{ backgroundColor: 'var(--bg-deep)', minHeight: '100vh', padding: '48px 40px', maxWidth: '860px' }}>
+    <div style={{ backgroundColor: 'var(--bg-deep)', minHeight: '100vh', padding: 'clamp(24px,4vw,48px) clamp(16px,4vw,40px)', maxWidth: '860px' }}>
       <button onClick={() => navigate('/analysen')} style={{ color: 'var(--text-2)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.82rem', marginBottom: '32px', padding: 0 }}>
         ← Zurück
       </button>

@@ -45,8 +45,8 @@ function InfoCard({ num, title, text }) {
 
 export default function MayaInfo() {
   return (
-    <div style={{ backgroundColor: BG, minHeight: '100vh', padding: '48px 40px', fontFamily: 'Inter, sans-serif' }}>
-      <div style={{ maxWidth: '760px' }}>
+    <div style={{ backgroundColor: BG, minHeight: '100vh', padding: 'clamp(24px,4vw,48px) clamp(16px,4vw,40px)', fontFamily: 'Inter, sans-serif' }}>
+      <div className="analysis-inner" style={{ maxWidth: '760px' }}>
 
         <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '8px' }}>
           Hintergrund

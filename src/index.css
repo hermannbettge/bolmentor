@@ -204,3 +204,21 @@ body {
     gap: 2px !important;
   }
 }
+
+/* ── Global mobile safety ── */
+@media (max-width: 768px) {
+  body, #root {
+    overflow-x: hidden;
+  }
+
+  /* Scale down headings globally on mobile */
+  h1 {
+    font-size: clamp(1.4rem, 5vw, 2rem) !important;
+    line-height: 1.25 !important;
+  }
+
+  /* All inner content wrappers fill mobile width */
+  .analysis-inner {
+    max-width: 100% !important;
+  }
+}

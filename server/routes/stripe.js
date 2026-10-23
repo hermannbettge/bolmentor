@@ -153,11 +153,6 @@ router.post('/claim-session', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'Zahlung nicht abgeschlossen' })
     }
 
-    const sessionEmail = (session.customer_details?.email || '').toLowerCase()
-    if (sessionEmail && sessionEmail !== (req.user.email || '').toLowerCase()) {
-      return res.status(403).json({ error: 'E-Mail stimmt nicht mit der Zahlung überein' })
-    }
-
     const lineItem = session.line_items?.data?.[0]
     const priceId = lineItem?.price?.id
     const mapping = PRICE_MAP[priceId]

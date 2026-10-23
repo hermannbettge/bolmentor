@@ -117,14 +117,14 @@ export default function PartnerschaftsanalysePage() {
   }
 
   if (checking) return (
-    <div style={{ backgroundColor: 'var(--bg-deep)', minHeight: '100vh', padding: '48px 40px' }}>
+    <div style={{ backgroundColor: 'var(--bg-deep)', minHeight: '100vh', padding: 'clamp(24px,4vw,48px) clamp(16px,4vw,40px)' }}>
       <div style={{ color: TEXT_LIGHT }}>Wird geladen…</div>
     </div>
   )
 
   return (
-    <div style={{ backgroundColor: 'var(--bg-deep)', minHeight: '100vh', padding: '48px 40px', fontFamily: 'Inter, sans-serif' }}>
-      <div style={{ maxWidth: '720px' }}>
+    <div style={{ backgroundColor: 'var(--bg-deep)', minHeight: '100vh', padding: 'clamp(24px,4vw,48px) clamp(16px,4vw,40px)', fontFamily: 'Inter, sans-serif' }}>
+      <div className="analysis-inner" style={{ maxWidth: '720px' }}>
         <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '8px' }}>
           Paaranalyse
         </div>
