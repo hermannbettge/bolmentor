@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext } from 'react'
+import { useState, useEffect, useRef, createContext, useContext } from 'react'
 import { supabase } from '../lib/supabase.js'
 
 const AuthContext = createContext(null)
@@ -7,6 +7,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
+  const profileVersion = useRef(0)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -28,17 +29,18 @@ export function AuthProvider({ children }) {
   }, [])
 
   async function loadProfile(userId) {
+    const version = ++profileVersion.current
     try {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single()
-      if (!error) setProfile(data)
+      if (!error && version === profileVersion.current) setProfile(data)
     } catch {
       // Profile might not exist yet
     } finally {
-      setLoading(false)
+      if (version === profileVersion.current) setLoading(false)
     }
   }
 

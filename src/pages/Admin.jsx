@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { useNavigate } from 'react-router-dom'
+import { useIsMobile } from '../hooks/useIsMobile.js'
 import { supabase } from '../lib/supabase.js'
 
 const ANALYSIS_TYPES = [
@@ -112,6 +113,7 @@ function InputModal({ label, onConfirm, onCancel }) {
 export default function Admin() {
   const { user, profile } = useAuth()
   const navigate = useNavigate()
+  const isMobile = useIsMobile()
   const [tab, setTab] = useState('users') // 'users' | 'trash'
   const [users, setUsers] = useState([])
   const [trashedUsers, setTrashedUsers] = useState([])
@@ -306,7 +308,7 @@ export default function Admin() {
   return (
     <>
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-deep)', color: 'var(--text-1)', fontFamily: 'Inter, sans-serif' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: isMobile ? '24px 16px 100px' : '40px 24px' }}>
         <div style={{ marginBottom: '32px' }}>
           <div style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.18em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: '8px' }}>
             Admin
@@ -355,7 +357,7 @@ export default function Admin() {
 
         {/* Nutzer-Tab */}
         {tab === 'users' && (
-          <div style={{ display: 'grid', gridTemplateColumns: selectedUser ? '1fr 400px' : '1fr', gap: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: selectedUser && !isMobile ? '1fr 400px' : '1fr', gap: '24px' }}>
 
             <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: '4px', border: '1px solid var(--border)', overflow: 'hidden' }}>
               <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -364,14 +366,16 @@ export default function Admin() {
                   Aktualisieren
                 </button>
               </div>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+              <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', minWidth: isMobile ? 'unset' : '600px', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                    {['Name', 'ID', 'Mitgliedschaft', 'Analysen', 'Registriert', ''].map(h => (
-                      <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: 'var(--text-2)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                        {h}
-                      </th>
-                    ))}
+                    <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: 'var(--text-2)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Name</th>
+                    {!isMobile && <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: 'var(--text-2)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>ID</th>}
+                    <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: 'var(--text-2)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Status</th>
+                    {!isMobile && <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: 'var(--text-2)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Analysen</th>}
+                    {!isMobile && <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: 'var(--text-2)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Registriert</th>}
+                    <th style={{ padding: '10px 16px' }}></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -381,22 +385,16 @@ export default function Admin() {
                         {u.name || '—'}
                         {u.is_admin && <span style={{ marginLeft: '6px', fontSize: '0.68rem', color: 'var(--accent)' }}>ADMIN</span>}
                       </td>
-                      <td style={{ padding: '12px 16px', color: 'var(--text-2)', fontSize: '0.82rem' }}>
-                        {u.id.slice(0, 8)}…
-                      </td>
+                      {!isMobile && <td style={{ padding: '12px 16px', color: 'var(--text-2)', fontSize: '0.82rem' }}>{u.id.slice(0, 8)}…</td>}
                       <td style={{ padding: '12px 16px' }}>
                         <Badge active={u.membership_active} />
                       </td>
-                      <td style={{ padding: '12px 16px', color: 'var(--text-2)' }}>
-                        {(u.purchased_analyses?.filter(k => k !== 'compatibility') || []).length}
-                      </td>
-                      <td style={{ padding: '12px 16px', color: 'var(--text-2)', fontSize: '0.8rem' }}>
-                        {new Date(u.created_at).toLocaleDateString('de-DE')}
-                      </td>
+                      {!isMobile && <td style={{ padding: '12px 16px', color: 'var(--text-2)' }}>{(u.purchased_analyses?.filter(k => k !== 'compatibility') || []).length}</td>}
+                      {!isMobile && <td style={{ padding: '12px 16px', color: 'var(--text-2)', fontSize: '0.8rem' }}>{new Date(u.created_at).toLocaleDateString('de-DE')}</td>}
                       <td style={{ padding: '12px 16px' }}>
                         <button
                           onClick={() => setSelectedUser(selectedUser?.id === u.id ? null : u)}
-                          style={{ background: 'none', border: '1px solid rgba(var(--accent-rgb,184,151,90),0.3)', color: 'var(--accent)', cursor: 'pointer', padding: '4px 12px', fontSize: '0.78rem', borderRadius: '2px' }}
+                          style={{ background: 'none', border: '1px solid rgba(var(--accent-rgb,184,151,90),0.3)', color: 'var(--accent)', cursor: 'pointer', padding: '4px 12px', fontSize: '0.78rem', borderRadius: '2px', whiteSpace: 'nowrap' }}
                         >
                           {selectedUser?.id === u.id ? 'Schließen' : 'Bearbeiten'}
                         </button>
@@ -405,6 +403,7 @@ export default function Admin() {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
 
             {/* Detail-Panel */}

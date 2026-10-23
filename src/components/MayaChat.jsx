@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth.jsx'
+import { useIsMobile } from '../hooks/useIsMobile.js'
 import { supabase } from '../lib/supabase.js'
 
 const SUGGESTIONS = [
@@ -12,6 +13,7 @@ const SUGGESTIONS = [
 
 export default function MayaChat() {
   const { user } = useAuth()
+  const isMobile = useIsMobile()
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
@@ -63,7 +65,7 @@ export default function MayaChat() {
     }
   }
 
-  if (!user) return null
+  if (!user || isMobile) return null
 
   return (
     <>
