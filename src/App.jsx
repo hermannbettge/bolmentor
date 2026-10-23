@@ -65,7 +65,7 @@ function AppRoutes() {
         <Route path="/analyse/partnerschaft" element={<ProtectedRoute requireMembership><PartnerschaftsanalysePage /></ProtectedRoute>} />
         <Route path="/analyse/:type" element={<ProtectedRoute requireMembership><AnalysePage /></ProtectedRoute>} />
         <Route path="/maya-kalender" element={<ProtectedRoute requireMembership><MayaInfo /></ProtectedRoute>} />
-        <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+        <Route path="/checkout" element={<Checkout />} />
         <Route path="/maya-ki" element={<ProtectedRoute requireMembership><MayaKI /></ProtectedRoute>} />
 
         <Route path="*" element={<Navigate to="/" replace />} />

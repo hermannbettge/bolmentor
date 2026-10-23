@@ -56,7 +56,22 @@ export default function Registrieren() {
       // Convert DD.MM.YYYY to YYYY-MM-DD for storage
       const parts = birthDate.split('.')
       const isoDate = `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`
-      await signUp(email, password, name, isoDate)
+      const data = await signUp(email, password, name, isoDate)
+
+      const stripeSession = searchParams.get('stripe_session')
+      if (stripeSession && data?.session?.access_token) {
+        try {
+          await fetch('/api/stripe/claim-session', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${data.session.access_token}`,
+            },
+            body: JSON.stringify({ session_id: stripeSession }),
+          })
+        } catch {}
+      }
+
       const redirect = searchParams.get('redirect')
       navigate(redirect || '/dashboard')
     } catch (err) {

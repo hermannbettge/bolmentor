@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import { redirectToCheckout, PRICES } from '../lib/stripe.js'
+import { redirectToCheckout, redirectToGuestCheckout, PRICES } from '../lib/stripe.js'
 import { useAuth } from '../hooks/useAuth.jsx'
 
 const isIntro = new Date() < new Date('2027-01-01T00:00:00Z')
@@ -25,7 +25,7 @@ const PRODUCTS = [
 export default function Checkout() {
   const [params] = useSearchParams()
   const navigate = useNavigate()
-  const { profile } = useAuth()
+  const { user, profile } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -44,7 +44,11 @@ export default function Checkout() {
     setLoading(true)
     setError('')
     try {
-      await redirectToCheckout(priceId)
+      if (user) {
+        await redirectToCheckout(priceId)
+      } else {
+        await redirectToGuestCheckout(priceId)
+      }
     } catch (e) {
       setError(e.message)
       setLoading(false)

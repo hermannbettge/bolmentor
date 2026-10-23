@@ -1,5 +1,19 @@
 import { supabase } from './supabase.js'
 
+export async function redirectToGuestCheckout(priceId) {
+  const res = await fetch('/api/stripe/guest-checkout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ priceId }),
+  })
+  if (!res.ok) {
+    const err = await res.json()
+    throw new Error(err.error || 'Checkout konnte nicht gestartet werden')
+  }
+  const { url } = await res.json()
+  window.location.href = url
+}
+
 export async function redirectToCheckout(priceId) {
   const { data: { session } } = await supabase.auth.getSession()
   const res = await fetch('/api/stripe/create-checkout-session', {

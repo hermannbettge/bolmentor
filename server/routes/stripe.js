@@ -80,6 +80,87 @@ router.post('/create-checkout-session', requireAuth, async (req, res) => {
   }
 })
 
+// Guest checkout — no login required, success redirects to registration
+router.post('/guest-checkout', async (req, res) => {
+  try {
+    const stripe = getStripe()
+    const { priceId } = req.body
+    if (!priceId) return res.status(400).json({ error: 'priceId fehlt' })
+
+    const mapping = PRICE_MAP[priceId]
+    if (!mapping) return res.status(400).json({ error: 'Unbekanntes Produkt' })
+
+    const appUrl = process.env.APP_URL || 'http://localhost:5173'
+    const isSubscription = mapping.type === 'membership'
+
+    const session = await stripe.checkout.sessions.create({
+      mode: isSubscription ? 'subscription' : 'payment',
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${appUrl}/registrieren?stripe_session={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/`,
+      allow_promotion_codes: true,
+    })
+
+    res.json({ url: session.url })
+  } catch (err) {
+    console.error('Guest Checkout Fehler:', err)
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// Claim a completed guest checkout session after registration
+router.post('/claim-session', requireAuth, async (req, res) => {
+  try {
+    const stripe = getStripe()
+    const { session_id } = req.body
+    if (!session_id) return res.status(400).json({ error: 'session_id fehlt' })
+
+    const session = await stripe.checkout.sessions.retrieve(session_id, {
+      expand: ['line_items'],
+    })
+
+    if (session.status !== 'complete' && session.payment_status !== 'paid') {
+      return res.status(400).json({ error: 'Zahlung nicht abgeschlossen' })
+    }
+
+    const sessionEmail = (session.customer_details?.email || '').toLowerCase()
+    if (sessionEmail && sessionEmail !== (req.user.email || '').toLowerCase()) {
+      return res.status(403).json({ error: 'E-Mail stimmt nicht mit der Zahlung überein' })
+    }
+
+    const lineItem = session.line_items?.data?.[0]
+    const priceId = lineItem?.price?.id
+    const mapping = PRICE_MAP[priceId]
+    if (!mapping) return res.status(400).json({ error: 'Produkt nicht erkannt' })
+
+    const now = new Date()
+
+    if (mapping.type === 'membership') {
+      await supabase.from('profiles').update({
+        membership_active: true,
+        membership_start: now.toISOString(),
+        subscription_plan: mapping.plan,
+        stripe_customer_id: session.customer || null,
+        updated_at: now.toISOString(),
+      }).eq('id', req.user.id)
+    } else if (mapping.type === 'analysis') {
+      const { data: profile } = await supabase.from('profiles').select('purchased_analyses').eq('id', req.user.id).single()
+      const list = profile?.purchased_analyses || []
+      if (!list.includes(mapping.key)) {
+        await supabase.from('profiles').update({
+          purchased_analyses: [...list, mapping.key],
+          updated_at: now.toISOString(),
+        }).eq('id', req.user.id)
+      }
+    }
+
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Claim Session Fehler:', err)
+    res.status(500).json({ error: err.message })
+  }
+})
+
 // Create a Stripe Customer Portal session (manage subscription/cancel)
 router.post('/customer-portal', requireAuth, async (req, res) => {
   try {
