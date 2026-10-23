@@ -40,7 +40,7 @@ const ANALYSES = [
     icon: '💰',
     title: 'Finanzanalyse',
     subtitle: 'Dein Verhältnis zu Geld und Überfluss',
-    description: 'Geld ist Energie — und dein Umgang damit folgt einem Muster. Die Analyse zeigt deine natürliche Beziehung zu Wohlstand, welche unbewussten Überzeugungen dich begrenzen und wie du finanziell in deiner Kraft bleibst.',
+    description: 'Geld ist Energie, und dein Umgang damit folgt einem Muster. Die Analyse zeigt deine natürliche Beziehung zu Wohlstand, welche unbewussten Überzeugungen dich begrenzen und wie du finanziell in deiner Kraft bleibst.',
     highlights: ['Dein natürliches Geld-Muster', 'Unbewusste Blockaden sichtbar machen', 'Stärken im Umgang mit Ressourcen'],
   },
   {
@@ -48,7 +48,7 @@ const ANALYSES = [
     icon: '🎯',
     title: 'Karriere-Analyse',
     subtitle: 'Dein beruflicher Weg und deine Berufung',
-    description: 'Was ist deine eigentliche Berufung? Nicht das, was du gewählt hast — sondern das, wofür du wirklich gemacht bist. Die Analyse zeigt deinen optimalen Karrierepfad, wann der beste Zeitpunkt für Veränderungen ist und welche Umgebung dich aufblühen lässt.',
+    description: 'Was ist deine eigentliche Berufung? Nicht das, was du gewählt hast, sondern das, wofür du wirklich gemacht bist. Die Analyse zeigt deinen optimalen Karrierepfad, wann der beste Zeitpunkt für Veränderungen ist und welche Umgebung dich aufblühen lässt.',
     highlights: ['Berufung vs. gewählter Beruf', 'Optimales Timing für Karriereschritte', 'Umgebung und Kontext für Höchstleistung'],
   },
   {
@@ -56,7 +56,7 @@ const ANALYSES = [
     icon: '📅',
     title: 'Lebensphasen-Analyse',
     subtitle: 'Die wichtigsten Phasen deines Lebens',
-    description: 'Dein Leben folgt einem Rhythmus aus Phasen — Aufbau, Reife, Transformation. Die Analyse zeigt, in welcher Phase du dich gerade befindest, was als nächstes kommt und welche vergangenen Phasen du vielleicht noch nicht vollständig integriert hast.',
+    description: 'Dein Leben folgt einem Rhythmus aus Phasen, Aufbau, Reife, Transformation. Die Analyse zeigt, in welcher Phase du dich gerade befindest, was als nächstes kommt und welche vergangenen Phasen du vielleicht noch nicht vollständig integriert hast.',
     highlights: ['Aktuelle Lebensphase verstehen', 'Kommende Übergänge erkennen', 'Vergangenes integrieren'],
   },
   {
@@ -64,16 +64,24 @@ const ANALYSES = [
     icon: '❤️',
     title: 'Beziehungsmuster',
     subtitle: 'Deine eigenen Bindungsstile und Beziehungsmuster',
-    description: 'Beziehungsmuster wiederholen sich — bis man sie versteht. Die Analyse zeigt, wie du in Beziehungen wirkst, was du unbewusst anziehst und was dir in einer Verbindung wirklich Erfüllung bringt.',
+    description: 'Beziehungsmuster wiederholen sich, bis man sie versteht. Die Analyse zeigt, wie du in Beziehungen wirkst, was du unbewusst anziehst und was dir in einer Verbindung wirklich Erfüllung bringt.',
     highlights: ['Dein Bindungsstil verstehen', 'Unbewusste Muster erkennen', 'Tiefe und Erfüllung in Beziehungen'],
   },
   {
     key: 'partnership',
     icon: '💫',
     title: 'Partnerschaftsanalyse',
-    subtitle: 'Du und dein Partner — Dynamik & Kompatibilität',
+    subtitle: 'Du und dein Partner, Dynamik und Kompatibilität',
     description: 'Wie harmonieren zwei Energien miteinander? Die Partnerschaftsanalyse vergleicht dein Maya-Kin mit dem deines Partners und zeigt eure Stärken, Spannungsfelder und das gemeinsame Wachstumspotenzial.',
-    highlights: ['Energetische Kompatibilität', 'Gemeinsame Stärken & Herausforderungen', 'Wachstumspotenzial als Paar'],
+    highlights: ['Energetische Kompatibilität', 'Gemeinsame Stärken und Herausforderungen', 'Wachstumspotenzial als Paar'],
+  },
+  {
+    key: 'events',
+    icon: '📆',
+    title: 'Ereignis-Analysen',
+    subtitle: 'Wichtige Daten in deinem Leben verstehen',
+    description: 'Manche Daten bleiben. Der erste Tag in einem neuen Job, eine Begegnung, die alles verändert hat, ein Vertrag, den du unterschrieben hast. Gib das Datum ein und MAYA zeigt dir, welche Energie damals aktiv war und was das für heute bedeutet.',
+    highlights: ['Jedes Datum analysierbar', 'Vergangenheit besser verstehen', 'Verbindung zu aktuellen Mustern'],
   },
 ]
 
@@ -128,7 +136,7 @@ export default function ZusatzanalysenPage() {
             Tauche tiefer ein.
           </h1>
           <p style={{ fontSize: '1rem', fontWeight: 300, lineHeight: 1.85, color: TEXT_MID, maxWidth: '560px', marginBottom: '0' }}>
-            Jede Analyse beleuchtet einen spezifischen Lebensbereich. Als monatliches Abo buchbar, jederzeit kündbar. Du kannst einzelne Bereiche wählen oder alles auf einmal buchen.
+            Jede Analyse beleuchtet einen spezifischen Lebensbereich. Als monatliches Abo buchbar, jederzeit kündbar. Du kannst einzelne {m ? null : <br />}Bereiche wählen oder alles auf einmal buchen.
           </p>
         </div>
       </section>
@@ -139,19 +147,19 @@ export default function ZusatzanalysenPage() {
           <div style={{ display: 'grid', gridTemplateColumns: m ? '1fr' : '2fr 1fr', gap: m ? '28px' : '60px', alignItems: 'center' }}>
             <div>
               <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: GOLD_LIGHT, marginBottom: '16px' }}>
-                Alle 8 Analysen
+                Alle 10 Analysen
               </div>
               <h2 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: m ? '1.8rem' : '2.4rem', color: CREAM, lineHeight: 1.2, marginBottom: '16px' }}>
                 Das Komplettpaket.
               </h2>
-              <p style={{ fontSize: '0.95rem', fontWeight: 300, lineHeight: 1.85, color: 'rgba(244,239,230,0.7)', marginBottom: '0' }}>
-                Alle 9 Analysen auf einen Schlag. Business, Gesundheit, Familie, Selbstausdruck, Finanzen, Karriere, Lebensphasen, Beziehungsmuster und Partnerschaft. Im Jahrestarif inklusive — jederzeit kündbar.
+              <p style={{ fontSize: '0.95rem', fontWeight: 300, lineHeight: 1.85, color: 'rgba(244,239,230,0.88)', marginBottom: '0' }}>
+                Alle 10 Analysen auf einen Schlag. Business, Gesundheit, Familie, Selbstausdruck, Finanzen, Karriere, Lebensphasen, Beziehungsmuster, Partnerschaft und Ereignis-Analysen. Im Jahrestarif inklusive, jederzeit kündbar.
               </p>
             </div>
             <div style={{ backgroundColor: 'rgba(244,239,230,0.05)', border: `1px solid ${GOLD_LIGHT}`, borderRadius: '4px', padding: '32px 28px' }}>
               <div style={{ fontSize: '0.72rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.14em', color: GOLD_LIGHT, marginBottom: '12px' }}>Komplettpaket</div>
-              <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.5rem', color: CREAM, marginBottom: '8px' }}>Alle 9 Analysen</div>
-              <div style={{ fontSize: '0.82rem', color: 'rgba(244,239,230,0.5)', marginBottom: '24px', lineHeight: 1.6 }}>
+              <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.5rem', color: CREAM, marginBottom: '8px' }}>Alle 10 Analysen</div>
+              <div style={{ fontSize: '0.82rem', color: 'rgba(244,239,230,0.82)', marginBottom: '24px', lineHeight: 1.6 }}>
                 Im Jahrestarif inklusive · Jederzeit kündbar
               </div>
               <button
@@ -216,7 +224,10 @@ export default function ZusatzanalysenPage() {
                   ))}
                 </div>
                 <div style={{ borderTop: `1px solid rgba(42,32,24,0.08)`, paddingTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ fontSize: '0.78rem', color: TEXT_LIGHT }}>Monatlich · Jederzeit kündbar</div>
+                  <div>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 500, color: TEXT }}>9 € / Monat <span style={{ fontSize: '0.72rem', color: GOLD, fontWeight: 600 }}>bis 31.12.2026</span></div>
+                    <div style={{ fontSize: '0.72rem', color: TEXT_LIGHT, marginTop: '2px' }}>Monatlich · Jederzeit kündbar</div>
+                  </div>
                   <button
                     onClick={() => goToCheckout(a.key)}
                     style={{
