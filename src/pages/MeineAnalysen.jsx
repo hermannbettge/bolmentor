@@ -20,6 +20,7 @@ const ANALYSES = [
   { key: 'career', icon: '🎯', title: 'Karriere-Analyse', description: 'Dein beruflicher Weg und deine Berufung' },
   { key: 'lifephases', icon: '📅', title: 'Lebensphasen', description: 'Die wichtigsten Jahre deines Lebens' },
   { key: 'relationship', icon: '❤️', title: 'Beziehungsmuster', description: 'Deine eigenen Bindungsstile und Beziehungsmuster' },
+  { key: 'partnership', icon: '💑', title: 'Partnerschaftsanalyse', description: 'Du und dein Partner als Paar', requiresPartner: true },
 ]
 
 
@@ -73,6 +74,11 @@ export default function MeineAnalysen() {
         {ANALYSES.map(item => {
           const isPurchased = profile?.is_admin || purchased.includes(item.key)
           const hasAnalysis = existingTypes.has(item.key)
+          const hasPartner = !!profile?.partner_birth_date
+          const partnerMissing = item.requiresPartner && isPurchased && !hasPartner
+
+          const route = item.key === 'partnership' ? '/analyse/partnerschaft' : `/analyse/${item.key}`
+          const existingKey = item.key === 'partnership' ? 'partnership_compatibility' : item.key
 
           return (
             <div key={item.key} style={{
@@ -85,19 +91,30 @@ export default function MeineAnalysen() {
             }}>
               <div style={{ fontSize: '1.8rem', marginBottom: '12px' }}>{item.icon}</div>
               <h3 style={{ color: 'var(--color-text-primary)', fontWeight: 400, fontSize: '0.95rem', marginBottom: '6px' }}>
-                {item.title}
+                {item.key === 'partnership' && profile?.partner_first_name
+                  ? `Du & ${profile.partner_first_name}`
+                  : item.title}
               </h3>
               <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', lineHeight: 1.6, marginBottom: '16px', flex: 1 }}>
                 {item.description}
               </p>
 
               {isPurchased ? (
-                <button
-                  onClick={() => navigate(`/analyse/${item.key}`)}
-                  style={{ backgroundColor: 'var(--color-gold)', color: '#000', border: 'none', borderRadius: '4px', padding: '8px 16px', fontSize: '0.82rem', fontWeight: 500, cursor: 'pointer' }}
-                >
-                  {!checked ? '…' : hasAnalysis ? 'Analyse anzeigen' : 'Analyse erstellen'}
-                </button>
+                partnerMissing ? (
+                  <button
+                    onClick={() => navigate('/profil')}
+                    style={{ border: '1px solid rgba(139,110,62,0.4)', color: 'var(--color-text-muted)', background: 'transparent', borderRadius: '4px', padding: '8px 16px', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
+                  >
+                    Partnerdaten im Profil eintragen →
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => navigate(route)}
+                    style={{ backgroundColor: 'var(--color-gold)', color: '#000', border: 'none', borderRadius: '4px', padding: '8px 16px', fontSize: '0.82rem', fontWeight: 500, cursor: 'pointer' }}
+                  >
+                    {!checked ? '…' : existingTypes.has(existingKey) ? 'Analyse anzeigen' : 'Analyse erstellen'}
+                  </button>
+                )
               ) : (
                 <button
                   onClick={() => navigate(`/checkout?product=${item.key}`)}
@@ -109,32 +126,6 @@ export default function MeineAnalysen() {
             </div>
           )
         })}
-
-        {/* Partner compatibility card — only when partnership is purchased AND partner birth date is set */}
-        {(profile?.is_admin || purchased.includes('partnership')) && profile?.partner_birth_date && (
-          <div style={{
-            backgroundColor: 'var(--color-bg-card)',
-            border: '1px solid rgba(139,110,62,0.2)',
-            borderRadius: '4px',
-            padding: '24px',
-            display: 'flex',
-            flexDirection: 'column',
-          }}>
-            <div style={{ fontSize: '1.8rem', marginBottom: '12px' }}>💑</div>
-            <h3 style={{ color: 'var(--color-text-primary)', fontWeight: 400, fontSize: '0.95rem', marginBottom: '6px' }}>
-              Partnerschaftsanalyse
-            </h3>
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', lineHeight: 1.6, marginBottom: '16px', flex: 1 }}>
-              Du und {profile.partner_first_name || 'dein Partner'} als Paar
-            </p>
-            <button
-              onClick={() => navigate('/analyse/partnerschaft')}
-              style={{ backgroundColor: 'var(--color-gold)', color: '#000', border: 'none', borderRadius: '4px', padding: '8px 16px', fontSize: '0.82rem', fontWeight: 500, cursor: 'pointer' }}
-            >
-              {!checked ? '…' : existingTypes.has('partnership_compatibility') ? 'Analyse anzeigen' : 'Analyse erstellen'}
-            </button>
-          </div>
-        )}
         {/* Event analysis cards */}
         {userEvents.map(ev => (
           <div key={ev.id} style={{
