@@ -74,8 +74,8 @@ export default function Registrieren() {
           setLoading(false)
           return
         }
-        // Reload profile so membership_active is up to date before navigation
-        await refreshProfile()
+        // Reload profile with explicit userId — user state may not be set yet
+        await refreshProfile(data.user.id)
       }
 
       const redirect = searchParams.get('redirect')

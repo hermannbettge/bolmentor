@@ -84,8 +84,9 @@ export function AuthProvider({ children }) {
     return data
   }
 
-  async function refreshProfile() {
-    if (user) await loadProfile(user.id)
+  async function refreshProfile(userId) {
+    const id = userId || user?.id
+    if (id) await loadProfile(id)
   }
 
   return (
