@@ -188,10 +188,10 @@ function MonthView({ days, firstDay, todayStr, selected, setSelected }) {
                 key={di}
                 onClick={() => setSelected(day)}
                 style={{
-                  border: isSel ? '2px solid var(--accent)' : regen?.wave ? '1px solid rgba(123,158,217,0.6)' : regen ? `1px solid rgba(196,122,90,0.4)` : res.border,
+                  border: isSel ? '2px solid var(--accent)' : isToday ? '2px solid var(--accent)' : regen?.wave ? '1px solid rgba(123,158,217,0.6)' : regen ? `1px solid rgba(196,122,90,0.4)` : res.border,
                   borderRadius: '6px',
                   padding: '8px 6px',
-                  backgroundColor: isSel ? 'rgba(var(--accent-rgb,184,151,90),0.15)' : regen?.wave ? 'rgba(123,158,217,0.18)' : regen ? `${e.bg}` : e.bg,
+                  backgroundColor: isSel ? 'rgba(var(--accent-rgb,184,151,90),0.15)' : isToday ? 'rgba(var(--accent-rgb,184,151,90),0.1)' : regen?.wave ? 'rgba(123,158,217,0.18)' : regen ? `${e.bg}` : e.bg,
                   cursor: 'pointer',
                   minHeight: '72px',
                   display: 'flex', flexDirection: 'column', gap: '3px',
@@ -202,7 +202,15 @@ function MonthView({ days, firstDay, todayStr, selected, setSelected }) {
                 onMouseLeave={el => el.currentTarget.style.transform = 'scale(1)'}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <span style={{ fontSize: '0.82rem', fontWeight: isToday ? 700 : 400, color: isToday ? 'var(--accent)' : 'var(--text-1)' }}>{day.day}</span>
+                  <span style={{
+                    fontSize: '0.82rem', fontWeight: isToday ? 700 : 400,
+                    color: isToday ? 'var(--bg-deep)' : 'var(--text-1)',
+                    backgroundColor: isToday ? 'var(--accent)' : 'transparent',
+                    borderRadius: isToday ? '50%' : '0',
+                    width: isToday ? '20px' : 'auto', height: isToday ? '20px' : 'auto',
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    lineHeight: 1,
+                  }}>{day.day}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
                     {regenInfo && (
                       <span style={{ fontSize: '0.72rem', color: regenInfo.color, lineHeight: 1, fontWeight: 600 }}>
