@@ -83,9 +83,16 @@ router.post('/', async (req, res) => {
           }).eq('id', userId)
         }
 
-        // For one-time payments, fulfill immediately
+        // Fulfill immediately for payment mode; for subscription mode also fulfill
+        // directly so the user sees the result without waiting for subscription events
         if (session.mode === 'payment') {
           await fulfillOrder(userId, priceId)
+        } else if (session.mode === 'subscription' && userId) {
+          // Expand line items to get the price ID for subscription purchases
+          const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
+          const fullSession = await stripe.checkout.sessions.retrieve(session.id, { expand: ['line_items'] })
+          const itemPriceId = fullSession.line_items?.data?.[0]?.price?.id
+          if (itemPriceId) await fulfillOrder(userId, itemPriceId)
         }
         break
       }
@@ -158,10 +165,15 @@ router.post('/', async (req, res) => {
         const { data: profile } = await supabase
           .from('profiles').select('id').eq('stripe_customer_id', customerId).single()
         if (profile) {
-          await supabase.from('profiles').update({
-            membership_active: false,
-            updated_at: new Date().toISOString(),
-          }).eq('id', profile.id)
+          // Only deactivate membership for membership subscription failures, not analysis ones
+          const failedPriceId = invoice.lines?.data?.[0]?.price?.id
+          const failedMapping = PRICE_MAP[failedPriceId]
+          if (!failedMapping || failedMapping.type === 'membership') {
+            await supabase.from('profiles').update({
+              membership_active: false,
+              updated_at: new Date().toISOString(),
+            }).eq('id', profile.id)
+          }
         }
         break
       }
