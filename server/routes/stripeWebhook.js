@@ -21,7 +21,7 @@ async function fulfillOrder(userId, priceId) {
     }
     // Annual plan includes all analyses
     if (mapping.plan === 'annual') {
-      updateData.purchased_analyses = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership', 'relationship']
+      updateData.purchased_analyses = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership', 'relationship', 'events']
     }
     await supabase.from('profiles').update(updateData).eq('id', userId)
   } else if (mapping.type === 'analysis') {

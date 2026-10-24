@@ -161,21 +161,33 @@ router.post('/claim-session', requireAuth, async (req, res) => {
     const now = new Date()
 
     if (mapping.type === 'membership') {
-      await supabase.from('profiles').update({
+      const updateData = {
         membership_active: true,
         membership_start: now.toISOString(),
         subscription_plan: mapping.plan,
         stripe_customer_id: session.customer || null,
         updated_at: now.toISOString(),
-      }).eq('id', req.user.id)
+      }
+      if (mapping.plan === 'annual') {
+        updateData.purchased_analyses = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership', 'relationship', 'events']
+      }
+      const { error: updateErr } = await supabase.from('profiles').update(updateData).eq('id', req.user.id)
+      if (updateErr) {
+        console.error('Supabase update Fehler (membership):', updateErr)
+        return res.status(500).json({ error: `Profil konnte nicht aktualisiert werden: ${updateErr.message}` })
+      }
     } else if (mapping.type === 'analysis') {
       const { data: profile } = await supabase.from('profiles').select('purchased_analyses').eq('id', req.user.id).single()
       const list = profile?.purchased_analyses || []
       if (!list.includes(mapping.key)) {
-        await supabase.from('profiles').update({
+        const { error: updateErr } = await supabase.from('profiles').update({
           purchased_analyses: [...list, mapping.key],
           updated_at: now.toISOString(),
         }).eq('id', req.user.id)
+        if (updateErr) {
+          console.error('Supabase update Fehler (analysis):', updateErr)
+          return res.status(500).json({ error: `Analyse konnte nicht freigeschaltet werden: ${updateErr.message}` })
+        }
       }
     }
 
