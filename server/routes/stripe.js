@@ -238,7 +238,9 @@ router.post('/customer-portal', requireAuth, async (req, res) => {
 })
 
 // Upgrade from monthly membership to annual
-// Always redirects to Stripe so user sees exact prorated amount before confirming
+// Redirects to Stripe Checkout for the annual plan.
+// Existing monthly membership and analysis subscriptions are cancelled with proration
+// after successful payment via webhook — their remaining value offsets future invoices.
 router.post('/upgrade-annual', requireAuth, async (req, res) => {
   try {
     const stripe = getStripe()
@@ -248,70 +250,21 @@ router.post('/upgrade-annual', requireAuth, async (req, res) => {
     const appUrl = process.env.APP_URL || 'http://localhost:5173'
     const { data: profile } = await supabase.from('profiles').select('stripe_customer_id').eq('id', req.user.id).single()
 
-    // No Stripe customer / no active sub yet — fresh annual checkout
-    if (!profile?.stripe_customer_id) {
-      const session = await stripe.checkout.sessions.create({
-        mode: 'subscription',
-        line_items: [{ price: annualPriceId, quantity: 1 }],
-        success_url: `${appUrl}/dashboard?checkout=success&stripe_session={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${appUrl}/analysen`,
-        customer_email: req.user.email,
-        metadata: { user_id: req.user.id, product_key: 'membershipAnnual' },
-        allow_promotion_codes: true,
-      })
-      return res.json({ redirect_url: session.url })
-    }
+    const customerField = profile?.stripe_customer_id
+      ? { customer: profile.stripe_customer_id }
+      : { customer_email: req.user.email }
 
-    // List all active subscriptions for this customer
-    const subscriptions = await stripe.subscriptions.list({ customer: profile.stripe_customer_id, status: 'active', limit: 20 })
-
-    // Find the monthly membership subscription
-    const membershipSub = subscriptions.data.find(sub => {
-      const pid = sub.items?.data?.[0]?.price?.id
-      return PRICE_MAP[pid]?.type === 'membership' && PRICE_MAP[pid]?.plan === 'monthly'
+    const session = await stripe.checkout.sessions.create({
+      mode: 'subscription',
+      line_items: [{ price: annualPriceId, quantity: 1 }],
+      success_url: `${appUrl}/dashboard?checkout=success&stripe_session={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/analysen`,
+      ...customerField,
+      metadata: { user_id: req.user.id, product_key: 'membershipAnnual', upgrade_from_monthly: 'true' },
+      allow_promotion_codes: true,
     })
 
-    // Find all analysis subscriptions (to cancel after upgrade — included in annual)
-    const analysisSubs = subscriptions.data.filter(sub => {
-      const pid = sub.items?.data?.[0]?.price?.id
-      return PRICE_MAP[pid]?.type === 'analysis'
-    })
-
-    // Cancel analysis subscriptions immediately with proration credit
-    // Credits accumulate on the customer balance and offset the annual invoice
-    for (const sub of analysisSubs) {
-      await stripe.subscriptions.cancel(sub.id, { prorate: true })
-    }
-
-    if (!membershipSub) {
-      // No monthly sub — create fresh annual checkout (customer balance auto-applied)
-      const session = await stripe.checkout.sessions.create({
-        mode: 'subscription',
-        line_items: [{ price: annualPriceId, quantity: 1 }],
-        success_url: `${appUrl}/dashboard?checkout=success&stripe_session={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${appUrl}/analysen`,
-        customer: profile.stripe_customer_id,
-        metadata: { user_id: req.user.id, product_key: 'membershipAnnual' },
-        allow_promotion_codes: true,
-      })
-      return res.json({ redirect_url: session.url })
-    }
-
-    // Upgrade membership subscription in place — Stripe shows proration in billing portal
-    // Use subscription_update_confirm flow so user sees exact amount on Stripe's page
-    const portalSession = await stripe.billingPortal.sessions.create({
-      customer: profile.stripe_customer_id,
-      return_url: `${appUrl}/dashboard?checkout=success&stripe_session=upgraded`,
-      flow_data: {
-        type: 'subscription_update_confirm',
-        subscription_update_confirm: {
-          subscription: membershipSub.id,
-          items: [{ id: membershipSub.items.data[0].id, price: annualPriceId, quantity: 1 }],
-        },
-      },
-    })
-
-    res.json({ redirect_url: portalSession.url })
+    res.json({ redirect_url: session.url })
   } catch (err) {
     console.error('Upgrade to annual Fehler:', err)
     res.status(500).json({ error: err.message })

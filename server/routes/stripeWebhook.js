@@ -88,11 +88,24 @@ router.post('/', async (req, res) => {
         if (session.mode === 'payment') {
           await fulfillOrder(userId, priceId)
         } else if (session.mode === 'subscription' && userId) {
-          // Expand line items to get the price ID for subscription purchases
           const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
           const fullSession = await stripe.checkout.sessions.retrieve(session.id, { expand: ['line_items'] })
           const itemPriceId = fullSession.line_items?.data?.[0]?.price?.id
           if (itemPriceId) await fulfillOrder(userId, itemPriceId)
+
+          // If this was an annual upgrade, cancel the old monthly membership + analysis subs
+          if (session.metadata?.upgrade_from_monthly === 'true' && customerId) {
+            const allSubs = await stripe.subscriptions.list({ customer: customerId, status: 'active', limit: 20 })
+            const newSubId = fullSession.subscription
+            for (const sub of allSubs.data) {
+              if (sub.id === newSubId) continue
+              const pid = sub.items?.data?.[0]?.price?.id
+              const m = PRICE_MAP[pid]
+              if (m?.type === 'membership' || m?.type === 'analysis') {
+                await stripe.subscriptions.cancel(sub.id, { prorate: true })
+              }
+            }
+          }
         }
         break
       }
