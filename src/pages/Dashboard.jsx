@@ -1,27 +1,41 @@
 import { useEffect, useRef } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
+import { supabase } from '../lib/supabase.js'
 import { calculateKin, getGermanDate } from '../lib/mayanCalendar.js'
 
 export default function Dashboard() {
   const { profile, refreshProfile } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
-  const pollRef = useRef(null)
+  const claimedRef = useRef(false)
 
   useEffect(() => {
     if (searchParams.get('checkout') !== 'success') return
-    // Remove the param from URL immediately
+    const stripeSession = searchParams.get('stripe_session')
     setSearchParams({}, { replace: true })
 
-    // Poll until profile reflects new purchase (webhook may lag a few seconds)
-    let attempts = 0
-    const prevAnalyses = (profile?.purchased_analyses || []).length
-    pollRef.current = setInterval(async () => {
-      attempts++
+    if (!stripeSession || claimedRef.current) return
+    claimedRef.current = true
+
+    async function claimAndRefresh() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session?.access_token) return
+        await fetch('/api/stripe/claim-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ session_id: stripeSession }),
+        })
+      } catch {}
+      // Refresh once immediately, then once more after 3s as safety net
       await refreshProfile()
-      if (attempts >= 8) clearInterval(pollRef.current)
-    }, 2000)
-    return () => clearInterval(pollRef.current)
+      setTimeout(async () => { await refreshProfile() }, 3000)
+    }
+
+    claimAndRefresh()
   }, []) // eslint-disable-line
   const today = getGermanDate()
   const isFirstOfMonth = new Date().getDate() === 1

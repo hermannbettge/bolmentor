@@ -93,8 +93,8 @@ router.post('/create-checkout-session', requireAuth, async (req, res) => {
     const session = await stripe.checkout.sessions.create({
       mode,
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: successUrl || `${process.env.APP_URL || 'http://localhost:5173'}/dashboard?checkout=success`,
-      cancel_url: cancelUrl || `${process.env.APP_URL || 'http://localhost:5173'}/profil?checkout=cancelled`,
+      success_url: successUrl || `${process.env.APP_URL || 'http://localhost:5173'}/dashboard?checkout=success&stripe_session={CHECKOUT_SESSION_ID}`,
+      cancel_url: cancelUrl || `${process.env.APP_URL || 'http://localhost:5173'}/analysen?checkout=cancelled`,
       customer_email: req.user.email,
       metadata: {
         user_id: req.user.id,
