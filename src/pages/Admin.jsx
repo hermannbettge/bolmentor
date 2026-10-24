@@ -114,7 +114,7 @@ export default function Admin() {
   const { user, profile } = useAuth()
   const navigate = useNavigate()
   const isMobile = useIsMobile()
-  const [tab, setTab] = useState('users') // 'users' | 'trash'
+  const [tab, setTab] = useState('users') // 'users' | 'trash' | 'backup'
   const [users, setUsers] = useState([])
   const [trashedUsers, setTrashedUsers] = useState([])
   const [loading, setLoading] = useState(true)
@@ -122,6 +122,9 @@ export default function Admin() {
   const [msg, setMsg] = useState('')
   const [error, setError] = useState('')
   const [modal, setModal] = useState(null) // { type: 'confirm'|'input', ... }
+  const [backupLoading, setBackupLoading] = useState(false)
+  const [restoreLoading, setRestoreLoading] = useState(false)
+  const [restoreResult, setRestoreResult] = useState(null)
 
   useEffect(() => {
     if (profile && !profile.is_admin) navigate('/')
@@ -299,6 +302,76 @@ export default function Admin() {
     )
   }
 
+  async function downloadBackup() {
+    setBackupLoading(true)
+    setError('')
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch('/api/admin/backup', {
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || 'Backup fehlgeschlagen')
+      }
+      const blob = await res.blob()
+      const disposition = res.headers.get('Content-Disposition') || ''
+      const match = disposition.match(/filename="([^"]+)"/)
+      const filename = match ? match[1] : `backup_${Date.now()}.json`
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      a.click()
+      URL.revokeObjectURL(url)
+      setMsg(`Backup heruntergeladen: ${filename}`)
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setBackupLoading(false)
+    }
+  }
+
+  function handleRestoreFile(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      try {
+        const backup = JSON.parse(ev.target.result)
+        if (!backup?.tables?.profiles) {
+          setError('Ungültiges Backup-Format. Die Datei muss "tables.profiles" enthalten.')
+          return
+        }
+        showConfirm(
+          `Backup vom ${backup.created_at ? new Date(backup.created_at).toLocaleString('de-DE') : 'unbekannt'} einspielen? ${backup.stats?.profiles || 0} Profile, ${backup.stats?.analyses || 0} Analysen. Bestehende Daten werden überschrieben.`,
+          async () => {
+            closeModal()
+            setRestoreLoading(true)
+            setRestoreResult(null)
+            try {
+              const result = await apiCall('/restore', 'POST', { backup, confirm: true })
+              setRestoreResult(result)
+              setMsg(`Restore abgeschlossen: ${result.restored} Profile wiederhergestellt.`)
+              if (result.errors?.length > 0) {
+                setError(`${result.errors.length} Fehler beim Restore aufgetreten.`)
+              }
+            } catch (err) {
+              setError(err.message)
+            } finally {
+              setRestoreLoading(false)
+            }
+          },
+          { confirmLabel: 'Restore starten', danger: true }
+        )
+      } catch {
+        setError('Datei konnte nicht gelesen werden.')
+      }
+    }
+    reader.readAsText(file)
+    e.target.value = ''
+  }
+
   if (loading) return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-deep)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)' }}>
       Laden…
@@ -321,6 +394,7 @@ export default function Admin() {
           {[
             { key: 'users', label: `Nutzer (${users.length})` },
             { key: 'trash', label: `Papierkorb (${trashedUsers.length})` },
+            { key: 'backup', label: 'Backup' },
           ].map(t => (
             <button
               key={t.key}
@@ -591,6 +665,74 @@ export default function Admin() {
                 </tbody>
               </table>
             )}
+          </div>
+        )}
+
+        {tab === 'backup' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {/* Backup erstellen */}
+            <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: '4px', border: '1px solid var(--border)', padding: '28px' }}>
+              <div style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.14em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: '8px' }}>Backup erstellen</div>
+              <p style={{ color: 'var(--text-2)', fontSize: '0.88rem', lineHeight: 1.7, marginBottom: '20px', marginTop: 0 }}>
+                Exportiert alle Nutzerdaten, Analysen, Ereignisse und Chats als JSON-Datei. Die Datei enthält eine Versionsnummer und Zeitstempel.
+              </p>
+              <button
+                onClick={downloadBackup}
+                disabled={backupLoading}
+                style={{
+                  padding: '12px 28px', cursor: backupLoading ? 'wait' : 'pointer',
+                  backgroundColor: 'rgba(var(--accent-rgb,184,151,90),0.1)',
+                  border: '1px solid rgba(var(--accent-rgb,184,151,90),0.4)',
+                  color: 'var(--accent)', borderRadius: '2px', fontSize: '0.88rem', fontWeight: 600,
+                  opacity: backupLoading ? 0.6 : 1,
+                }}
+              >
+                {backupLoading ? 'Backup wird erstellt...' : 'Backup herunterladen'}
+              </button>
+            </div>
+
+            {/* Backup einspielen */}
+            <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: '4px', border: '1px solid var(--border)', padding: '28px' }}>
+              <div style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.14em', color: '#ef4444', textTransform: 'uppercase', marginBottom: '8px' }}>Backup einspielen</div>
+              <p style={{ color: 'var(--text-2)', fontSize: '0.88rem', lineHeight: 1.7, marginBottom: '8px', marginTop: 0 }}>
+                Spielt eine Backup-Datei ein. Bestehende Profildaten werden durch die Backup-Daten überschrieben.
+              </p>
+              <p style={{ color: '#ef4444', fontSize: '0.82rem', lineHeight: 1.6, marginBottom: '20px', marginTop: 0 }}>
+                Achtung: Diese Aktion kann nicht rückgängig gemacht werden. Vorher ein aktuelles Backup erstellen.
+              </p>
+              <label style={{
+                display: 'inline-block', padding: '12px 28px',
+                cursor: restoreLoading ? 'wait' : 'pointer',
+                backgroundColor: 'rgba(239,68,68,0.08)',
+                border: '1px solid rgba(239,68,68,0.35)',
+                color: '#ef4444', borderRadius: '2px', fontSize: '0.88rem', fontWeight: 600,
+                opacity: restoreLoading ? 0.6 : 1,
+              }}>
+                {restoreLoading ? 'Restore läuft...' : 'Backup-Datei auswählen'}
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={handleRestoreFile}
+                  disabled={restoreLoading}
+                  style={{ display: 'none' }}
+                />
+              </label>
+
+              {restoreResult && (
+                <div style={{ marginTop: '20px', padding: '16px', backgroundColor: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.25)', borderRadius: '2px' }}>
+                  <div style={{ fontSize: '0.85rem', color: '#22c55e', fontWeight: 600, marginBottom: '6px' }}>Restore abgeschlossen</div>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--text-2)' }}>Profile wiederhergestellt: {restoreResult.restored}</div>
+                  {restoreResult.errors?.length > 0 && (
+                    <div style={{ marginTop: '8px' }}>
+                      <div style={{ fontSize: '0.8rem', color: '#ef4444', marginBottom: '4px' }}>{restoreResult.errors.length} Fehler:</div>
+                      {restoreResult.errors.slice(0, 5).map((e, i) => (
+                        <div key={i} style={{ fontSize: '0.78rem', color: 'var(--text-2)' }}>{e.id?.slice(0, 8)}: {e.error}</div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

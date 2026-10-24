@@ -10,7 +10,6 @@ import adminRoutes from './routes/admin.js'
 import authRoutes from './routes/auth.js'
 import stripeRoutes from './routes/stripe.js'
 import stripeWebhookRoutes from './routes/stripeWebhook.js'
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const app = express()

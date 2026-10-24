@@ -207,4 +207,75 @@ router.get('/users/:id/analyses', requireAdmin, async (req, res) => {
   res.json(data)
 })
 
+// Backup: alle Daten exportieren
+router.get('/backup', requireAdmin, async (req, res) => {
+  try {
+    const [profilesRes, eventsRes, analysesRes, chatsRes] = await Promise.all([
+      supabase.from('profiles').select('*').order('created_at', { ascending: true }),
+      supabase.from('events').select('*').order('created_at', { ascending: true }),
+      supabase.from('analyses').select('*').order('created_at', { ascending: true }),
+      supabase.from('maya_chats').select('*').order('created_at', { ascending: true }),
+    ])
+
+    if (profilesRes.error) return res.status(500).json({ error: profilesRes.error.message })
+
+    const now = new Date()
+    const pad = n => String(n).padStart(2, '0')
+    const datePart = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
+    const timePart = `${pad(now.getHours())}-${pad(now.getMinutes())}`
+
+    const backup = {
+      schema_version: 2,
+      created_at: now.toISOString(),
+      tables: {
+        profiles: profilesRes.data || [],
+        events: eventsRes.data || [],
+        analyses: analysesRes.data || [],
+        maya_chats: chatsRes.data || [],
+      },
+      stats: {
+        profiles: (profilesRes.data || []).length,
+        events: (eventsRes.data || []).length,
+        analyses: (analysesRes.data || []).length,
+        maya_chats: (chatsRes.data || []).length,
+      },
+    }
+
+    const filename = `backup_v${backup.schema_version}_${datePart}_${timePart}.json`
+    res.setHeader('Content-Type', 'application/json')
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`)
+    res.json(backup)
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+// Restore: Backup-Datei hochladen und einspielen (nur profiles)
+router.post('/restore', requireAdmin, async (req, res) => {
+  try {
+    const { backup, confirm } = req.body
+    if (!backup?.tables?.profiles) return res.status(400).json({ error: 'Ungültiges Backup-Format' })
+    if (!confirm) return res.status(400).json({ error: 'Bestätigung fehlt' })
+
+    const profiles = backup.tables.profiles
+    if (!Array.isArray(profiles) || profiles.length === 0) {
+      return res.status(400).json({ error: 'Keine Profile im Backup gefunden' })
+    }
+
+    const results = { restored: 0, errors: [] }
+    for (const profile of profiles) {
+      const { error } = await supabase.from('profiles').upsert(profile, { onConflict: 'id' })
+      if (error) {
+        results.errors.push({ id: profile.id, error: error.message })
+      } else {
+        results.restored++
+      }
+    }
+
+    res.json(results)
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
 export default router
