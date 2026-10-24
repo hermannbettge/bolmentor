@@ -118,6 +118,22 @@ router.post('/', async (req, res) => {
           for (const item of items) {
             await fulfillOrder(profile.id, item.price?.id)
           }
+          // If upgraded to annual, cancel any remaining analysis subscriptions (included in annual)
+          const isNowAnnual = items.some(item => {
+            const m = PRICE_MAP[item.price?.id]
+            return m?.type === 'membership' && m?.plan === 'annual'
+          })
+          if (isNowAnnual) {
+            const stripe = new (await import('stripe')).default(process.env.STRIPE_SECRET_KEY)
+            const allSubs = await stripe.subscriptions.list({ customer: customerId, status: 'active', limit: 20 })
+            for (const sub of allSubs.data) {
+              if (sub.id === subscription.id) continue
+              const pid = sub.items?.data?.[0]?.price?.id
+              if (PRICE_MAP[pid]?.type === 'analysis') {
+                await stripe.subscriptions.cancel(sub.id, { prorate: true })
+              }
+            }
+          }
         } else if (subscription.status === 'canceled' || subscription.status === 'unpaid') {
           const mapping = PRICE_MAP[items[0]?.price?.id]
           if (mapping?.type === 'membership') {

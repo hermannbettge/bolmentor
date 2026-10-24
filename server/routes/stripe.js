@@ -237,18 +237,19 @@ router.post('/customer-portal', requireAuth, async (req, res) => {
   }
 })
 
-// Upgrade from monthly membership to annual (prorates remaining month)
+// Upgrade from monthly membership to annual
+// Always redirects to Stripe so user sees exact prorated amount before confirming
 router.post('/upgrade-annual', requireAuth, async (req, res) => {
   try {
     const stripe = getStripe()
     const annualPriceId = PRODUCT_KEY_MAP.membershipAnnual?.()
     if (!annualPriceId) return res.status(500).json({ error: 'Jahrestarif-Preis nicht konfiguriert' })
 
+    const appUrl = process.env.APP_URL || 'http://localhost:5173'
     const { data: profile } = await supabase.from('profiles').select('stripe_customer_id').eq('id', req.user.id).single()
 
-    // No Stripe customer yet — redirect to normal annual checkout
+    // No Stripe customer / no active sub yet — fresh annual checkout
     if (!profile?.stripe_customer_id) {
-      const appUrl = process.env.APP_URL || 'http://localhost:5173'
       const session = await stripe.checkout.sessions.create({
         mode: 'subscription',
         line_items: [{ price: annualPriceId, quantity: 1 }],
@@ -261,16 +262,29 @@ router.post('/upgrade-annual', requireAuth, async (req, res) => {
       return res.json({ redirect_url: session.url })
     }
 
-    // Find active monthly membership subscription
-    const subscriptions = await stripe.subscriptions.list({ customer: profile.stripe_customer_id, status: 'active', limit: 10 })
+    // List all active subscriptions for this customer
+    const subscriptions = await stripe.subscriptions.list({ customer: profile.stripe_customer_id, status: 'active', limit: 20 })
+
+    // Find the monthly membership subscription
     const membershipSub = subscriptions.data.find(sub => {
       const pid = sub.items?.data?.[0]?.price?.id
       return PRICE_MAP[pid]?.type === 'membership' && PRICE_MAP[pid]?.plan === 'monthly'
     })
 
+    // Find all analysis subscriptions (to cancel after upgrade — included in annual)
+    const analysisSubs = subscriptions.data.filter(sub => {
+      const pid = sub.items?.data?.[0]?.price?.id
+      return PRICE_MAP[pid]?.type === 'analysis'
+    })
+
+    // Cancel analysis subscriptions immediately with proration credit
+    // Credits accumulate on the customer balance and offset the annual invoice
+    for (const sub of analysisSubs) {
+      await stripe.subscriptions.cancel(sub.id, { prorate: true })
+    }
+
     if (!membershipSub) {
-      // No monthly sub found — create new annual checkout
-      const appUrl = process.env.APP_URL || 'http://localhost:5173'
+      // No monthly sub — create fresh annual checkout (customer balance auto-applied)
       const session = await stripe.checkout.sessions.create({
         mode: 'subscription',
         line_items: [{ price: annualPriceId, quantity: 1 }],
@@ -283,22 +297,21 @@ router.post('/upgrade-annual', requireAuth, async (req, res) => {
       return res.json({ redirect_url: session.url })
     }
 
-    // Upgrade in place with proration — remaining monthly credit applied to annual
-    const itemId = membershipSub.items.data[0].id
-    await stripe.subscriptions.update(membershipSub.id, {
-      items: [{ id: itemId, price: annualPriceId }],
-      proration_behavior: 'create_prorations',
+    // Upgrade membership subscription in place — Stripe shows proration in billing portal
+    // Use subscription_update_confirm flow so user sees exact amount on Stripe's page
+    const portalSession = await stripe.billingPortal.sessions.create({
+      customer: profile.stripe_customer_id,
+      return_url: `${appUrl}/dashboard?checkout=success&stripe_session=upgraded`,
+      flow_data: {
+        type: 'subscription_update_confirm',
+        subscription_update_confirm: {
+          subscription: membershipSub.id,
+          items: [{ id: membershipSub.items.data[0].id, price: annualPriceId, quantity: 1 }],
+        },
+      },
     })
 
-    // Update profile to annual plan + unlock all analyses
-    const now = new Date()
-    await supabase.from('profiles').update({
-      subscription_plan: 'annual',
-      purchased_analyses: ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership', 'relationship', 'events'],
-      updated_at: now.toISOString(),
-    }).eq('id', req.user.id)
-
-    res.json({ success: true })
+    res.json({ redirect_url: portalSession.url })
   } catch (err) {
     console.error('Upgrade to annual Fehler:', err)
     res.status(500).json({ error: err.message })
