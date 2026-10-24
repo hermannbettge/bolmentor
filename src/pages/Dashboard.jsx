@@ -1,9 +1,28 @@
-import { Link } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { calculateKin, getGermanDate } from '../lib/mayanCalendar.js'
 
 export default function Dashboard() {
-  const { profile } = useAuth()
+  const { profile, refreshProfile } = useAuth()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const pollRef = useRef(null)
+
+  useEffect(() => {
+    if (searchParams.get('checkout') !== 'success') return
+    // Remove the param from URL immediately
+    setSearchParams({}, { replace: true })
+
+    // Poll until profile reflects new purchase (webhook may lag a few seconds)
+    let attempts = 0
+    const prevAnalyses = (profile?.purchased_analyses || []).length
+    pollRef.current = setInterval(async () => {
+      attempts++
+      await refreshProfile()
+      if (attempts >= 8) clearInterval(pollRef.current)
+    }, 2000)
+    return () => clearInterval(pollRef.current)
+  }, []) // eslint-disable-line
   const today = getGermanDate()
   const isFirstOfMonth = new Date().getDate() === 1
 
