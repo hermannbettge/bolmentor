@@ -188,7 +188,7 @@ function MonthView({ days, firstDay, todayStr, selected, setSelected }) {
                 key={di}
                 onClick={() => setSelected(day)}
                 style={{
-                  border: isSel ? '2px solid var(--accent)' : isToday ? '2px solid var(--accent)' : regen?.wave ? '1px solid rgba(123,158,217,0.6)' : regen ? `1px solid rgba(196,122,90,0.4)` : res.border,
+                  border: isSel ? '2px solid var(--accent)' : isToday ? '2px solid rgba(255,255,255,0.7)' : regen?.wave ? '1px solid rgba(123,158,217,0.6)' : regen ? `1px solid rgba(196,122,90,0.4)` : res.border,
                   borderRadius: '6px',
                   padding: '8px 6px',
                   backgroundColor: isSel ? 'rgba(var(--accent-rgb,184,151,90),0.15)' : isToday ? 'rgba(var(--accent-rgb,184,151,90),0.1)' : regen?.wave ? 'rgba(123,158,217,0.18)' : regen ? `${e.bg}` : e.bg,
