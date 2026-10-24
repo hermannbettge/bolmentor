@@ -237,6 +237,74 @@ router.post('/customer-portal', requireAuth, async (req, res) => {
   }
 })
 
+// Upgrade from monthly membership to annual (prorates remaining month)
+router.post('/upgrade-annual', requireAuth, async (req, res) => {
+  try {
+    const stripe = getStripe()
+    const annualPriceId = PRODUCT_KEY_MAP.membershipAnnual?.()
+    if (!annualPriceId) return res.status(500).json({ error: 'Jahrestarif-Preis nicht konfiguriert' })
+
+    const { data: profile } = await supabase.from('profiles').select('stripe_customer_id').eq('id', req.user.id).single()
+
+    // No Stripe customer yet — redirect to normal annual checkout
+    if (!profile?.stripe_customer_id) {
+      const appUrl = process.env.APP_URL || 'http://localhost:5173'
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        line_items: [{ price: annualPriceId, quantity: 1 }],
+        success_url: `${appUrl}/dashboard?checkout=success&stripe_session={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${appUrl}/analysen`,
+        customer_email: req.user.email,
+        metadata: { user_id: req.user.id, product_key: 'membershipAnnual' },
+        allow_promotion_codes: true,
+      })
+      return res.json({ redirect_url: session.url })
+    }
+
+    // Find active monthly membership subscription
+    const subscriptions = await stripe.subscriptions.list({ customer: profile.stripe_customer_id, status: 'active', limit: 10 })
+    const membershipSub = subscriptions.data.find(sub => {
+      const pid = sub.items?.data?.[0]?.price?.id
+      return PRICE_MAP[pid]?.type === 'membership' && PRICE_MAP[pid]?.plan === 'monthly'
+    })
+
+    if (!membershipSub) {
+      // No monthly sub found — create new annual checkout
+      const appUrl = process.env.APP_URL || 'http://localhost:5173'
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        line_items: [{ price: annualPriceId, quantity: 1 }],
+        success_url: `${appUrl}/dashboard?checkout=success&stripe_session={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${appUrl}/analysen`,
+        customer: profile.stripe_customer_id,
+        metadata: { user_id: req.user.id, product_key: 'membershipAnnual' },
+        allow_promotion_codes: true,
+      })
+      return res.json({ redirect_url: session.url })
+    }
+
+    // Upgrade in place with proration — remaining monthly credit applied to annual
+    const itemId = membershipSub.items.data[0].id
+    await stripe.subscriptions.update(membershipSub.id, {
+      items: [{ id: itemId, price: annualPriceId }],
+      proration_behavior: 'create_prorations',
+    })
+
+    // Update profile to annual plan + unlock all analyses
+    const now = new Date()
+    await supabase.from('profiles').update({
+      subscription_plan: 'annual',
+      purchased_analyses: ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership', 'relationship', 'events'],
+      updated_at: now.toISOString(),
+    }).eq('id', req.user.id)
+
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Upgrade to annual Fehler:', err)
+    res.status(500).json({ error: err.message })
+  }
+})
+
 // Diagnostic endpoint — lists which price env vars are missing (admin only via secret header)
 router.get('/config-check', (req, res) => {
   const secret = req.headers['x-admin-secret']

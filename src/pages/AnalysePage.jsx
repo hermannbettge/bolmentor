@@ -5,6 +5,41 @@ import { supabase } from '../lib/supabase.js'
 import AnalysisDisplay from '../components/AnalysisDisplay.jsx'
 import PDFDownloadButton from '../components/PDFDownloadButton.jsx'
 
+function AnnualUpgradeModal({ onClose, onConfirm, loading }) {
+  const isIntro = new Date() < new Date('2027-01-01T00:00:00Z')
+  return (
+    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+      <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '40px', maxWidth: '480px', width: '100%' }}>
+        <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--accent)', marginBottom: '8px' }}>Jahrestarif</div>
+        <h2 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: '1.6rem', color: 'var(--text-1)', marginBottom: '16px' }}>
+          Zum Jahrestarif wechseln
+        </h2>
+        <p style={{ color: 'var(--text-2)', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: '24px' }}>
+          {isIntro
+            ? 'Jahrestarif: 170 € / Jahr (14,17 € / Monat) bis 31.12.2026, danach 270 € / Jahr. Alle Zusatzanalysen inklusive. Der bereits gezahlte Monatsbeitrag wird anteilig angerechnet.'
+            : 'Jahrestarif: 270 € / Jahr (22,50 € / Monat). Alle Zusatzanalysen inklusive. Der bereits gezahlte Monatsbeitrag wird anteilig angerechnet.'}
+        </p>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <button
+            onClick={onConfirm}
+            disabled={loading}
+            style={{ backgroundColor: 'var(--accent)', color: '#fff', border: 'none', borderRadius: '40px', padding: '13px 28px', fontWeight: 500, fontSize: '0.9rem', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, fontFamily: 'Inter, sans-serif' }}
+          >
+            {loading ? 'Wird verarbeitet…' : 'Jetzt upgraden'}
+          </button>
+          <button
+            onClick={onClose}
+            disabled={loading}
+            style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-2)', borderRadius: '40px', padding: '13px 28px', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
+          >
+            Abbrechen
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function todayStr() { return new Date().toISOString().split('T')[0] }
 
 const COPPER = 'var(--accent)'
@@ -21,7 +56,7 @@ const LABELS = {
 
 export default function AnalysePage() {
   const { type } = useParams()
-  const { user, profile } = useAuth()
+  const { user, profile, refreshProfile } = useAuth()
   const navigate = useNavigate()
   const [analysis, setAnalysis] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -34,6 +69,34 @@ export default function AnalysePage() {
   const [dailyLoading, setDailyLoading] = useState(false)
   const [dailyChecking, setDailyChecking] = useState(true)
   const [dailyDate, setDailyDate] = useState(todayStr())
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const [upgradeLoading, setUpgradeLoading] = useState(false)
+  const [upgradeError, setUpgradeError] = useState('')
+
+  async function handleUpgradeAnnual() {
+    setUpgradeLoading(true)
+    setUpgradeError('')
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch('/api/stripe/upgrade-annual', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Upgrade fehlgeschlagen')
+      if (data.redirect_url) {
+        window.location.href = data.redirect_url
+        return
+      }
+      // Upgraded in place — refresh profile and close modal
+      await refreshProfile()
+      setShowUpgradeModal(false)
+    } catch (e) {
+      setUpgradeError(e.message)
+    } finally {
+      setUpgradeLoading(false)
+    }
+  }
   // Use next year in Q4 (Oct–Dec) so analysis is forward-looking
   const now = new Date()
   const currentYear = now.getMonth() >= 9 ? now.getFullYear() + 1 : now.getFullYear()
@@ -208,6 +271,7 @@ export default function AnalysePage() {
   )
 
   return (
+    <>
     <div style={{ backgroundColor: 'var(--bg-deep)', minHeight: '100vh', padding: 'clamp(24px,4vw,48px) clamp(16px,4vw,40px)', fontFamily: 'Inter, sans-serif' }}>
       <div className="analysis-inner" style={{ maxWidth: '720px' }}>
         <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '8px' }}>
@@ -297,9 +361,15 @@ export default function AnalysePage() {
             <p style={{ color: TEXT_LIGHT, fontSize: '0.9rem', lineHeight: 1.7, marginBottom: '16px' }}>
               Die Jahresanalyse ist exklusiv im Jahrestarif verfügbar. Erhalte eine detaillierte Monat-für-Monat-Analyse für {currentYear}.
             </p>
-            <a href="/analysen" style={{ display: 'inline-block', border: '1px solid var(--accent)', color: COPPER, borderRadius: '40px', padding: '10px 24px', fontSize: '0.85rem', textDecoration: 'none' }}>
+            {upgradeError && (
+              <p style={{ color: '#ff6b6b', fontSize: '0.85rem', marginBottom: '12px' }}>{upgradeError}</p>
+            )}
+            <button
+              onClick={() => { setUpgradeError(''); setShowUpgradeModal(true) }}
+              style={{ border: '1px solid var(--accent)', color: COPPER, background: 'transparent', borderRadius: '40px', padding: '10px 24px', fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
+            >
               Zum Jahrestarif wechseln →
-            </a>
+            </button>
           </div>
         )}
 
@@ -382,5 +452,14 @@ export default function AnalysePage() {
         )}
       </div>
     </div>
+
+    {showUpgradeModal && (
+      <AnnualUpgradeModal
+        onClose={() => setShowUpgradeModal(false)}
+        onConfirm={handleUpgradeAnnual}
+        loading={upgradeLoading}
+      />
+    )}
+    </>
   )
 }
