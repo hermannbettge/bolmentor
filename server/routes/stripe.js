@@ -90,12 +90,18 @@ router.post('/create-checkout-session', requireAuth, async (req, res) => {
     const stripePrice = await stripe.prices.retrieve(priceId)
     const mode = stripePrice.type === 'recurring' ? 'subscription' : 'payment'
 
+    // Use existing Stripe customer if available so all subscriptions appear under one customer
+    const { data: profile } = await supabase.from('profiles').select('stripe_customer_id').eq('id', req.user.id).single()
+    const customerField = profile?.stripe_customer_id
+      ? { customer: profile.stripe_customer_id }
+      : { customer_email: req.user.email }
+
     const session = await stripe.checkout.sessions.create({
       mode,
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: successUrl || `${process.env.APP_URL || 'http://localhost:5173'}/dashboard?checkout=success&stripe_session={CHECKOUT_SESSION_ID}`,
       cancel_url: cancelUrl || `${process.env.APP_URL || 'http://localhost:5173'}/analysen?checkout=cancelled`,
-      customer_email: req.user.email,
+      ...customerField,
       metadata: {
         user_id: req.user.id,
         product_key: productKey,
