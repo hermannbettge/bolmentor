@@ -1,16 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <rect width="64" height="64" rx="12" fill="#1a1610"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Background -->
+  <rect width="64" height="64" rx="10" fill="#1a1610"/>
+
   <!-- Outer ring -->
-  <circle cx="32" cy="32" r="26" stroke="#B8975A" stroke-width="2" fill="none"/>
-  <!-- Inner circle -->
-  <circle cx="32" cy="32" r="8" fill="#B8975A"/>
-  <!-- Sun rays -->
-  <line x1="32" y1="4" x2="32" y2="14" stroke="#B8975A" stroke-width="2.5" stroke-linecap="round"/>
-  <line x1="32" y1="50" x2="32" y2="60" stroke="#B8975A" stroke-width="2.5" stroke-linecap="round"/>
-  <line x1="4" y1="32" x2="14" y2="32" stroke="#B8975A" stroke-width="2.5" stroke-linecap="round"/>
-  <line x1="50" y1="32" x2="60" y2="32" stroke="#B8975A" stroke-width="2.5" stroke-linecap="round"/>
-  <line x1="12.7" y1="12.7" x2="19.8" y2="19.8" stroke="#B8975A" stroke-width="2.5" stroke-linecap="round"/>
-  <line x1="44.2" y1="44.2" x2="51.3" y2="51.3" stroke="#B8975A" stroke-width="2.5" stroke-linecap="round"/>
-  <line x1="51.3" y1="12.7" x2="44.2" y2="19.8" stroke="#B8975A" stroke-width="2.5" stroke-linecap="round"/>
-  <line x1="19.8" y1="44.2" x2="12.7" y2="51.3" stroke="#B8975A" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="32" cy="32" r="28" fill="none" stroke="#B8975A" stroke-width="1.5"/>
+
+  <!-- 4 petal Kin flower -->
+  <!-- Top petal -->
+  <ellipse cx="32" cy="20" rx="5.5" ry="9" fill="#B8975A"/>
+  <!-- Bottom petal -->
+  <ellipse cx="32" cy="44" rx="5.5" ry="9" fill="#B8975A"/>
+  <!-- Left petal -->
+  <ellipse cx="20" cy="32" rx="9" ry="5.5" fill="#B8975A"/>
+  <!-- Right petal -->
+  <ellipse cx="44" cy="32" rx="9" ry="5.5" fill="#B8975A"/>
+
+  <!-- Center circle -->
+  <circle cx="32" cy="32" r="7" fill="#1a1610"/>
+  <circle cx="32" cy="32" r="4.5" fill="#B8975A"/>
+
+  <!-- Small corner dots (classic Kin detail) -->
+  <circle cx="32" cy="9"  r="2" fill="#B8975A"/>
+  <circle cx="32" cy="55" r="2" fill="#B8975A"/>
+  <circle cx="9"  cy="32" r="2" fill="#B8975A"/>
+  <circle cx="55" cy="32" r="2" fill="#B8975A"/>
 </svg>
