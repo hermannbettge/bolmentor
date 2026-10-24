@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth.jsx'
 import { supabase } from '../lib/supabase.js'
 import AnalysisDisplay from '../components/AnalysisDisplay.jsx'
 import { getRegenDay, getRegenSymbol, REGEN_LEGEND } from '../data/regenDays.js'
+import { useIsMobile } from '../hooks/useIsMobile.js'
 
 const GERMAN_MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
 const WEEKDAYS = ['Mo','Di','Mi','Do','Fr','Sa','So']
@@ -26,6 +27,7 @@ const RESONANCE_STYLE = {
 export default function Kalender() {
   const { user, profile } = useAuth()
   const navigate = useNavigate()
+  const isMobile = useIsMobile()
   const now = new Date()
   const [year, setYear] = useState(now.getFullYear())
   const [month, setMonth] = useState(now.getMonth() + 1)
@@ -72,7 +74,7 @@ export default function Kalender() {
   const todayStr = now.toISOString().split('T')[0]
 
   return (
-    <div style={{ backgroundColor: 'var(--bg-deep)', minHeight: '100vh', padding: 'clamp(16px, 4vw, 40px) clamp(12px, 3vw, 32px)', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ backgroundColor: 'var(--bg-deep)', minHeight: '100vh', padding: isMobile ? '16px 8px' : 'clamp(16px, 4vw, 40px) clamp(12px, 3vw, 32px)', fontFamily: 'Inter, sans-serif', overflowX: 'hidden' }}>
       <div style={{ maxWidth: '960px' }}>
 
         {/* Header */}
@@ -144,7 +146,7 @@ export default function Kalender() {
         {loading ? (
           <div style={{ color: 'var(--text-2)', padding: '40px 0' }}>Wird geladen…</div>
         ) : view === 'month' ? (
-          <MonthView days={days} firstDay={firstDay} todayStr={todayStr} selected={selected} setSelected={setSelected} userKin={userKin} navigate={navigate} />
+          <MonthView days={days} firstDay={firstDay} todayStr={todayStr} selected={selected} setSelected={setSelected} userKin={userKin} navigate={navigate} isMobile={isMobile} />
         ) : (
           <ListView days={days} todayStr={todayStr} selected={selected} setSelected={setSelected} navigate={navigate} />
         )}
@@ -158,23 +160,32 @@ export default function Kalender() {
   )
 }
 
-function MonthView({ days, firstDay, todayStr, selected, setSelected }) {
+function MonthView({ days, firstDay, todayStr, selected, setSelected, isMobile }) {
   const cells = [...Array(firstDay).fill(null), ...days]
   const weeks = []
   for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7))
   while (weeks[weeks.length - 1]?.length < 7) weeks[weeks.length - 1].push(null)
 
+  const gap = isMobile ? '2px' : '4px'
+  const cellPad = isMobile ? '5px 3px' : '8px 6px'
+  const cellMinH = isMobile ? '62px' : '72px'
+  const dayFs = isMobile ? '0.75rem' : '0.82rem'
+  const sealFs = isMobile ? '0.58rem' : '0.65rem'
+  const labelFs = isMobile ? '0.55rem' : '0.6rem'
+  const dotSize = isMobile ? '6px' : '7px'
+  const todayCircle = isMobile ? '18px' : '20px'
+
   return (
-    <div>
+    <div style={{ width: '100%' }}>
       {/* Weekday headers */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', marginBottom: '4px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap, marginBottom: gap }}>
         {WEEKDAYS.map(d => (
-          <div key={d} style={{ textAlign: 'center', fontSize: '0.72rem', color: 'var(--text-2)', fontWeight: 600, padding: '4px 0', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{d}</div>
+          <div key={d} style={{ textAlign: 'center', fontSize: isMobile ? '0.62rem' : '0.72rem', color: 'var(--text-2)', fontWeight: 600, padding: '4px 0', textTransform: 'uppercase', letterSpacing: isMobile ? '0' : '0.08em' }}>{d}</div>
         ))}
       </div>
       {/* Day cells */}
       {weeks.map((week, wi) => (
-        <div key={wi} style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', marginBottom: '4px' }}>
+        <div key={wi} style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap, marginBottom: gap }}>
           {week.map((day, di) => {
             if (!day) return <div key={di} />
             const e = ENERGY[day.energyType]
@@ -190,12 +201,14 @@ function MonthView({ days, firstDay, todayStr, selected, setSelected }) {
                 style={{
                   border: isSel ? '2px solid var(--accent)' : isToday ? '2px solid rgba(255,255,255,0.7)' : regen?.wave ? '1px solid rgba(123,158,217,0.6)' : regen ? `1px solid rgba(196,122,90,0.4)` : res.border,
                   borderRadius: '6px',
-                  padding: '8px 6px',
+                  padding: cellPad,
                   backgroundColor: isSel ? 'rgba(var(--accent-rgb,184,151,90),0.15)' : isToday ? 'rgba(var(--accent-rgb,184,151,90),0.1)' : regen?.wave ? 'rgba(123,158,217,0.18)' : regen ? `${e.bg}` : e.bg,
                   cursor: 'pointer',
-                  minHeight: '72px',
-                  display: 'flex', flexDirection: 'column', gap: '3px',
+                  minHeight: cellMinH,
+                  display: 'flex', flexDirection: 'column', gap: '2px',
                   position: 'relative',
+                  overflow: 'hidden',
+                  boxSizing: 'border-box',
                   transition: 'transform 0.1s',
                 }}
                 onMouseEnter={el => el.currentTarget.style.transform = 'scale(1.03)'}
@@ -203,27 +216,27 @@ function MonthView({ days, firstDay, todayStr, selected, setSelected }) {
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <span style={{
-                    fontSize: '0.82rem', fontWeight: isToday ? 700 : 400,
+                    fontSize: dayFs, fontWeight: isToday ? 700 : 400,
                     color: isToday ? 'var(--bg-deep)' : 'var(--text-1)',
                     backgroundColor: isToday ? 'var(--accent)' : 'transparent',
                     borderRadius: isToday ? '50%' : '0',
-                    width: isToday ? '20px' : 'auto', height: isToday ? '20px' : 'auto',
+                    width: isToday ? todayCircle : 'auto', height: isToday ? todayCircle : 'auto',
                     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                    lineHeight: 1,
+                    lineHeight: 1, flexShrink: 0,
                   }}>{day.day}</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
-                    {regenInfo && (
-                      <span style={{ fontSize: '0.72rem', color: regenInfo.color, lineHeight: 1, fontWeight: 600 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '2px', flexShrink: 0 }}>
+                    {regenInfo && !isMobile && (
+                      <span style={{ fontSize: '0.65rem', color: regenInfo.color, lineHeight: 1, fontWeight: 600 }}>
                         {regenInfo.symbol}
                       </span>
                     )}
-                    <div style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: day.resonance === 'birthday' ? '#FFD700' : e.color }} />
+                    <div style={{ width: dotSize, height: dotSize, borderRadius: '50%', backgroundColor: day.resonance === 'birthday' ? '#FFD700' : e.color, flexShrink: 0 }} />
                   </div>
                 </div>
-                <div style={{ fontSize: '0.65rem', color: 'var(--text-2)', lineHeight: 1.2 }}>
+                <div style={{ fontSize: sealFs, color: 'var(--text-2)', lineHeight: 1.2, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                   {day.toneNumber} {day.seal.split(' ')[1] || day.seal}
                 </div>
-                <div style={{ fontSize: '0.6rem', color: e.color, fontWeight: 500 }}>{e.label}</div>
+                <div style={{ fontSize: labelFs, color: e.color, fontWeight: 500 }}>{e.label}</div>
               </div>
             )
           })}
