@@ -25,15 +25,8 @@ export default function Navbar() {
       borderBottom: '1px solid rgba(139,110,62,0.3)',
     }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: m ? '0 12px' : '0 20px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-        <Link to="/" style={{
-          color: 'var(--color-gold)',
-          fontSize: m ? '0.68rem' : '0.78rem',
-          fontWeight: 500,
-          letterSpacing: m ? '0.06em' : '0.12em',
-          textDecoration: 'none',
-          flexShrink: 0,
-        }}>
-          BEWUSSTSEIN.OHNE.LIMIT
+        <Link to="/" style={{ textDecoration: 'none', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+          <img src="/logo.svg" alt="Bewusstsein.ohne.Limit" style={{ height: m ? '32px' : '38px', display: 'block' }} />
         </Link>
 
         {m ? (

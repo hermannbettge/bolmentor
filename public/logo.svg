@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 48" fill="none">
+  <!-- Kin symbol mark -->
+  <!-- Outer ring -->
+  <circle cx="24" cy="24" r="20" stroke="#B8975A" stroke-width="1.2" fill="none"/>
+  <!-- 4 petals -->
+  <ellipse cx="24" cy="14.5" rx="4" ry="6.5" fill="#B8975A"/>
+  <ellipse cx="24" cy="33.5" rx="4" ry="6.5" fill="#B8975A"/>
+  <ellipse cx="14.5" cy="24" rx="6.5" ry="4" fill="#B8975A"/>
+  <ellipse cx="33.5" cy="24" rx="6.5" ry="4" fill="#B8975A"/>
+  <!-- Center -->
+  <circle cx="24" cy="24" r="5.5" fill="#1a1610"/>
+  <circle cx="24" cy="24" r="3.5" fill="#B8975A"/>
+  <!-- Cardinal dots -->
+  <circle cx="24" cy="5.5" r="1.5" fill="#B8975A"/>
+  <circle cx="24" cy="42.5" r="1.5" fill="#B8975A"/>
+  <circle cx="5.5"  cy="24" r="1.5" fill="#B8975A"/>
+  <circle cx="42.5" cy="24" r="1.5" fill="#B8975A"/>
+
+  <!-- Wordmark -->
+  <!-- Main word "BEWUSSTSEIN" -->
+  <text x="55" y="20" font-family="Georgia, 'Times New Roman', serif" font-size="13" font-weight="400" fill="#B8975A" letter-spacing="2.5">BEWUSSTSEIN</text>
+  <!-- Separator line -->
+  <line x1="55" y1="25" x2="234" y2="25" stroke="#B8975A" stroke-width="0.5" opacity="0.4"/>
+  <!-- Sub-words "OHNE · LIMIT" -->
+  <text x="55" y="38" font-family="Georgia, 'Times New Roman', serif" font-size="10" font-weight="400" fill="#B8975A" letter-spacing="5" opacity="0.75">OHNE · LIMIT</text>
+</svg>
