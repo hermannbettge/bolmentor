@@ -85,10 +85,13 @@ router.post('/create-checkout-session', requireAuth, async (req, res) => {
     if (!priceId) return res.status(500).json({ error: `Stripe-Preis für "${productKey}" nicht konfiguriert. Bitte wende dich an den Support.` })
 
     const meta = PRODUCT_META[productKey]
-    const isSubscription = meta.type === 'membership'
+
+    // Determine mode from actual Stripe price type (recurring → subscription, one_time → payment)
+    const stripePrice = await stripe.prices.retrieve(priceId)
+    const mode = stripePrice.type === 'recurring' ? 'subscription' : 'payment'
 
     const session = await stripe.checkout.sessions.create({
-      mode: isSubscription ? 'subscription' : 'payment',
+      mode,
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: successUrl || `${process.env.APP_URL || 'http://localhost:5173'}/dashboard?checkout=success`,
       cancel_url: cancelUrl || `${process.env.APP_URL || 'http://localhost:5173'}/profil?checkout=cancelled`,
@@ -121,10 +124,13 @@ router.post('/guest-checkout', async (req, res) => {
 
     const meta = PRODUCT_META[productKey]
     const appUrl = process.env.APP_URL || 'http://localhost:5173'
-    const isSubscription = meta.type === 'membership'
+
+    // Determine mode from actual Stripe price type (recurring → subscription, one_time → payment)
+    const stripePrice = await stripe.prices.retrieve(priceId)
+    const mode = stripePrice.type === 'recurring' ? 'subscription' : 'payment'
 
     const session = await stripe.checkout.sessions.create({
-      mode: isSubscription ? 'subscription' : 'payment',
+      mode,
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${appUrl}/registrieren?stripe_session={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/`,
