@@ -74,8 +74,11 @@ export default function Registrieren() {
           setLoading(false)
           return
         }
-        // Reload profile with explicit userId — user state may not be set yet
-        await refreshProfile(data.user.id)
+        // Full page reload after claim — ensures AuthProvider reads fresh profile
+        // from DB without React state race condition in ProtectedRoute
+        const redirect = searchParams.get('redirect')
+        window.location.replace(redirect || '/dashboard')
+        return
       }
 
       const redirect = searchParams.get('redirect')
