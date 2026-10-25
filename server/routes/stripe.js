@@ -237,10 +237,9 @@ router.post('/customer-portal', requireAuth, async (req, res) => {
   }
 })
 
-// Upgrade from monthly membership to annual
-// Redirects to Stripe Checkout for the annual plan.
-// Existing monthly membership and analysis subscriptions are cancelled with proration
-// after successful payment via webhook — their remaining value offsets future invoices.
+// Upgrade from monthly membership to annual.
+// Credits the user for what they've already paid (monthly fee + purchased analyses)
+// by creating a one-time Stripe coupon and applying it to the checkout session.
 router.post('/upgrade-annual', requireAuth, async (req, res) => {
   try {
     const stripe = getStripe()
@@ -248,13 +247,40 @@ router.post('/upgrade-annual', requireAuth, async (req, res) => {
     if (!annualPriceId) return res.status(500).json({ error: 'Jahrestarif-Preis nicht konfiguriert' })
 
     const appUrl = process.env.APP_URL || 'http://localhost:5173'
-    const { data: profile } = await supabase.from('profiles').select('stripe_customer_id').eq('id', req.user.id).single()
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('stripe_customer_id, subscription_plan, membership_active, purchased_analyses')
+      .eq('id', req.user.id)
+      .single()
+
+    // Build list of price IDs already paid for
+    const creditPriceIds = []
+    if (profile?.membership_active && profile?.subscription_plan === 'monthly') {
+      const id = PRODUCT_KEY_MAP.membershipMonthly?.()
+      if (id) creditPriceIds.push(id)
+    }
+    for (const key of (profile?.purchased_analyses || [])) {
+      const id = PRODUCT_KEY_MAP[key]?.()
+      if (id) creditPriceIds.push(id)
+    }
+
+    // Fetch unit_amount for each price (deduplicated)
+    let creditCents = 0
+    if (creditPriceIds.length > 0) {
+      const uniqueIds = [...new Set(creditPriceIds)]
+      const amounts = {}
+      await Promise.all(uniqueIds.map(async (priceId) => {
+        const price = await stripe.prices.retrieve(priceId)
+        amounts[priceId] = price.unit_amount || 0
+      }))
+      creditCents = creditPriceIds.reduce((sum, id) => sum + (amounts[id] || 0), 0)
+    }
 
     const customerField = profile?.stripe_customer_id
       ? { customer: profile.stripe_customer_id }
       : { customer_email: req.user.email }
 
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams = {
       mode: 'subscription',
       line_items: [{ price: annualPriceId, quantity: 1 }],
       success_url: `${appUrl}/dashboard?checkout=success&stripe_session={CHECKOUT_SESSION_ID}`,
@@ -262,8 +288,27 @@ router.post('/upgrade-annual', requireAuth, async (req, res) => {
       ...customerField,
       metadata: { user_id: req.user.id, product_key: 'membershipAnnual', upgrade_from_monthly: 'true' },
       allow_promotion_codes: true,
-    })
+    }
 
+    if (creditCents > 0) {
+      // Fetch annual price to cap credit so the charge stays positive
+      const annualPrice = await stripe.prices.retrieve(annualPriceId)
+      const annualAmount = annualPrice.unit_amount || 17000
+      const cappedCredit = Math.min(creditCents, annualAmount - 100) // leave at least €1
+      if (cappedCredit > 0) {
+        const coupon = await stripe.coupons.create({
+          amount_off: cappedCredit,
+          currency: 'eur',
+          duration: 'once',
+          name: `Upgrade-Gutschrift ${(cappedCredit / 100).toFixed(2).replace('.', ',')} €`,
+          max_redemptions: 1,
+        })
+        sessionParams.discounts = [{ coupon: coupon.id }]
+        sessionParams.allow_promotion_codes = false // cannot combine with discounts
+      }
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams)
     res.json({ redirect_url: session.url })
   } catch (err) {
     console.error('Upgrade to annual Fehler:', err)
