@@ -151,6 +151,12 @@ async function streamClaude(res, prompt, maxTokens, onComplete) {
   res.setHeader('Connection', 'keep-alive')
   res.setHeader('X-Accel-Buffering', 'no') // disable nginx/Railway proxy buffering
   res.flushHeaders()
+
+  // Keepalive pings every 5s force Railway's proxy to flush the buffer
+  const keepalive = setInterval(() => {
+    try { res.write(': ping\n\n') } catch {}
+  }, 5000)
+
   let fullContent = ''
   try {
     const stream = anthropic.messages.stream({
@@ -169,6 +175,7 @@ async function streamClaude(res, prompt, maxTokens, onComplete) {
   } catch (err) {
     res.write(`data: ${JSON.stringify({ error: err.message })}\n\n`)
   } finally {
+    clearInterval(keepalive)
     res.end()
   }
 }
