@@ -152,6 +152,7 @@ export default function AnalysePage() {
       const res = await fetch(`/api/analysis/${type}/daily?date=${date}`, {
         headers: { Authorization: `Bearer ${session.access_token}` },
       })
+      if (!res.ok) return
       const data = await res.json()
       setDailyAnalysis(data.content || null)
     } catch {}
@@ -167,6 +168,7 @@ export default function AnalysePage() {
       const res = await fetch(`/api/analysis/${type}/daily?date=${newDate}`, {
         headers: { Authorization: `Bearer ${session.access_token}` },
       })
+      if (!res.ok) return
       const data = await res.json()
       setDailyAnalysis(data.content || null)
     } catch {}
