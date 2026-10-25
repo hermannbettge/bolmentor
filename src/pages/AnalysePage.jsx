@@ -248,15 +248,43 @@ export default function AnalysePage() {
     setError('')
     try {
       const { data: { session } } = await supabase.auth.getSession()
-      const body = {}
       const res = await fetch(`/api/analysis/${type}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
-        body: JSON.stringify(body),
+        body: JSON.stringify({}),
       })
+      // Non-OK before streaming starts means a JSON error (auth/access)
       if (!res.ok) { const e = await res.json(); throw new Error(e.error) }
-      const data = await res.json()
-      setAnalysis(data.content)
+
+      // Read SSE stream
+      const reader = res.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+      let streamingContent = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop() // keep incomplete last line
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue
+          try {
+            const msg = JSON.parse(line.slice(6))
+            if (msg.error) throw new Error(msg.error)
+            if (msg.text) {
+              streamingContent += msg.text
+              setAnalysis(streamingContent) // live update while streaming
+            }
+            if (msg.done) {
+              setAnalysis(msg.content)
+            }
+          } catch (parseErr) {
+            if (parseErr.message && !parseErr.message.includes('JSON')) throw parseErr
+          }
+        }
+      }
     } catch (e) {
       setError(e.message)
     } finally {

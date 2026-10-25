@@ -644,26 +644,50 @@ router.post('/monthly', requireAuth, async (req, res) => {
   }
 })
 
-// Special analyses
+// Special analyses — streamed via SSE to avoid Railway gateway timeout
 const SPECIAL_TYPES = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership', 'relationship']
 
 SPECIAL_TYPES.forEach(type => {
   router.post(`/${type}`, requireAuth, async (req, res) => {
+    // Validate before opening stream so we can return JSON errors for auth/access issues
+    let profile, prompt
     try {
-      const profile = await getProfile(req.user.id)
+      profile = await getProfile(req.user.id)
       checkMembership(profile)
       checkPurchased(profile, type)
-
       const kinData = calculateKinFromDate(profile.birth_date)
-      const prompt = buildSpecialPrompt(type, profile, kinData, req.body.extraData)
+      prompt = buildSpecialPrompt(type, profile, kinData, req.body.extraData)
       if (!prompt) return res.status(400).json({ error: 'Unbekannter Analysetyp' })
-
-      const content = await callClaude(prompt)
-      const today = new Date().toISOString().split('T')[0]
-      await saveAnalysis(req.user.id, type, content, today)
-      res.json({ content })
     } catch (err) {
-      res.status(400).json({ error: err.message })
+      return res.status(400).json({ error: err.message })
+    }
+
+    // Switch to SSE streaming so the connection stays alive for long responses
+    res.setHeader('Content-Type', 'text/event-stream')
+    res.setHeader('Cache-Control', 'no-cache')
+    res.setHeader('Connection', 'keep-alive')
+    res.flushHeaders()
+
+    let fullContent = ''
+    try {
+      const stream = anthropic.messages.stream({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 8000,
+        messages: [{ role: 'user', content: prompt }],
+      })
+      for await (const chunk of stream) {
+        if (chunk.type === 'content_block_delta' && chunk.delta?.type === 'text_delta') {
+          fullContent += chunk.delta.text
+          res.write(`data: ${JSON.stringify({ text: chunk.delta.text })}\n\n`)
+        }
+      }
+      const today = new Date().toISOString().split('T')[0]
+      await saveAnalysis(req.user.id, type, fullContent, today)
+      res.write(`data: ${JSON.stringify({ done: true, content: fullContent })}\n\n`)
+    } catch (err) {
+      res.write(`data: ${JSON.stringify({ error: err.message })}\n\n`)
+    } finally {
+      res.end()
     }
   })
 })
