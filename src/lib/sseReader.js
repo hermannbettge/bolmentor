@@ -27,7 +27,11 @@ export async function readSSEStream(res, { onChunk, onDone }) {
       if (!line.startsWith('data: ')) continue
       let msg
       try { msg = JSON.parse(line.slice(6)) } catch { continue }
-      if (msg.error) throw new Error(msg.error)
+      if (msg.error) {
+        const raw = msg.error
+        const isHtml = typeof raw === 'string' && raw.trimStart().startsWith('<')
+        throw new Error(isHtml ? 'Verbindungsfehler — bitte erneut versuchen.' : raw)
+      }
       if (msg.text) {
         streamingContent += msg.text
         onChunk(streamingContent)

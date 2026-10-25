@@ -173,7 +173,11 @@ async function streamClaude(res, prompt, maxTokens, onComplete) {
     await onComplete(fullContent)
     res.write(`data: ${JSON.stringify({ done: true, content: fullContent })}\n\n`)
   } catch (err) {
-    res.write(`data: ${JSON.stringify({ error: err.message })}\n\n`)
+    const msg = err.message || ''
+    const userMsg = msg.startsWith('<') || msg.includes('<!DOCTYPE')
+      ? 'KI-Dienst vorübergehend nicht erreichbar — bitte erneut versuchen.'
+      : msg
+    res.write(`data: ${JSON.stringify({ error: userMsg })}\n\n`)
   } finally {
     clearInterval(keepalive)
     res.end()
