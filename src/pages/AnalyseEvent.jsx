@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth.jsx'
 import { supabase } from '../lib/supabase.js'
 import AnalysisDisplay from '../components/AnalysisDisplay.jsx'
 import { generateAnalysisPDF } from '../lib/pdfGenerator.js'
+import { readSSEStream } from '../lib/sseReader.js'
 
 const CATEGORY_LABELS = {
   land: 'Land / Nation',
@@ -55,29 +56,10 @@ export default function AnalyseEvent() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
       })
-      if (!res.ok) { const e = await res.json(); throw new Error(e.error) }
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-      let buffer = ''
-      let streamingContent = ''
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        buffer += decoder.decode(value, { stream: true })
-        const lines = buffer.split('\n')
-        buffer = lines.pop()
-        for (const line of lines) {
-          if (!line.startsWith('data: ')) continue
-          try {
-            const msg = JSON.parse(line.slice(6))
-            if (msg.error) throw new Error(msg.error)
-            if (msg.text) { streamingContent += msg.text; setContent(streamingContent) }
-            if (msg.done) { setContent(msg.content); setAnalysisDate(new Date().toISOString().split('T')[0]) }
-          } catch (parseErr) {
-            if (parseErr.message && !parseErr.message.includes('JSON')) throw parseErr
-          }
-        }
-      }
+      await readSSEStream(res, {
+        onChunk: (text) => setContent(text),
+        onDone: (content) => { setContent(content); setAnalysisDate(new Date().toISOString().split('T')[0]) },
+      })
     } catch (e) {
       setError(e.message)
     } finally {

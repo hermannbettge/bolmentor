@@ -4,6 +4,7 @@ import { calculateTodayKin, getGermanDate, daysUntilFirstOfNextMonth, isFirstOfM
 import AnalysisDisplay from '../components/AnalysisDisplay.jsx'
 import PDFDownloadButton from '../components/PDFDownloadButton.jsx'
 import { supabase } from '../lib/supabase.js'
+import { readSSEStream } from '../lib/sseReader.js'
 
 export default function Monatsanalyse() {
   const { user, profile } = useAuth()
@@ -59,32 +60,10 @@ export default function Monatsanalyse() {
           'Authorization': `Bearer ${session.access_token}`,
         },
       })
-      if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.error || 'Fehler beim Erstellen der Analyse')
-      }
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-      let buffer = ''
-      let streamingContent = ''
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        buffer += decoder.decode(value, { stream: true })
-        const lines = buffer.split('\n')
-        buffer = lines.pop()
-        for (const line of lines) {
-          if (!line.startsWith('data: ')) continue
-          try {
-            const msg = JSON.parse(line.slice(6))
-            if (msg.error) throw new Error(msg.error)
-            if (msg.text) { streamingContent += msg.text; setAnalysis(streamingContent) }
-            if (msg.done) { setAnalysis(msg.content) }
-          } catch (parseErr) {
-            if (parseErr.message && !parseErr.message.includes('JSON')) throw parseErr
-          }
-        }
-      }
+      await readSSEStream(res, {
+        onChunk: (text) => setAnalysis(text),
+        onDone: (content) => setAnalysis(content),
+      })
     } catch (err) {
       setError(err.message)
     } finally {

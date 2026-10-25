@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth.jsx'
 import { supabase } from '../lib/supabase.js'
 import AnalysisDisplay from '../components/AnalysisDisplay.jsx'
 import PDFDownloadButton from '../components/PDFDownloadButton.jsx'
+import { readSSEStream } from '../lib/sseReader.js'
 
 const COPPER = 'var(--accent)'
 const TEXT = 'var(--text-1)'
@@ -88,29 +89,10 @@ export default function PartnerschaftsanalysePage() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
         body: JSON.stringify({ date: dailyDate }),
       })
-      if (!res.ok) { const e = await res.json(); throw new Error(e.error) }
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-      let buffer = ''
-      let streamingContent = ''
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        buffer += decoder.decode(value, { stream: true })
-        const lines = buffer.split('\n')
-        buffer = lines.pop()
-        for (const line of lines) {
-          if (!line.startsWith('data: ')) continue
-          try {
-            const msg = JSON.parse(line.slice(6))
-            if (msg.error) throw new Error(msg.error)
-            if (msg.text) { streamingContent += msg.text; setDailyAnalysis(streamingContent) }
-            if (msg.done) { setDailyAnalysis(msg.content) }
-          } catch (parseErr) {
-            if (parseErr.message && !parseErr.message.includes('JSON')) throw parseErr
-          }
-        }
-      }
+      await readSSEStream(res, {
+        onChunk: (text) => setDailyAnalysis(text),
+        onDone: (content) => setDailyAnalysis(content),
+      })
     } catch (e) {
       setError(e.message)
     } finally {
@@ -126,29 +108,10 @@ export default function PartnerschaftsanalysePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
       })
-      if (!res.ok) { const e = await res.json(); throw new Error(e.error) }
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-      let buffer = ''
-      let streamingContent = ''
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        buffer += decoder.decode(value, { stream: true })
-        const lines = buffer.split('\n')
-        buffer = lines.pop()
-        for (const line of lines) {
-          if (!line.startsWith('data: ')) continue
-          try {
-            const msg = JSON.parse(line.slice(6))
-            if (msg.error) throw new Error(msg.error)
-            if (msg.text) { streamingContent += msg.text; setAnalysis(streamingContent) }
-            if (msg.done) { setAnalysis(msg.content) }
-          } catch (parseErr) {
-            if (parseErr.message && !parseErr.message.includes('JSON')) throw parseErr
-          }
-        }
-      }
+      await readSSEStream(res, {
+        onChunk: (text) => setAnalysis(text),
+        onDone: (content) => setAnalysis(content),
+      })
     } catch (e) {
       setError(e.message)
     } finally {
