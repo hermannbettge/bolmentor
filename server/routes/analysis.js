@@ -144,6 +144,34 @@ async function callClaude(prompt, maxTokens = 8000) {
   return message.content[0].text
 }
 
+// Stream a Claude response as SSE — keeps Railway connection alive for long responses
+async function streamClaude(res, prompt, maxTokens, onComplete) {
+  res.setHeader('Content-Type', 'text/event-stream')
+  res.setHeader('Cache-Control', 'no-cache')
+  res.setHeader('Connection', 'keep-alive')
+  res.flushHeaders()
+  let fullContent = ''
+  try {
+    const stream = anthropic.messages.stream({
+      model: 'claude-sonnet-4-6',
+      max_tokens: maxTokens,
+      messages: [{ role: 'user', content: prompt }],
+    })
+    for await (const chunk of stream) {
+      if (chunk.type === 'content_block_delta' && chunk.delta?.type === 'text_delta') {
+        fullContent += chunk.delta.text
+        res.write(`data: ${JSON.stringify({ text: chunk.delta.text })}\n\n`)
+      }
+    }
+    await onComplete(fullContent)
+    res.write(`data: ${JSON.stringify({ done: true, content: fullContent })}\n\n`)
+  } catch (err) {
+    res.write(`data: ${JSON.stringify({ error: err.message })}\n\n`)
+  } finally {
+    res.end()
+  }
+}
+
 // Build prompts inline (server-side, no import from src/)
 function buildDailyPrompt(profile, kinData, todayKin, todayStr) {
   return `Du bist ein Maya Kalender Experte mit tiefem Verständnis des Tzolkin-Systems. Erstelle eine persönliche Tagesenergie-Analyse auf Deutsch.
@@ -601,47 +629,43 @@ router.get('/daily', requireAuth, async (req, res) => {
 })
 
 router.post('/daily', requireAuth, async (req, res) => {
+  let profile, prompt, dateStr
   try {
-    const profile = await getProfile(req.user.id)
+    profile = await getProfile(req.user.id)
     checkMembership(profile)
-
-    const dateStr = req.body.date || new Date().toISOString().split('T')[0]
+    dateStr = req.body.date || new Date().toISOString().split('T')[0]
     const dateObj = new Date(dateStr + 'T00:00:00')
     const monthName = GERMAN_MONTHS[dateObj.getMonth()]
     const dateLabel = `${dateObj.getDate()}. ${monthName} ${dateObj.getFullYear()}`
-
     const kinData = calculateKinFromDate(profile.birth_date)
     const dayKin = calculateKinFromDate(dateStr)
-
-    const prompt = buildDailyPrompt(profile, kinData, dayKin, dateLabel)
-    const content = await callClaude(prompt)
-
-    await saveAnalysis(req.user.id, `daily_${dateStr}`, content, dateStr)
-    res.json({ content })
+    prompt = buildDailyPrompt(profile, kinData, dayKin, dateLabel)
   } catch (err) {
-    res.status(400).json({ error: err.message })
+    return res.status(400).json({ error: err.message })
   }
+  await streamClaude(res, prompt, 8000, async (content) => {
+    await saveAnalysis(req.user.id, `daily_${dateStr}`, content, dateStr)
+  })
 })
 
 router.post('/monthly', requireAuth, async (req, res) => {
+  let profile, prompt, todayStr, monthYear
   try {
-    const profile = await getProfile(req.user.id)
+    profile = await getProfile(req.user.id)
     checkMembership(profile)
-
     const today = new Date()
     const monthName = GERMAN_MONTHS[today.getMonth()]
     const year = today.getFullYear()
-    const monthYear = `${year}-${String(today.getMonth() + 1).padStart(2, '0')}`
-
+    todayStr = today.toISOString().split('T')[0]
+    monthYear = `${year}-${String(today.getMonth() + 1).padStart(2, '0')}`
     const kinData = calculateKinFromDate(profile.birth_date)
-    const prompt = buildMonthlyPrompt(profile, kinData, monthName, year)
-    const content = await callClaude(prompt)
-
-    await saveAnalysis(req.user.id, 'monthly', content, today.toISOString().split('T')[0], monthYear)
-    res.json({ content })
+    prompt = buildMonthlyPrompt(profile, kinData, monthName, year)
   } catch (err) {
-    res.status(400).json({ error: err.message })
+    return res.status(400).json({ error: err.message })
   }
+  await streamClaude(res, prompt, 8000, async (content) => {
+    await saveAnalysis(req.user.id, 'monthly', content, todayStr, monthYear)
+  })
 })
 
 // Special analyses — streamed via SSE to avoid Railway gateway timeout
@@ -662,33 +686,11 @@ SPECIAL_TYPES.forEach(type => {
       return res.status(400).json({ error: err.message })
     }
 
-    // Switch to SSE streaming so the connection stays alive for long responses
-    res.setHeader('Content-Type', 'text/event-stream')
-    res.setHeader('Cache-Control', 'no-cache')
-    res.setHeader('Connection', 'keep-alive')
-    res.flushHeaders()
-
-    let fullContent = ''
-    try {
-      const stream = anthropic.messages.stream({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 8000,
-        messages: [{ role: 'user', content: prompt }],
-      })
-      for await (const chunk of stream) {
-        if (chunk.type === 'content_block_delta' && chunk.delta?.type === 'text_delta') {
-          fullContent += chunk.delta.text
-          res.write(`data: ${JSON.stringify({ text: chunk.delta.text })}\n\n`)
-        }
-      }
+    const userId = req.user.id
+    await streamClaude(res, prompt, 8000, async (content) => {
       const today = new Date().toISOString().split('T')[0]
-      await saveAnalysis(req.user.id, type, fullContent, today)
-      res.write(`data: ${JSON.stringify({ done: true, content: fullContent })}\n\n`)
-    } catch (err) {
-      res.write(`data: ${JSON.stringify({ error: err.message })}\n\n`)
-    } finally {
-      res.end()
-    }
+      await saveAnalysis(userId, type, content, today)
+    })
   })
 })
 
@@ -767,27 +769,25 @@ DAILY_DOMAIN_TYPES.forEach(type => {
 
   // POST: generate domain daily for a given date (default: today)
   router.post(`/${type}/daily`, requireAuth, async (req, res) => {
+    let profile, prompt, dateStr
     try {
-      const profile = await getProfile(req.user.id)
+      profile = await getProfile(req.user.id)
       checkMembership(profile)
       checkPurchased(profile, type)
-
-      const dateStr = req.body.date || new Date().toISOString().split('T')[0]
+      dateStr = req.body.date || new Date().toISOString().split('T')[0]
       const dateObj = new Date(dateStr + 'T00:00:00')
       const monthName = GERMAN_MONTHS[dateObj.getMonth()]
       const dateLabel = `${dateObj.getDate()}. ${monthName} ${dateObj.getFullYear()}`
-
       const kinData = calculateKinFromDate(profile.birth_date)
       const dayKin = calculateKinFromDate(dateStr)
-
-      const prompt = buildDomainDailyPrompt(type, profile, kinData, dayKin, dateLabel)
-      const content = await callClaude(prompt, 4000)
-
-      await saveAnalysis(req.user.id, `${type}_daily_${dateStr}`, content, dateStr)
-      res.json({ content })
+      prompt = buildDomainDailyPrompt(type, profile, kinData, dayKin, dateLabel)
     } catch (err) {
-      res.status(400).json({ error: err.message })
+      return res.status(400).json({ error: err.message })
     }
+    const userId = req.user.id
+    await streamClaude(res, prompt, 4000, async (content) => {
+      await saveAnalysis(userId, `${type}_daily_${dateStr}`, content, dateStr)
+    })
   })
 })
 
@@ -796,28 +796,29 @@ const YEARLY_TYPES = ['business', 'health', 'family', 'selfexpression', 'finance
 
 YEARLY_TYPES.forEach(type => {
   router.post(`/${type}/yearly`, requireAuth, async (req, res) => {
+    let prompt, year, userId
     try {
       const profile = await getProfile(req.user.id)
       checkMembership(profile)
       checkAnnualPlan(profile)
       checkPurchased(profile, type)
-
-      const year = req.body.year || new Date().getFullYear()
+      year = req.body.year || new Date().getFullYear()
       const kinData = calculateKinFromDate(profile.birth_date)
-      const prompt = buildYearlyPrompt(type, profile, kinData, year)
-
-      const content = await callClaude(prompt, 16000)
-      const today = new Date().toISOString().split('T')[0]
-      await saveAnalysis(req.user.id, `${type}_yearly_${year}`, content, today)
-      res.json({ content })
+      prompt = buildYearlyPrompt(type, profile, kinData, year)
+      userId = req.user.id
     } catch (err) {
-      res.status(400).json({ error: err.message })
+      return res.status(400).json({ error: err.message })
     }
+    await streamClaude(res, prompt, 16000, async (content) => {
+      const today = new Date().toISOString().split('T')[0]
+      await saveAnalysis(userId, `${type}_yearly_${year}`, content, today)
+    })
   })
 })
 
 // Partner compatibility analysis (uses partner data from user profile)
 router.post('/partnership/partner-compatibility', requireAuth, async (req, res) => {
+  let prompt, userId
   try {
     const profile = await getProfile(req.user.id)
     checkMembership(profile)
@@ -832,7 +833,7 @@ router.post('/partnership/partner-compatibility', requireAuth, async (req, res) 
     const partnerName = [profile.partner_first_name, profile.partner_last_name].filter(Boolean).join(' ') || 'Partner/in'
     const name = profile.name
 
-    const prompt = `Du bist ein weltklasse Maya-Kalender-Experte und Beziehungscoach. Erstelle eine vollständige Partner-Kompatibilitätsanalyse auf Deutsch.
+    prompt = `Du bist ein weltklasse Maya-Kalender-Experte und Beziehungscoach. Erstelle eine vollständige Partner-Kompatibilitätsanalyse auf Deutsch.
 ${SYSTEM_RULES}
 
 PERSON 1: ${name}
@@ -873,13 +874,14 @@ Erstelle eine tiefe Paar-Kompatibilitätsanalyse. Jeder Abschnitt 4–6 Absätze
 
 Mindestens 3500 Wörter. Sei außergewöhnlich konkret und nenne beide Partner bei ihren Namen.`
 
-    const content = await callClaude(prompt, 10000)
-    const today = new Date().toISOString().split('T')[0]
-    await saveAnalysis(req.user.id, 'partnership_compatibility', content, today)
-    res.json({ content })
+    userId = req.user.id
   } catch (err) {
-    res.status(400).json({ error: err.message })
+    return res.status(400).json({ error: err.message })
   }
+  await streamClaude(res, prompt, 10000, async (content) => {
+    const today = new Date().toISOString().split('T')[0]
+    await saveAnalysis(userId, 'partnership_compatibility', content, today)
+  })
 })
 
 function getEventLimit(profile) {
@@ -893,11 +895,11 @@ function getEventLimit(profile) {
 
 // Event analysis — analyse any entity by its "birth date" (country, job, relationship, etc.)
 router.post('/event/:eventId', requireAuth, async (req, res) => {
+  let prompt, userId, eventId
   try {
     const profile = await getProfile(req.user.id)
     checkMembership(profile)
 
-    // Check event slot limit
     const limit = getEventLimit(profile)
     const { count } = await supabase
       .from('user_events')
@@ -907,7 +909,7 @@ router.post('/event/:eventId', requireAuth, async (req, res) => {
       return res.status(403).json({ error: `Du hast dein Limit von ${limit} Ereignis${limit === 1 ? '' : 'sen'} erreicht.` })
     }
 
-    const { eventId } = req.params
+    eventId = req.params.eventId
     const { data: event, error: evErr } = await supabase
       .from('user_events')
       .select('*')
@@ -929,7 +931,7 @@ router.post('/event/:eventId', requireAuth, async (req, res) => {
     }
     const catLabel = categoryLabels[event.category] || 'Ereignis'
 
-    const prompt = `Du bist ein weltklasse Maya-Kalender-Experte. Erstelle eine vollständige Energie-Analyse für ein ${catLabel} auf Deutsch.
+    prompt = `Du bist ein weltklasse Maya-Kalender-Experte. Erstelle eine vollständige Energie-Analyse für ein ${catLabel} auf Deutsch.
 ${SYSTEM_RULES}
 
 PERSON: ${profile.name}
@@ -963,13 +965,14 @@ Erstelle eine tiefe Analyse der Energie dieses Ereignisses und wie es mit ${prof
 
 Mindestens 2500 Wörter. Sei außergewöhnlich konkret. Sprich ${profile.name} direkt an.`
 
-    const content = await callClaude(prompt, 8000)
-    const today = new Date().toISOString().split('T')[0]
-    await saveAnalysis(req.user.id, `event_${eventId}`, content, today)
-    res.json({ content })
+    userId = req.user.id
   } catch (err) {
-    res.status(400).json({ error: err.message })
+    return res.status(400).json({ error: err.message })
   }
+  await streamClaude(res, prompt, 8000, async (content) => {
+    const today = new Date().toISOString().split('T')[0]
+    await saveAnalysis(userId, `event_${eventId}`, content, today)
+  })
 })
 
 // Get existing event analysis

@@ -56,9 +56,28 @@ export default function AnalyseEvent() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
       })
       if (!res.ok) { const e = await res.json(); throw new Error(e.error) }
-      const data = await res.json()
-      setContent(data.content)
-      setAnalysisDate(new Date().toISOString().split('T')[0])
+      const reader = res.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+      let streamingContent = ''
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop()
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue
+          try {
+            const msg = JSON.parse(line.slice(6))
+            if (msg.error) throw new Error(msg.error)
+            if (msg.text) { streamingContent += msg.text; setContent(streamingContent) }
+            if (msg.done) { setContent(msg.content); setAnalysisDate(new Date().toISOString().split('T')[0]) }
+          } catch (parseErr) {
+            if (parseErr.message && !parseErr.message.includes('JSON')) throw parseErr
+          }
+        }
+      }
     } catch (e) {
       setError(e.message)
     } finally {

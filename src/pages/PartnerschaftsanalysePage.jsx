@@ -89,8 +89,28 @@ export default function PartnerschaftsanalysePage() {
         body: JSON.stringify({ date: dailyDate }),
       })
       if (!res.ok) { const e = await res.json(); throw new Error(e.error) }
-      const data = await res.json()
-      setDailyAnalysis(data.content)
+      const reader = res.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+      let streamingContent = ''
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop()
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue
+          try {
+            const msg = JSON.parse(line.slice(6))
+            if (msg.error) throw new Error(msg.error)
+            if (msg.text) { streamingContent += msg.text; setDailyAnalysis(streamingContent) }
+            if (msg.done) { setDailyAnalysis(msg.content) }
+          } catch (parseErr) {
+            if (parseErr.message && !parseErr.message.includes('JSON')) throw parseErr
+          }
+        }
+      }
     } catch (e) {
       setError(e.message)
     } finally {
@@ -107,8 +127,28 @@ export default function PartnerschaftsanalysePage() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
       })
       if (!res.ok) { const e = await res.json(); throw new Error(e.error) }
-      const data = await res.json()
-      setAnalysis(data.content)
+      const reader = res.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+      let streamingContent = ''
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop()
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue
+          try {
+            const msg = JSON.parse(line.slice(6))
+            if (msg.error) throw new Error(msg.error)
+            if (msg.text) { streamingContent += msg.text; setAnalysis(streamingContent) }
+            if (msg.done) { setAnalysis(msg.content) }
+          } catch (parseErr) {
+            if (parseErr.message && !parseErr.message.includes('JSON')) throw parseErr
+          }
+        }
+      }
     } catch (e) {
       setError(e.message)
     } finally {
