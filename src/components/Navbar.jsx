@@ -2,12 +2,14 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { useIsMobile } from '../hooks/useIsMobile.js'
+import { useTheme } from '../hooks/useTheme.jsx'
 
 export default function Navbar() {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
   const m = useIsMobile()
+  const { theme, toggle } = useTheme()
 
   async function handleSignOut() {
     await signOut()
@@ -34,6 +36,9 @@ export default function Navbar() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             {user ? (
               <>
+                <button onClick={toggle} style={{ color: 'var(--color-text-muted)', fontSize: '0.78rem', background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
+                  {theme === 'dark' ? '☀' : '☾'}
+                </button>
                 <Link to="/dashboard" style={{ color: 'var(--color-gold)', fontSize: '0.78rem', textDecoration: 'none', fontWeight: 500 }}>
                   Dashboard
                 </Link>
@@ -66,6 +71,9 @@ export default function Navbar() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
             {user ? (
               <>
+                <button onClick={toggle} title={theme === 'dark' ? 'Hell' : 'Dunkel'} style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 2px' }}>
+                  {theme === 'dark' ? '☀' : '☾'}
+                </button>
                 <Link to="/dashboard" style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textDecoration: 'none' }}>
                   Dashboard
                 </Link>

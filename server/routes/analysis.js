@@ -699,7 +699,7 @@ SPECIAL_TYPES.forEach(type => {
     }
 
     const userId = req.user.id
-    await streamClaude(res, prompt, 8000, async (content) => {
+    await streamClaude(res, prompt, 16000, async (content) => {
       const today = new Date().toISOString().split('T')[0]
       await saveAnalysis(userId, type, content, today)
     })
