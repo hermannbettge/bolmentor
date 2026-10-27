@@ -34,50 +34,114 @@ const LIFE_THEMES = [
 
 // Structured knowledge base: verifiable meanings for each seal and tone
 // Source: Dreamspell / José Argüelles system
+// Structured Dreamspell knowledge base with machine-readable activity tags
+// Tags are the single source of truth — MAYA never decides this itself
 const SEAL_KNOWLEDGE = [
-  { seal: 'Roter Drachen',        qualities: 'Geburt, Fürsorge, Empfang, Nähren',           goodFor: 'Neue Projekte starten, Produktlaunches, Angebote erstellen, Selbstfürsorge',          avoidFor: 'Harte Konfrontationen, finale Abschlüsse' },
-  { seal: 'Weißer Wind',          qualities: 'Kommunikation, Geist, Botschaft, Klarheit',    goodFor: 'Akquise, Verkaufsgespräche, Präsentationen, Networking, wichtige Gespräche',          avoidFor: 'Rückzug, stille Einzelarbeit' },
-  { seal: 'Blaue Nacht',          qualities: 'Träume, Intuition, Fülle, Innenschau',         goodFor: 'Strategie entwickeln, kreative Ideenfindung, Meditation, Visionwork',                  avoidFor: 'Aktive Kaltakquise, direkte Konfrontation' },
-  { seal: 'Gelbe Saat',           qualities: 'Zielsetzung, Blüte, Bewusstsein, Fokus',       goodFor: 'Ziele setzen, Angebote schärfen, Strategiemeetings, Businessplanung',                  avoidFor: 'Ablenkung, Multitasking' },
-  { seal: 'Rote Schlange',        qualities: 'Lebenskraft, Instinkt, Leidenschaft, Körper',  goodFor: 'Energetische Präsentation, Motivation, Sport, körperliche Arbeit',                    avoidFor: 'Vertragsverhandlungen, Detailarbeit' },
-  { seal: 'Weißer Weltenwandler', qualities: 'Wandel, Loslassen, Gleichmut, Übergang',       goodFor: 'Alte Muster loslassen, Neuausrichtung, Abschluss von Projekten',                      avoidFor: 'Wichtige neue Starts, Akquise' },
-  { seal: 'Blaue Hand',           qualities: 'Vollendung, Heilung, Leistung, Handeln',       goodFor: 'Vertragsabschlüsse, Projekte abschließen, Lieferungen, sichtbare Resultate',          avoidFor: 'Planung ohne Umsetzung' },
-  { seal: 'Gelber Stern',         qualities: 'Schönheit, Eleganz, Ausstrahlung, Kunst',      goodFor: 'Branding, Marketing, Präsentationen, Social Media, sichtbar sein',                    avoidFor: 'Grobe operative Arbeit' },
-  { seal: 'Roter Mond',           qualities: 'Reinigung, Fließen, universale Wasser, Empfang', goodFor: 'Intuitive Entscheidungen, Selbstreflexion, Gesundheit, loslassen',                 avoidFor: 'Harte Verkaufsgespräche, Druck ausüben' },
-  { seal: 'Weißer Hund',          qualities: 'Liebe, Loyalität, Treue, Verbindung, Herz',   goodFor: 'Teambuilding, Kundenbeziehungen pflegen, Kooperationen, Netzwerk stärken',            avoidFor: 'Kühle Verhandlungen, rein sachliche Entscheidungen' },
-  { seal: 'Blauer Affe',          qualities: 'Magie, Spiel, Humor, Illusion, Leichtigkeit', goodFor: 'Kreative Arbeit, Events, entspannte Kundengespräche, Social Media Spaß',              avoidFor: 'Ernste Vertragsabschlüsse, finale Entscheidungen' },
-  { seal: 'Gelber Mensch',        qualities: 'Freier Wille, Einfluss, Weisheit, Führung',    goodFor: 'Akquise, Führungsgespräche, Positionierung, Autorität zeigen',                        avoidFor: 'Unterwerfung, Bitten um Erlaubnis' },
-  { seal: 'Rotes Schilf',         qualities: 'Weltdienst, Raum, Prophetie, Ausdehnung',      goodFor: 'Neue Märkte erschließen, Netzwerk ausbauen, Vorträge, öffentliches Auftreten',        avoidFor: 'Kleinteilige Verwaltungsarbeit' },
-  { seal: 'Weißer Zauberer',      qualities: 'Zeitlosigkeit, Empfang, Magie, Hingabe',       goodFor: 'Intuitive Strategien, tiefe Gespräche, spirituelle Arbeit, Vertrauen aufbauen',       avoidFor: 'Zeitdruck, kurzfristige Entscheidungen' },
-  { seal: 'Blauer Adler',         qualities: 'Vision, Kreativität, Geist, Überblick',        goodFor: 'Strategische Planung, Visionen kommunizieren, Pitches, Inspiration verbreiten',       avoidFor: 'Detailarbeit, operative Ausführung' },
-  { seal: 'Gelber Krieger',       qualities: 'Intelligenz, Mut, Befragung, Furchtlosigkeit', goodFor: 'Akquise, Kaltakquise, Verhandlungen, Herausforderungen annehmen',                    avoidFor: 'Passives Abwarten, Rückzug' },
-  { seal: 'Rote Erde',            qualities: 'Navigation, Synchronizität, Evolution, Erdung', goodFor: 'Langfristige Planung, Routinen aufbauen, Strukturarbeit, nachhaltige Projekte',      avoidFor: 'Spontane Entscheidungen, schnelle Deals' },
-  { seal: 'Weißes Spiegelmesser', qualities: 'Ordnung, Reflexion, Wahrheit, Endlosigkeit',   goodFor: 'Analyse, Verträge prüfen, Buchhaltung, Klarheit in Prozessen',                       avoidFor: 'Kreatives Chaos, spontane Aktionen' },
-  { seal: 'Blauer Sturm',         qualities: 'Transformation, Selbst-Generation, Energie',   goodFor: 'Radikale Veränderungen, Restrukturierung, intensive Energie für Sprints',             avoidFor: 'Stabilisierung, ruhige Gespräche' },
-  { seal: 'Gelbe Sonne',          qualities: 'Erleuchtung, Feuer, Leben, universales Licht', goodFor: 'Sichtbarkeit maximieren, Launches, Bühnenauftritte, Leuchtturm-Aktionen',             avoidFor: 'Introvertierte Rückzugsarbeit' },
+  { seal: 'Roter Drachen',        qualities: 'Geburt, Fürsorge, Empfang, Nähren',              tags: ['launch', 'angebot'],      avoidTags: ['abschluss', 'konfrontation'] },
+  { seal: 'Weißer Wind',          qualities: 'Kommunikation, Geist, Botschaft, Klarheit',       tags: ['akquise', 'praesentation', 'netzwerk'],  avoidTags: ['einzelarbeit'] },
+  { seal: 'Blaue Nacht',          qualities: 'Träume, Intuition, Fülle, Innenschau',             tags: ['strategie', 'kreativitaet', 'reflexion'], avoidTags: ['akquise', 'konfrontation'] },
+  { seal: 'Gelbe Saat',           qualities: 'Zielsetzung, Blüte, Bewusstsein, Fokus',           tags: ['strategie', 'angebot', 'planung'],       avoidTags: [] },
+  { seal: 'Rote Schlange',        qualities: 'Lebenskraft, Instinkt, Leidenschaft, Körper',      tags: ['praesentation', 'motivation'],           avoidTags: ['verhandlung', 'detailarbeit'] },
+  { seal: 'Weißer Weltenwandler', qualities: 'Wandel, Loslassen, Gleichmut, Übergang',           tags: ['abschluss', 'neuausrichtung'],            avoidTags: ['akquise', 'launch'] },
+  { seal: 'Blaue Hand',           qualities: 'Vollendung, Heilung, Leistung, Handeln',           tags: ['abschluss', 'verhandlung', 'lieferung'], avoidTags: [] },
+  { seal: 'Gelber Stern',         qualities: 'Schönheit, Eleganz, Ausstrahlung, Kunst',          tags: ['praesentation', 'marketing', 'sichtbarkeit'], avoidTags: [] },
+  { seal: 'Roter Mond',           qualities: 'Reinigung, Fließen, Empfang, Intuition',           tags: ['reflexion', 'gesundheit'],               avoidTags: ['akquise', 'verhandlung'] },
+  { seal: 'Weißer Hund',          qualities: 'Liebe, Loyalität, Treue, Verbindung',              tags: ['netzwerk', 'kooperation', 'teamarbeit'], avoidTags: [] },
+  { seal: 'Blauer Affe',          qualities: 'Magie, Spiel, Humor, Leichtigkeit',                tags: ['kreativitaet', 'marketing', 'events'],   avoidTags: ['abschluss'] },
+  { seal: 'Gelber Mensch',        qualities: 'Freier Wille, Einfluss, Weisheit, Führung',        tags: ['akquise', 'fuehrung', 'positionierung'], avoidTags: [] },
+  { seal: 'Rotes Schilf',         qualities: 'Weltdienst, Raum, Ausdehnung, Prophetie',          tags: ['netzwerk', 'oeffentlich', 'praesentation'], avoidTags: [] },
+  { seal: 'Weißer Zauberer',      qualities: 'Zeitlosigkeit, Empfang, Magie, Hingabe',           tags: ['strategie', 'vertrauen', 'netzwerk'],    avoidTags: ['zeitdruck'] },
+  { seal: 'Blauer Adler',         qualities: 'Vision, Kreativität, Geist, Überblick',            tags: ['strategie', 'praesentation', 'planung'], avoidTags: ['detailarbeit'] },
+  { seal: 'Gelber Krieger',       qualities: 'Intelligenz, Mut, Befragung, Furchtlosigkeit',     tags: ['akquise', 'verhandlung', 'konfrontation'], avoidTags: [] },
+  { seal: 'Rote Erde',            qualities: 'Navigation, Synchronizität, Evolution, Erdung',    tags: ['planung', 'struktur', 'langfristig'],    avoidTags: [] },
+  { seal: 'Weißes Spiegelmesser', qualities: 'Ordnung, Reflexion, Wahrheit, Klarheit',           tags: ['analyse', 'verhandlung', 'struktur'],    avoidTags: [] },
+  { seal: 'Blauer Sturm',         qualities: 'Transformation, Energie, Selbst-Generation',       tags: ['veraenderung', 'sprint', 'restrukturierung'], avoidTags: ['stabilitaet'] },
+  { seal: 'Gelbe Sonne',          qualities: 'Erleuchtung, Feuer, Sichtbarkeit, Universalität',  tags: ['launch', 'sichtbarkeit', 'oeffentlich'], avoidTags: [] },
 ]
 
 const TONE_KNOWLEDGE = [
-  { toneNumber: 1,  tone: 'Magnetisch',      power: 'Vereint',      qualities: 'Anziehung, neuer Zyklus-Start, Zweck setzen',          goodFor: 'Neue Kampagnen starten, Ziele ausrufen, Anziehung erzeugen' },
-  { toneNumber: 2,  tone: 'Lunar',           power: 'Stabilisiert', qualities: 'Polarität, Herausforderung, Dualität aufdecken',        goodFor: 'Hindernisse identifizieren, Probleme analysieren, nicht für Starts' },
-  { toneNumber: 3,  tone: 'Elektrisch',      power: 'Aktiviert',    qualities: 'Aktivierung, Service, Bindung, Energie freisetzen',     goodFor: 'Aktionen starten, Teams aktivieren, Energie in Bewegung bringen' },
-  { toneNumber: 4,  tone: 'Selbst-Existent', power: 'Definiert',    qualities: 'Form, Definition, Struktur, Messbarkeit',               goodFor: 'Angebote strukturieren, Verträge formulieren, Prozesse definieren' },
-  { toneNumber: 5,  tone: 'Übertönend',      power: 'Befähigt',     qualities: 'Kernkraft, Strahlung, Befähigung, Stärke',              goodFor: 'Präsentationen mit Überzeugungskraft, Führung zeigen, Stärke demonstrieren' },
-  { toneNumber: 6,  tone: 'Rhythmisch',      power: 'Organisiert',  qualities: 'Gleichgewicht, Organisation, Ordnung herstellen',       goodFor: 'Systeme aufbauen, Routinen einführen, Abläufe optimieren' },
-  { toneNumber: 7,  tone: 'Resonant',        power: 'Kanalisiert',  qualities: 'Inspiration, Kanal, Abstimmung, Intuition',             goodFor: 'Kreative Arbeit, intuitive Entscheidungen, tiefe Gespräche' },
-  { toneNumber: 8,  tone: 'Galaktisch',      power: 'Harmonisiert', qualities: 'Integrität, Modell sein, Harmonie, Ausrichtung',        goodFor: 'Vertrauen aufbauen, Qualität zeigen, Vorbildfunktion' },
-  { toneNumber: 9,  tone: 'Solar',           power: 'Pulsiert',     qualities: 'Intention, Realisierung, Pulsation, Antrieb',           goodFor: 'Intensive Aktionsphasen, Deadlines einhalten, maximale Energie' },
-  { toneNumber: 10, tone: 'Planetar',        power: 'Manifestiert', qualities: 'Manifestation, Vollendung, Produktion, sichtbar werden', goodFor: 'Abschlüsse, Launches, Auslieferung, Ergebnisse sichtbar machen' },
-  { toneNumber: 11, tone: 'Spektral',        power: 'Löst auf',     qualities: 'Auflösung, Loslassen, Befreiung, Reinigung',            goodFor: 'Altes loslassen, beenden, bereinigen – nicht für neue Starts' },
-  { toneNumber: 12, tone: 'Kristallin',      power: 'Weiht',        qualities: 'Kooperation, Universalisierung, Widmung, Zusammenarbeit', goodFor: 'Kooperationen besiegeln, Partnerschaften, Gemeinschaftsprojekte' },
-  { toneNumber: 13, tone: 'Kosmisch',        power: 'Überdauert',   qualities: 'Transzendenz, Präsenz, Erleuchtung, Zyklusabschluss',   goodFor: 'Abschluss eines Zyklus, tiefe Reflexion – Neues startet im nächsten Zyklus' },
+  { toneNumber: 1,  tone: 'Magnetisch',      power: 'Vereint',      qualities: 'Anziehung, neuer Zyklus-Start, Zweck setzen',           tags: ['launch', 'akquise', 'angebot'] },
+  { toneNumber: 2,  tone: 'Lunar',           power: 'Stabilisiert', qualities: 'Polarität, Herausforderung, Analyse',                    tags: ['analyse', 'reflexion'] },
+  { toneNumber: 3,  tone: 'Elektrisch',      power: 'Aktiviert',    qualities: 'Aktivierung, Service, Energie freisetzen',               tags: ['akquise', 'motivation', 'netzwerk'] },
+  { toneNumber: 4,  tone: 'Selbst-Existent', power: 'Definiert',    qualities: 'Form, Definition, Struktur, Messbarkeit',                tags: ['angebot', 'struktur', 'planung'] },
+  { toneNumber: 5,  tone: 'Übertönend',      power: 'Befähigt',     qualities: 'Kernkraft, Ausstrahlung, Stärke',                        tags: ['praesentation', 'fuehrung', 'akquise'] },
+  { toneNumber: 6,  tone: 'Rhythmisch',      power: 'Organisiert',  qualities: 'Gleichgewicht, Organisation, Ordnung',                   tags: ['struktur', 'planung'] },
+  { toneNumber: 7,  tone: 'Resonant',        power: 'Kanalisiert',  qualities: 'Inspiration, Intuition, Abstimmung',                     tags: ['kreativitaet', 'strategie', 'reflexion'] },
+  { toneNumber: 8,  tone: 'Galaktisch',      power: 'Harmonisiert', qualities: 'Integrität, Harmonie, Vorbildfunktion',                  tags: ['vertrauen', 'kooperation', 'netzwerk'] },
+  { toneNumber: 9,  tone: 'Solar',           power: 'Pulsiert',     qualities: 'Intention, Realisierung, maximale Energie',              tags: ['akquise', 'sprint', 'abschluss'] },
+  { toneNumber: 10, tone: 'Planetar',        power: 'Manifestiert', qualities: 'Manifestation, Vollendung, sichtbar werden',             tags: ['abschluss', 'launch', 'lieferung'] },
+  { toneNumber: 11, tone: 'Spektral',        power: 'Löst auf',     qualities: 'Auflösung, Loslassen, Befreiung',                        tags: ['abschluss', 'neuausrichtung', 'reflexion'] },
+  { toneNumber: 12, tone: 'Kristallin',      power: 'Weiht',        qualities: 'Kooperation, Zusammenarbeit, Partnerschaft',             tags: ['kooperation', 'netzwerk', 'teamarbeit'] },
+  { toneNumber: 13, tone: 'Kosmisch',        power: 'Überdauert',   qualities: 'Transzendenz, Präsenz, Zyklusabschluss',                 tags: ['abschluss', 'reflexion'] },
 ]
+
+// Maps user-facing activity names to tags (both seal AND tone must have at least one matching tag)
+const ACTIVITY_MAP = {
+  akquise:       { label: 'Akquise / Kaltakquise',          requireAny: ['akquise'],       avoidAny: [] },
+  abschluss:     { label: 'Vertragsabschluss / Closing',    requireAny: ['abschluss'],     avoidAny: [] },
+  praesentation: { label: 'Präsentation / Pitch',           requireAny: ['praesentation'], avoidAny: [] },
+  netzwerk:      { label: 'Netzwerken / Kooperationen',     requireAny: ['netzwerk', 'kooperation'], avoidAny: [] },
+  strategie:     { label: 'Strategie / Planung',            requireAny: ['strategie', 'planung'],    avoidAny: [] },
+  launch:        { label: 'Launch / Neues starten',         requireAny: ['launch'],        avoidAny: [] },
+  marketing:     { label: 'Marketing / Sichtbarkeit',       requireAny: ['marketing', 'sichtbarkeit'], avoidAny: [] },
+  kreativitaet:  { label: 'Kreativarbeit',                  requireAny: ['kreativitaet'],  avoidAny: [] },
+}
+
+// Keywords in user messages that map to activity keys
+const ACTIVITY_KEYWORDS = {
+  akquise:       ['akquise', 'kaltakquise', 'kunden gewinnen', 'kundenakquise', 'neukundengewinnung', 'verkaufen', 'vertrieb'],
+  abschluss:     ['abschluss', 'vertrag', 'closing', 'deal abschließen', 'abschließen'],
+  praesentation: ['präsentation', 'pitch', 'vorstellen', 'vortrag', 'keynote'],
+  netzwerk:      ['netzwerk', 'netzwerken', 'kooperation', 'partner', 'kontakte knüpfen'],
+  strategie:     ['strategie', 'planung', 'businessplan', 'planen'],
+  launch:        ['launch', 'start', 'produktstart', 'auf den markt', 'veröffentlichung'],
+  marketing:     ['marketing', 'sichtbarkeit', 'social media', 'werbung', 'branding'],
+  kreativitaet:  ['kreativität', 'kreativ', 'ideen', 'content erstellen'],
+}
 
 function getSealKnowledge(sealName) {
   return SEAL_KNOWLEDGE.find(s => s.seal === sealName) || null
 }
 function getToneKnowledge(toneNumber) {
   return TONE_KNOWLEDGE.find(t => t.toneNumber === toneNumber) || null
+}
+
+// Detect which activity the user is asking about
+function detectActivity(messages) {
+  const text = messages.map(m => m.content).join(' ').toLowerCase()
+  for (const [key, keywords] of Object.entries(ACTIVITY_KEYWORDS)) {
+    if (keywords.some(kw => text.includes(kw))) return key
+  }
+  return null
+}
+
+// Deterministically compute which days are good for a given activity
+// A day qualifies if its seal AND tone both have at least one tag matching the activity's requireAny list
+function computeGoodDays(activityKey, today, endDate) {
+  const activity = ACTIVITY_MAP[activityKey]
+  if (!activity) return null
+  const goodDays = []
+  const cursor = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()))
+  const end = new Date(Date.UTC(endDate.getUTCFullYear(), endDate.getUTCMonth(), endDate.getUTCDate()))
+  while (cursor <= end) {
+    const dateStr = cursor.toISOString().split('T')[0]
+    const k = calculateKin(dateStr)
+    const sk = getSealKnowledge(k.seal)
+    const tk = getToneKnowledge(k.toneNumber)
+    if (!sk || !tk) { cursor.setUTCDate(cursor.getUTCDate() + 1); continue }
+    const sealMatch = activity.requireAny.some(tag => sk.tags.includes(tag))
+    const toneMatch = activity.requireAny.some(tag => tk.tags.includes(tag))
+    // Day qualifies if seal OR tone has the activity tag (one is enough for a signal)
+    if (sealMatch || toneMatch) {
+      const display = cursor.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC' })
+      const sealReason = sealMatch ? `${k.seal} (${sk.qualities})` : null
+      const toneReason = toneMatch ? `Ton ${k.toneNumber} ${k.tone} (${tk.qualities})` : null
+      const reason = [sealReason, toneReason].filter(Boolean).join(' + ')
+      goodDays.push(`${display} = Kin ${k.kin} | ${reason}`)
+    }
+    cursor.setUTCDate(cursor.getUTCDate() + 1)
+  }
+  return { label: activity.label, days: goodDays }
 }
 
 // Generate Kin table from today through endDate (inclusive)
@@ -295,6 +359,10 @@ router.post('/', requireAuth, async (req, res) => {
     const tableEnd = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() + 2, today.getUTCDate()))
     const kinTableRows = generateKinTable(today, tableEnd)
 
+    // Detect activity and pre-compute verified good days (server-side, not LLM-decided)
+    const detectedActivity = detectActivity(messages)
+    const goodDaysResult = detectedActivity ? computeGoodDays(detectedActivity, today, tableEnd) : null
+
     // Build topic restriction rules for the system prompt
     const allowedLabels = allowedTopics.map(t => TOPIC_META[t].label)
     const blockedTopics = Object.entries(TOPIC_META)
@@ -340,15 +408,21 @@ Datum: ${today.toISOString().split('T')[0]}
 Heutiges Kin: Kin ${todayKin.kin} – ${todayKin.tone} ${todayKin.seal}${dateKinSection}
 
 VOLLSTÄNDIGE KIN-TABELLE (heute + 2 Monate) – EXAKT UND VERBINDLICH:
-WICHTIG: Diese Tabelle wurde mathematisch berechnet und enthält verifizierbare Dreamspell-Qualitäten pro Tag. Verwende für JEDES Datum ausschließlich die Werte aus dieser Tabelle. Niemals schätzen, niemals aus dem Gedächtnis antworten. Dieselbe Frage muss immer dieselbe Antwort ergeben.
+WICHTIG: Diese Tabelle wurde mathematisch berechnet. Verwende ausschließlich diese Werte. Niemals schätzen. Dieselbe Frage muss immer dieselbe Antwort ergeben.
 ${kinTableRows.join('\n')}
+${goodDaysResult ? `
+VORAB BERECHNETE AKTIVITÄTS-TAGE – NUR DIESE LISTE VERWENDEN:
+Der Server hat deterministisch berechnet, welche Tage gut für "${goodDaysResult.label}" sind.
+Du darfst AUSSCHLIESSLICH diese Tage nennen. Keinen einzigen anderen Tag hinzufügen oder weglassen.
+Begründe jeden Tag mit den angegebenen Siegel- und Ton-Qualitäten.
 
-DREAMSPELL-WISSENSMODELL (Grundlage für alle Begründungen):
-SIEGEL-QUALITÄTEN:
-${SEAL_KNOWLEDGE.map(s => `${s.seal}: Qualitäten="${s.qualities}" | Gut für="${s.goodFor}" | Vermeiden="${s.avoidFor}"`).join('\n')}
-
-TON-QUALITÄTEN:
-${TONE_KNOWLEDGE.map(t => `Ton ${t.toneNumber} ${t.tone} (${t.power}): Qualitäten="${t.qualities}" | Gut für="${t.goodFor}"`).join('\n')}
+${goodDaysResult.days.length > 0
+  ? goodDaysResult.days.join('\n')
+  : 'Keine Tage in den nächsten 2 Monaten erfüllen die Kriterien.'}
+` : ''}
+DREAMSPELL-REFERENZ (nur zur Erklärung der Qualitäten):
+${SEAL_KNOWLEDGE.map(s => `${s.seal}: ${s.qualities}`).join(' | ')}
+TÖNE: ${TONE_KNOWLEDGE.map(t => `Ton ${t.toneNumber} ${t.tone}: ${t.qualities}`).join(' | ')}
 ${topicRules}
 
 GESPRÄCHSREGELN:
@@ -363,7 +437,8 @@ GESPRÄCHSREGELN:
 - Sei warm, weise und direkt
 - WICHTIG: Nenne niemals ein Kin aus dem Gedächtnis oder durch Schätzen. Die KIN-TABELLE oben enthält exakte Werte für die nächsten 2 Monate. Nutze ausschließlich diese Werte. Für Daten außerhalb der Tabelle: erkläre, dass du nur für die nächsten 2 Monate exakte Daten hast.
 - Wenn nach mehreren Tagen gefragt wird (z.B. "alle Akquise-Tage bis Jahresende"), liste jeden relevanten Tag mit Datum, Kin, Siegel und kurzer Begründung auf. Die Antwort muss bei wiederholter identischer Frage exakt gleich sein.
-- BEGRÜNDUNGSPFLICHT: Jede Empfehlung (z.B. "dieser Tag ist gut für Akquise") MUSS mit den Qualitäten aus der Tabelle begründet werden. Beispiel: "Der 03.11.2026 ist Kin 76, Gelbe Spektrale Kriegerin. Der Gelbe Krieger steht laut Dreamspell für Intelligenz, Mut und Furchtlosigkeit – ideal für Akquise und direkte Ansprache. Der Spektrale Ton (11) steht für Auflösung und Loslassen – gut zum Abschluss alter Hemmnisse, aber weniger für neue Starts." Damit ist jede Aussage für den Nutzer nachprüfbar.`
+- AKTIVITÄTS-TAGE: Wenn eine "VORAB BERECHNETE AKTIVITÄTS-TAGE"-Liste oben erscheint, darfst du AUSSCHLIESSLICH die dort aufgeführten Tage nennen. Du entscheidest nicht selbst, welche Tage gut sind – du liest die vorberechnete Liste vor und erklärst die genannten Siegel- und Ton-Qualitäten. Kein Tag darf hinzugefügt oder weggelassen werden.
+- BEGRÜNDUNGSPFLICHT: Erkläre bei jedem genannten Tag immer die konkreten Siegel- und Ton-Qualitäten aus der Referenz. Beispiel: "Der 03.11.2026 ist Kin 76, Gelber Krieger – Intelligenz, Mut, Furchtlosigkeit. Ton 11 Spektral steht für Auflösung. Das macht ihn geeignet für direkte Ansprache."`
 
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
