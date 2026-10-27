@@ -29,7 +29,7 @@ function saveMessages(userId, msgs) {
 }
 
 export default function MayaChat() {
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const isMobile = useIsMobile()
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState([])
@@ -56,9 +56,14 @@ export default function MayaChat() {
     }
   }, [messages, open])
 
+  // Count only user messages (excludes the initial assistant welcome)
+  const userMessageCount = messages.filter(m => m.role === 'user').length
+  const chatLimit = profile?.chat_messages_limit ?? null
+  const limitReached = chatLimit !== null && userMessageCount >= chatLimit
+
   async function send(text) {
     const question = text || input.trim()
-    if (!question || loading) return
+    if (!question || loading || limitReached) return
     setInput('')
     setError('')
 
@@ -207,34 +212,42 @@ export default function MayaChat() {
           </div>
 
           {/* Input */}
-          <div style={{ padding: '12px 16px', borderTop: '1px solid var(--border)', display: 'flex', gap: '8px', backgroundColor: 'var(--bg-card)' }}>
-            <input
-              ref={inputRef}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
-              placeholder="Frage MAYA etwas…"
-              disabled={loading}
-              style={{
-                flex: 1, backgroundColor: 'var(--bg-deep)', border: '1px solid var(--border)',
-                borderRadius: '20px', padding: '9px 16px', color: 'var(--text-1)',
-                fontSize: '0.875rem', outline: 'none',
-              }}
-            />
-            <button
-              onClick={() => send()}
-              disabled={loading || !input.trim()}
-              style={{
-                backgroundColor: input.trim() && !loading ? 'var(--accent)' : 'var(--border)',
-                color: input.trim() && !loading ? 'var(--bg-deep)' : 'var(--text-2)',
-                border: 'none', borderRadius: '50%', width: '38px', height: '38px',
-                cursor: input.trim() && !loading ? 'pointer' : 'default',
-                fontSize: '1rem', transition: 'background-color 0.15s',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-              }}
-            >
-              ↑
-            </button>
+          <div style={{ padding: '12px 16px', borderTop: '1px solid var(--border)', backgroundColor: 'var(--bg-card)' }}>
+            {limitReached ? (
+              <div style={{ textAlign: 'center', color: 'var(--text-2)', fontSize: '0.8rem', padding: '8px 0' }}>
+                Du hast dein Chat-Limit von {chatLimit} {chatLimit === 1 ? 'Nachricht' : 'Nachrichten'} erreicht.
+              </div>
+            ) : (
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  ref={inputRef}
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
+                  placeholder="Frage MAYA etwas…"
+                  disabled={loading}
+                  style={{
+                    flex: 1, backgroundColor: 'var(--bg-deep)', border: '1px solid var(--border)',
+                    borderRadius: '20px', padding: '9px 16px', color: 'var(--text-1)',
+                    fontSize: '0.875rem', outline: 'none',
+                  }}
+                />
+                <button
+                  onClick={() => send()}
+                  disabled={loading || !input.trim()}
+                  style={{
+                    backgroundColor: input.trim() && !loading ? 'var(--accent)' : 'var(--border)',
+                    color: input.trim() && !loading ? 'var(--bg-deep)' : 'var(--text-2)',
+                    border: 'none', borderRadius: '50%', width: '38px', height: '38px',
+                    cursor: input.trim() && !loading ? 'pointer' : 'default',
+                    fontSize: '1rem', transition: 'background-color 0.15s',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                  }}
+                >
+                  ↑
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

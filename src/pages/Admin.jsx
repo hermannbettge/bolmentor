@@ -221,6 +221,17 @@ export default function Admin() {
     }
   }
 
+  async function setChatLimit(userId, value) {
+    try {
+      await apiCall(`/users/${userId}/chat-limit`, 'PATCH', { chat_messages_limit: value === '' ? null : Number(value) })
+      setMsg('Chat-Limit gesetzt.')
+      await loadAll()
+      if (selectedUser?.id === userId) setSelectedUser(u => ({ ...u, chat_messages_limit: value === '' ? null : Number(value) }))
+    } catch (e) {
+      setError(e.message)
+    }
+  }
+
   function changeEmail(userId) {
     showInput('Neue E-Mail-Adresse:', async (newEmail) => {
       closeModal()
@@ -564,6 +575,22 @@ export default function Admin() {
                         style={{ flex: 1, padding: '7px 10px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '2px', color: 'var(--text-1)', fontSize: '0.82rem' }}
                       />
                       <span style={{ fontSize: '0.72rem', color: 'var(--text-2)' }}>leer = Auto</span>
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: '8px', padding: '12px', backgroundColor: 'var(--bg-deep)', borderRadius: '2px', border: '1px solid var(--border)' }}>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-2)', marginBottom: '8px' }}>Chat-Nachrichten-Limit</div>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <input
+                        type="number"
+                        min="1"
+                        max="9999"
+                        placeholder="Unbegrenzt"
+                        defaultValue={selectedUser.chat_messages_limit ?? ''}
+                        onBlur={e => setChatLimit(selectedUser.id, e.target.value)}
+                        style={{ flex: 1, padding: '7px 10px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '2px', color: 'var(--text-1)', fontSize: '0.82rem' }}
+                      />
+                      <span style={{ fontSize: '0.72rem', color: 'var(--text-2)' }}>leer = unbegrenzt</span>
                     </div>
                   </div>
                 </div>

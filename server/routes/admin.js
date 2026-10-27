@@ -22,7 +22,7 @@ async function requireAdmin(req, res, next) {
 router.get('/users', requireAdmin, async (req, res) => {
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, name, birth_date, membership_active, membership_start, membership_end, purchased_analyses, is_admin, created_at, max_events_override, subscription_plan')
+    .select('id, name, birth_date, membership_active, membership_start, membership_end, purchased_analyses, is_admin, created_at, max_events_override, chat_messages_limit, subscription_plan')
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
   if (error) return res.status(500).json({ error: error.message })
@@ -97,6 +97,14 @@ router.patch('/users/:id/admin', requireAdmin, async (req, res) => {
 router.patch('/users/:id/max-events', requireAdmin, async (req, res) => {
   const { max_events_override } = req.body
   const { data, error } = await supabase.from('profiles').update({ max_events_override, updated_at: new Date().toISOString() }).eq('id', req.params.id).select().single()
+  if (error) return res.status(500).json({ error: error.message })
+  res.json(data)
+})
+
+// Chat-Nachrichten-Limit
+router.patch('/users/:id/chat-limit', requireAdmin, async (req, res) => {
+  const { chat_messages_limit } = req.body
+  const { data, error } = await supabase.from('profiles').update({ chat_messages_limit, updated_at: new Date().toISOString() }).eq('id', req.params.id).select().single()
   if (error) return res.status(500).json({ error: error.message })
   res.json(data)
 })
