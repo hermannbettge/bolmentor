@@ -32,6 +32,48 @@ const LIFE_THEMES = [
   'Transformation und Selbst-Generation', 'Erleuchtung und universelles Feuer',
 ]
 
+// Extract dates from text and return their Kin data
+function extractAndCalculateDates(text, today) {
+  const results = []
+  const seen = new Set()
+
+  // Patterns: DD.MM.YYYY, DD.MM.YY, YYYY-MM-DD
+  const patterns = [
+    /\b(\d{1,2})\.(\d{1,2})\.(\d{4})\b/g,
+    /\b(\d{1,2})\.(\d{1,2})\.(\d{2})\b/g,
+    /\b(\d{4})-(\d{2})-(\d{2})\b/g,
+  ]
+
+  for (const pattern of patterns) {
+    let match
+    while ((match = pattern.exec(text)) !== null) {
+      let dateStr
+      if (pattern.source.startsWith('\\b(\\d{4})')) {
+        // YYYY-MM-DD
+        dateStr = `${match[1]}-${match[2].padStart(2,'0')}-${match[3].padStart(2,'0')}`
+      } else {
+        // DD.MM.YYYY or DD.MM.YY
+        const day = match[1].padStart(2,'0')
+        const month = match[2].padStart(2,'0')
+        let year = match[3]
+        if (year.length === 2) year = (parseInt(year) >= 50 ? '19' : '20') + year
+        dateStr = `${year}-${month}-${day}`
+      }
+      if (seen.has(dateStr)) continue
+      // Validate
+      const d = new Date(dateStr + 'T00:00:00Z')
+      if (isNaN(d.getTime())) continue
+      // Only include dates within a reasonable range (1900–2100)
+      if (d.getFullYear() < 1900 || d.getFullYear() > 2100) continue
+      seen.add(dateStr)
+      const kin = calculateKin(dateStr)
+      const display = d.toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric', timeZone:'UTC' })
+      results.push({ display, kin })
+    }
+  }
+  return results
+}
+
 const ANCHOR_DATE = new Date('1993-07-26T00:00:00Z')
 const ANCHOR_KIN_0 = 143
 
@@ -177,6 +219,10 @@ router.post('/', requireAuth, async (req, res) => {
     const today = new Date()
     const todayKin = calculateKin(today.toISOString().split('T')[0])
 
+    // Extract dates mentioned in the conversation and pre-calculate their Kins
+    const allText = messages.map(m => m.content).join(' ')
+    const dateKins = extractAndCalculateDates(allText, today)
+
     // Build topic restriction rules for the system prompt
     const allowedLabels = allowedTopics.map(t => TOPIC_META[t].label)
     const blockedTopics = Object.entries(TOPIC_META)
@@ -196,6 +242,13 @@ Wenn nach dem Profil, dem Kin oder der Energie einer anderen Person gefragt wird
 Du analysierst AUSSCHLIESSLICH ${profile.name || 'den Nutzer'} und deren/dessen Profil.
 Wenn nach dem Profil, dem Kin oder der Energie einer anderen Person gefragt wird, antworte: Du bist ausschließlich auf das Profil von ${profile.name || 'dem Nutzer'} ausgerichtet und gibst keine Einschätzungen zu anderen Personen.`
 
+    const dateKinSection = dateKins.length > 0
+      ? `\nBERECHNETE KIN-DATEN FÜR GENANNTE DATEN (exakt und verbindlich – verwende ausschließlich diese Werte):
+${dateKins.map(({ display, kin }) =>
+  `${display} = Kin ${kin.kin} – ${kin.tone} ${kin.seal} (Ton ${kin.toneNumber}, Kraft: ${kin.tonePower}, Lebensthema: ${kin.lifeTheme}, Antipode: ${kin.antipode})`
+).join('\n')}`
+      : ''
+
     const systemPrompt = `Du bist MAYA, eine tiefgründige KI-Beraterin, spezialisiert auf den Maya Tzolkin-Kalender (Dreamspell-System). Du kennst das vollständige Profil des Nutzers und gibst persönliche, präzise Antworten auf Deutsch.
 
 PROFIL VON ${profile.name?.toUpperCase() || 'DEM NUTZER'}:
@@ -212,7 +265,7 @@ Geburtsdatum: ${profile.birth_date}
 
 HEUTIGE ENERGIE:
 Datum: ${today.toISOString().split('T')[0]}
-Heutiges Kin: Kin ${todayKin.kin} – ${todayKin.tone} ${todayKin.seal}
+Heutiges Kin: Kin ${todayKin.kin} – ${todayKin.tone} ${todayKin.seal}${dateKinSection}
 ${topicRules}
 
 GESPRÄCHSREGELN:
@@ -224,7 +277,8 @@ GESPRÄCHSREGELN:
 - Keine meta-Kommentare ("Gerne erkläre ich dir...")
 - Beginne direkt mit der Antwort
 - Halte Antworten fokussiert: 150–400 Wörter, außer der Nutzer fragt nach einer Analyse
-- Sei warm, weise und direkt`
+- Sei warm, weise und direkt
+- WICHTIG: Nenne niemals ein Kin für ein Datum aus dem Gedächtnis oder durch Schätzen. Das Kin für jedes genannte Datum wird dir exakt berechnet oben bereitgestellt. Nutze ausschließlich diese Werte. Wenn kein Kin für ein Datum oben steht, erkläre, dass du das Datum nicht berechnen konntest.`
 
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
