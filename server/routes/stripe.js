@@ -304,7 +304,7 @@ router.post('/upgrade-annual', requireAuth, async (req, res) => {
           max_redemptions: 1,
         })
         sessionParams.discounts = [{ coupon: coupon.id }]
-        sessionParams.allow_promotion_codes = false // cannot combine with discounts
+        delete sessionParams.allow_promotion_codes // Stripe: discounts and allow_promotion_codes are mutually exclusive
       }
     }
 
