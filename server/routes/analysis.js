@@ -261,7 +261,7 @@ ABSOLUT VERBOTENE STILMITTEL (streng einhalten):
 - Kein Satz darf nahtlos in den nächsten übergehen ohne Satzzeichen dazwischen
 STIL:
 - Sprich die Person immer direkt mit Vornamen an
-- Jeder Abschnitt mindestens 4-6 ausführliche Absätze
+- Jeder Abschnitt 2–3 prägnante Absätze
 - Konkret, tiefgründig, persönlich - kein generisches Horoskop-Deutsch
 - Nutze das Maya-System als Tiefenpsychologie, nicht als Wahrsagerei
 `
@@ -291,7 +291,7 @@ Geburtsdatum: ${profile.birth_date}
 ${base}
 ${SYSTEM_RULES}
 
-Erstelle eine umfassende Business-Analyse mit diesen Abschnitten. Jeder Abschnitt soll 4–6 Absätze haben und konkrete, handlungsorientierte Erkenntnisse liefern:
+Erstelle eine prägnante Business-Analyse mit diesen Abschnitten. Jeder Abschnitt soll 2–3 Absätze haben und konkrete, handlungsorientierte Erkenntnisse liefern:
 
 ## DEIN KOSMISCHER BUSINESS-AUFTRAG
 ## DEINE NATÜRLICHEN STÄRKEN & SUPERKRÄFTE IM BUSINESS
@@ -310,13 +310,13 @@ Erstelle eine umfassende Business-Analyse mit diesen Abschnitten. Jeder Abschnit
 ## TÄGLICHE BUSINESS-PRAXIS & RITUALE
 ## DEIN BUSINESS-MANTRA
 
-Gesamtlänge: mindestens 3000 Wörter. Sei außergewöhnlich konkret und tiefgründig.`,
+Gesamtlänge: ca. 1200–1500 Wörter. Sei konkret und tiefgründig, aber prägnant.`,
 
     health: `Du bist ein weltklasse Maya-Kalender-Experte und Gesundheitsberater. Erstelle eine vollständige Gesundheitsanalyse auf Deutsch für ${name}.
 ${base}
 ${SYSTEM_RULES}
 
-Erstelle eine tiefe Gesundheitsanalyse. Jeder Abschnitt 4–6 Absätze:
+Erstelle eine prägnante Gesundheitsanalyse. Jeder Abschnitt 2–3 Absätze:
 
 ## DEINE KÖRPERENERGIE-SIGNATUR
 ## DEINE ENERGIESYSTEME & ORGANE IM FOKUS
@@ -335,7 +335,7 @@ Erstelle eine tiefe Gesundheitsanalyse. Jeder Abschnitt 4–6 Absätze:
 ## TÄGLICHE GESUNDHEITSPRAXIS
 ## DEINE GESUNDHEITS-AFFIRMATION
 
-Mindestens 3000 Wörter.`,
+Gesamtlänge: ca. 1200–1500 Wörter.`,
 
     family: `Du bist ein weltklasse Maya-Kalender-Experte und Familientherapeut. Erstelle eine vollständige Familienanalyse auf Deutsch für ${name}.
 ${base}
@@ -360,7 +360,7 @@ Tiefe Familienanalyse, jeder Abschnitt 4–6 Absätze:
 ## GRENZEN SETZEN IN DER FAMILIE
 ## DEINE FAMILIEN-AFFIRMATION
 
-Mindestens 3000 Wörter.`,
+Gesamtlänge: ca. 1200–1500 Wörter.`,
 
     selfexpression: `Du bist ein weltklasse Maya-Kalender-Experte und Kreativcoach. Erstelle eine vollständige Selbstausdruck-Analyse auf Deutsch für ${name}.
 ${base}
@@ -385,7 +385,7 @@ Umfassende Selbstausdruck-Analyse, jeder Abschnitt 4–6 Absätze:
 ## DEIN EINZIGARTIGER BEITRAG ZUR WELT
 ## DEINE SELBSTAUSDRUCK-AFFIRMATION
 
-Mindestens 3000 Wörter.`,
+Gesamtlänge: ca. 1200–1500 Wörter.`,
 
     finance: `Du bist ein weltklasse Maya-Kalender-Experte und Financial Coach. Erstelle eine vollständige Finanzanalyse auf Deutsch für ${name}.
 ${base}
@@ -410,7 +410,7 @@ Tiefe Finanzanalyse, jeder Abschnitt 4–6 Absätze:
 ## GELD & SINN – WAS DU WIRKLICH WILLST
 ## DEINE ÜBERFLUSS-AFFIRMATION
 
-Mindestens 3000 Wörter.`,
+Gesamtlänge: ca. 1200–1500 Wörter.`,
 
     career: `Du bist ein weltklasse Maya-Kalender-Experte und Karriere-Coach. Erstelle eine vollständige Karriere-Analyse auf Deutsch für ${name}.
 ${base}
@@ -435,7 +435,7 @@ Umfassende Karriereanalyse, jeder Abschnitt 4–6 Absätze:
 ## DEIN LANGFRISTIGES BERUFLICHES VERMÄCHTNIS
 ## DEINE KARRIERE-AFFIRMATION
 
-Mindestens 3000 Wörter.`,
+Gesamtlänge: ca. 1200–1500 Wörter.`,
 
     lifephases: `Du bist ein weltklasse Maya-Kalender-Experte. Erstelle eine vollständige Lebensphasen-Analyse auf Deutsch für ${name}.
 ${base}
@@ -460,7 +460,7 @@ Tiefe Lebensphasen-Analyse, jeder Abschnitt 4–6 Absätze:
 ## WIE DU JEDE LEBENSPHASE NUTZT
 ## DEIN LEBENSPHASEN-MANTRA
 
-Mindestens 3000 Wörter.`,
+Gesamtlänge: ca. 1200–1500 Wörter.`,
 
     partnership: `Du bist ein weltklasse Maya-Kalender-Experte und Beziehungscoach. Erstelle eine vollständige Partnerschaftsanalyse auf Deutsch für ${name}.
 ${base}
@@ -485,7 +485,7 @@ Tiefe Partnerschaftsanalyse, jeder Abschnitt 4–6 Absätze:
 ## DER WEG ZUR TRAUMPARTNERSCHAFT
 ## DEINE BEZIEHUNGS-AFFIRMATION
 
-Mindestens 3000 Wörter.`,
+Gesamtlänge: ca. 1200–1500 Wörter.`,
 
     relationship: `Du bist ein weltklasse Maya-Kalender-Experte und Beziehungscoach. Erstelle eine vollständige Beziehungsanalyse auf Deutsch für ${name} — fokussiert auf ihre/seine eigenen Beziehungsmuster, Bindungsstile und wie sie/er in Beziehungen agiert.
 ${base}
@@ -508,7 +508,7 @@ Tiefe Beziehungsanalyse der eigenen Muster, jeder Abschnitt 4–6 Absätze:
 ## HEILUNG ALTER BEZIEHUNGSWUNDEN
 ## DEINE BEZIEHUNGS-AFFIRMATION
 
-Mindestens 3000 Wörter.`,
+Gesamtlänge: ca. 1200–1500 Wörter.`,
 
   }
 
@@ -699,7 +699,7 @@ SPECIAL_TYPES.forEach(type => {
     }
 
     const userId = req.user.id
-    await streamClaude(res, prompt, 16000, async (content) => {
+    await streamClaude(res, prompt, 6000, async (content) => {
       const today = new Date().toISOString().split('T')[0]
       await saveAnalysis(userId, type, content, today)
     })
@@ -884,7 +884,7 @@ Erstelle eine tiefe Paar-Kompatibilitätsanalyse. Jeder Abschnitt 4–6 Absätze
 ## INDIVIDUELLE RATSCHLÄGE FÜR ${partnerName.toUpperCase()}
 ## AFFIRMATION FÜR EUER PAAR
 
-Mindestens 3500 Wörter. Sei außergewöhnlich konkret und nenne beide Partner bei ihren Namen.`
+Gesamtlänge: ca. 1500–1800 Wörter. Sei konkret und nenne beide Partner bei ihren Namen.`
 
     userId = req.user.id
   } catch (err) {
@@ -975,7 +975,7 @@ Erstelle eine tiefe Analyse der Energie dieses Ereignisses und wie es mit ${prof
 ## DAS LANGZEITPOTENZIAL
 ## AFFIRMATION
 
-Mindestens 2500 Wörter. Sei außergewöhnlich konkret. Sprich ${profile.name} direkt an.`
+Gesamtlänge: ca. 1200–1500 Wörter. Sei konkret. Sprich ${profile.name} direkt an.`
 
     userId = req.user.id
   } catch (err) {
