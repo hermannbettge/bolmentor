@@ -32,6 +32,21 @@ const LIFE_THEMES = [
   'Transformation und Selbst-Generation', 'Erleuchtung und universelles Feuer',
 ]
 
+// Generate Kin table from today through endDate (inclusive)
+function generateKinTable(today, endDate) {
+  const rows = []
+  const cursor = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()))
+  const end = new Date(Date.UTC(endDate.getUTCFullYear(), endDate.getUTCMonth(), endDate.getUTCDate()))
+  while (cursor <= end) {
+    const dateStr = cursor.toISOString().split('T')[0]
+    const k = calculateKin(dateStr)
+    const display = cursor.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC' })
+    rows.push(`${display} = Kin ${k.kin} | ${k.tone} ${k.seal} | Ton ${k.toneNumber} (${k.tonePower}) | Antipode: ${k.antipode}`)
+    cursor.setUTCDate(cursor.getUTCDate() + 1)
+  }
+  return rows
+}
+
 // Extract dates from text and return their Kin data
 function extractAndCalculateDates(text, today) {
   const results = []
@@ -224,6 +239,10 @@ router.post('/', requireAuth, async (req, res) => {
     const allText = messages.map(m => m.content).join(' ')
     const dateKins = extractAndCalculateDates(allText, today)
 
+    // Pre-compute full Kin table: today through end of next year (covers "until end of year" and 2-month minimum)
+    const tableEnd = new Date(Date.UTC(today.getUTCFullYear() + 1, 11, 31)) // Dec 31 next year
+    const kinTableRows = generateKinTable(today, tableEnd)
+
     // Build topic restriction rules for the system prompt
     const allowedLabels = allowedTopics.map(t => TOPIC_META[t].label)
     const blockedTopics = Object.entries(TOPIC_META)
@@ -244,9 +263,9 @@ Du analysierst AUSSCHLIESSLICH ${profile.name || 'den Nutzer'} und deren/dessen 
 Wenn nach dem Profil, dem Kin oder der Energie einer anderen Person gefragt wird, antworte: Du bist ausschließlich auf das Profil von ${profile.name || 'dem Nutzer'} ausgerichtet und gibst keine Einschätzungen zu anderen Personen.`
 
     const dateKinSection = dateKins.length > 0
-      ? `\nBERECHNETE KIN-DATEN FÜR GENANNTE DATEN (exakt und verbindlich – verwende ausschließlich diese Werte):
+      ? `\nZUSÄTZLICH GENANNTE DATEN (bereits in der Tabelle enthalten, zur Hervorhebung):
 ${dateKins.map(({ display, kin }) =>
-  `${display} = Kin ${kin.kin} – ${kin.tone} ${kin.seal} (Ton ${kin.toneNumber}, Kraft: ${kin.tonePower}, Lebensthema: ${kin.lifeTheme}, Antipode: ${kin.antipode})`
+  `${display} = Kin ${kin.kin} – ${kin.tone} ${kin.seal}`
 ).join('\n')}`
       : ''
 
@@ -267,6 +286,10 @@ Geburtsdatum: ${profile.birth_date}
 HEUTIGE ENERGIE:
 Datum: ${today.toISOString().split('T')[0]}
 Heutiges Kin: Kin ${todayKin.kin} – ${todayKin.tone} ${todayKin.seal}${dateKinSection}
+
+VOLLSTÄNDIGE KIN-TABELLE (heute bis 31.12.${today.getUTCFullYear() + 1}) – EXAKT UND VERBINDLICH:
+WICHTIG: Diese Tabelle wurde mathematisch berechnet. Verwende für JEDES Datum ausschließlich die Werte aus dieser Tabelle. Niemals schätzen, niemals aus dem Gedächtnis antworten. Dieselbe Frage muss immer dieselbe Antwort ergeben.
+${kinTableRows.join('\n')}
 ${topicRules}
 
 GESPRÄCHSREGELN:
@@ -279,11 +302,12 @@ GESPRÄCHSREGELN:
 - Beginne direkt mit der Antwort
 - Halte Antworten fokussiert: 150–400 Wörter, außer der Nutzer fragt nach einer Analyse
 - Sei warm, weise und direkt
-- WICHTIG: Nenne niemals ein Kin für ein Datum aus dem Gedächtnis oder durch Schätzen. Das Kin für jedes genannte Datum wird dir exakt berechnet oben bereitgestellt. Nutze ausschließlich diese Werte. Wenn kein Kin für ein Datum oben steht, erkläre, dass du das Datum nicht berechnen konntest.`
+- WICHTIG: Nenne niemals ein Kin aus dem Gedächtnis oder durch Schätzen. Die vollständige KIN-TABELLE oben enthält exakte Werte für jeden Tag bis Ende ${today.getUTCFullYear() + 1}. Nutze ausschließlich diese Werte. Für Daten außerhalb der Tabelle: erkläre, dass du nur bis Ende ${today.getUTCFullYear() + 1} exakte Daten hast.
+- Wenn nach mehreren Tagen gefragt wird (z.B. "alle Akquise-Tage bis Jahresende"), liste jeden relevanten Tag mit Datum, Kin, Siegel und kurzer Begründung auf. Die Antwort muss bei wiederholter identischer Frage exakt gleich sein.`
 
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: 1500,
+      max_tokens: 4000,
       system: systemPrompt,
       messages: messages.map(m => ({ role: m.role, content: m.content })),
     })
