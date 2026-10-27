@@ -239,8 +239,8 @@ router.post('/', requireAuth, async (req, res) => {
     const allText = messages.map(m => m.content).join(' ')
     const dateKins = extractAndCalculateDates(allText, today)
 
-    // Pre-compute full Kin table: today through end of next year (covers "until end of year" and 2-month minimum)
-    const tableEnd = new Date(Date.UTC(today.getUTCFullYear() + 1, 11, 31)) // Dec 31 next year
+    // Pre-compute full Kin table: today through 2 months ahead
+    const tableEnd = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() + 2, today.getUTCDate()))
     const kinTableRows = generateKinTable(today, tableEnd)
 
     // Build topic restriction rules for the system prompt
@@ -287,7 +287,7 @@ HEUTIGE ENERGIE:
 Datum: ${today.toISOString().split('T')[0]}
 Heutiges Kin: Kin ${todayKin.kin} – ${todayKin.tone} ${todayKin.seal}${dateKinSection}
 
-VOLLSTÄNDIGE KIN-TABELLE (heute bis 31.12.${today.getUTCFullYear() + 1}) – EXAKT UND VERBINDLICH:
+VOLLSTÄNDIGE KIN-TABELLE (heute + 2 Monate) – EXAKT UND VERBINDLICH:
 WICHTIG: Diese Tabelle wurde mathematisch berechnet. Verwende für JEDES Datum ausschließlich die Werte aus dieser Tabelle. Niemals schätzen, niemals aus dem Gedächtnis antworten. Dieselbe Frage muss immer dieselbe Antwort ergeben.
 ${kinTableRows.join('\n')}
 ${topicRules}
@@ -302,7 +302,7 @@ GESPRÄCHSREGELN:
 - Beginne direkt mit der Antwort
 - Halte Antworten fokussiert: 150–400 Wörter, außer der Nutzer fragt nach einer Analyse
 - Sei warm, weise und direkt
-- WICHTIG: Nenne niemals ein Kin aus dem Gedächtnis oder durch Schätzen. Die vollständige KIN-TABELLE oben enthält exakte Werte für jeden Tag bis Ende ${today.getUTCFullYear() + 1}. Nutze ausschließlich diese Werte. Für Daten außerhalb der Tabelle: erkläre, dass du nur bis Ende ${today.getUTCFullYear() + 1} exakte Daten hast.
+- WICHTIG: Nenne niemals ein Kin aus dem Gedächtnis oder durch Schätzen. Die KIN-TABELLE oben enthält exakte Werte für die nächsten 2 Monate. Nutze ausschließlich diese Werte. Für Daten außerhalb der Tabelle: erkläre, dass du nur für die nächsten 2 Monate exakte Daten hast.
 - Wenn nach mehreren Tagen gefragt wird (z.B. "alle Akquise-Tage bis Jahresende"), liste jeden relevanten Tag mit Datum, Kin, Siegel und kurzer Begründung auf. Die Antwort muss bei wiederholter identischer Frage exakt gleich sein.`
 
     const response = await anthropic.messages.create({
