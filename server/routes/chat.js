@@ -32,7 +32,56 @@ const LIFE_THEMES = [
   'Transformation und Selbst-Generation', 'Erleuchtung und universelles Feuer',
 ]
 
+// Structured knowledge base: verifiable meanings for each seal and tone
+// Source: Dreamspell / José Argüelles system
+const SEAL_KNOWLEDGE = [
+  { seal: 'Roter Drachen',        qualities: 'Geburt, Fürsorge, Empfang, Nähren',           goodFor: 'Neue Projekte starten, Produktlaunches, Angebote erstellen, Selbstfürsorge',          avoidFor: 'Harte Konfrontationen, finale Abschlüsse' },
+  { seal: 'Weißer Wind',          qualities: 'Kommunikation, Geist, Botschaft, Klarheit',    goodFor: 'Akquise, Verkaufsgespräche, Präsentationen, Networking, wichtige Gespräche',          avoidFor: 'Rückzug, stille Einzelarbeit' },
+  { seal: 'Blaue Nacht',          qualities: 'Träume, Intuition, Fülle, Innenschau',         goodFor: 'Strategie entwickeln, kreative Ideenfindung, Meditation, Visionwork',                  avoidFor: 'Aktive Kaltakquise, direkte Konfrontation' },
+  { seal: 'Gelbe Saat',           qualities: 'Zielsetzung, Blüte, Bewusstsein, Fokus',       goodFor: 'Ziele setzen, Angebote schärfen, Strategiemeetings, Businessplanung',                  avoidFor: 'Ablenkung, Multitasking' },
+  { seal: 'Rote Schlange',        qualities: 'Lebenskraft, Instinkt, Leidenschaft, Körper',  goodFor: 'Energetische Präsentation, Motivation, Sport, körperliche Arbeit',                    avoidFor: 'Vertragsverhandlungen, Detailarbeit' },
+  { seal: 'Weißer Weltenwandler', qualities: 'Wandel, Loslassen, Gleichmut, Übergang',       goodFor: 'Alte Muster loslassen, Neuausrichtung, Abschluss von Projekten',                      avoidFor: 'Wichtige neue Starts, Akquise' },
+  { seal: 'Blaue Hand',           qualities: 'Vollendung, Heilung, Leistung, Handeln',       goodFor: 'Vertragsabschlüsse, Projekte abschließen, Lieferungen, sichtbare Resultate',          avoidFor: 'Planung ohne Umsetzung' },
+  { seal: 'Gelber Stern',         qualities: 'Schönheit, Eleganz, Ausstrahlung, Kunst',      goodFor: 'Branding, Marketing, Präsentationen, Social Media, sichtbar sein',                    avoidFor: 'Grobe operative Arbeit' },
+  { seal: 'Roter Mond',           qualities: 'Reinigung, Fließen, universale Wasser, Empfang', goodFor: 'Intuitive Entscheidungen, Selbstreflexion, Gesundheit, loslassen',                 avoidFor: 'Harte Verkaufsgespräche, Druck ausüben' },
+  { seal: 'Weißer Hund',          qualities: 'Liebe, Loyalität, Treue, Verbindung, Herz',   goodFor: 'Teambuilding, Kundenbeziehungen pflegen, Kooperationen, Netzwerk stärken',            avoidFor: 'Kühle Verhandlungen, rein sachliche Entscheidungen' },
+  { seal: 'Blauer Affe',          qualities: 'Magie, Spiel, Humor, Illusion, Leichtigkeit', goodFor: 'Kreative Arbeit, Events, entspannte Kundengespräche, Social Media Spaß',              avoidFor: 'Ernste Vertragsabschlüsse, finale Entscheidungen' },
+  { seal: 'Gelber Mensch',        qualities: 'Freier Wille, Einfluss, Weisheit, Führung',    goodFor: 'Akquise, Führungsgespräche, Positionierung, Autorität zeigen',                        avoidFor: 'Unterwerfung, Bitten um Erlaubnis' },
+  { seal: 'Rotes Schilf',         qualities: 'Weltdienst, Raum, Prophetie, Ausdehnung',      goodFor: 'Neue Märkte erschließen, Netzwerk ausbauen, Vorträge, öffentliches Auftreten',        avoidFor: 'Kleinteilige Verwaltungsarbeit' },
+  { seal: 'Weißer Zauberer',      qualities: 'Zeitlosigkeit, Empfang, Magie, Hingabe',       goodFor: 'Intuitive Strategien, tiefe Gespräche, spirituelle Arbeit, Vertrauen aufbauen',       avoidFor: 'Zeitdruck, kurzfristige Entscheidungen' },
+  { seal: 'Blauer Adler',         qualities: 'Vision, Kreativität, Geist, Überblick',        goodFor: 'Strategische Planung, Visionen kommunizieren, Pitches, Inspiration verbreiten',       avoidFor: 'Detailarbeit, operative Ausführung' },
+  { seal: 'Gelber Krieger',       qualities: 'Intelligenz, Mut, Befragung, Furchtlosigkeit', goodFor: 'Akquise, Kaltakquise, Verhandlungen, Herausforderungen annehmen',                    avoidFor: 'Passives Abwarten, Rückzug' },
+  { seal: 'Rote Erde',            qualities: 'Navigation, Synchronizität, Evolution, Erdung', goodFor: 'Langfristige Planung, Routinen aufbauen, Strukturarbeit, nachhaltige Projekte',      avoidFor: 'Spontane Entscheidungen, schnelle Deals' },
+  { seal: 'Weißes Spiegelmesser', qualities: 'Ordnung, Reflexion, Wahrheit, Endlosigkeit',   goodFor: 'Analyse, Verträge prüfen, Buchhaltung, Klarheit in Prozessen',                       avoidFor: 'Kreatives Chaos, spontane Aktionen' },
+  { seal: 'Blauer Sturm',         qualities: 'Transformation, Selbst-Generation, Energie',   goodFor: 'Radikale Veränderungen, Restrukturierung, intensive Energie für Sprints',             avoidFor: 'Stabilisierung, ruhige Gespräche' },
+  { seal: 'Gelbe Sonne',          qualities: 'Erleuchtung, Feuer, Leben, universales Licht', goodFor: 'Sichtbarkeit maximieren, Launches, Bühnenauftritte, Leuchtturm-Aktionen',             avoidFor: 'Introvertierte Rückzugsarbeit' },
+]
+
+const TONE_KNOWLEDGE = [
+  { toneNumber: 1,  tone: 'Magnetisch',      power: 'Vereint',      qualities: 'Anziehung, neuer Zyklus-Start, Zweck setzen',          goodFor: 'Neue Kampagnen starten, Ziele ausrufen, Anziehung erzeugen' },
+  { toneNumber: 2,  tone: 'Lunar',           power: 'Stabilisiert', qualities: 'Polarität, Herausforderung, Dualität aufdecken',        goodFor: 'Hindernisse identifizieren, Probleme analysieren, nicht für Starts' },
+  { toneNumber: 3,  tone: 'Elektrisch',      power: 'Aktiviert',    qualities: 'Aktivierung, Service, Bindung, Energie freisetzen',     goodFor: 'Aktionen starten, Teams aktivieren, Energie in Bewegung bringen' },
+  { toneNumber: 4,  tone: 'Selbst-Existent', power: 'Definiert',    qualities: 'Form, Definition, Struktur, Messbarkeit',               goodFor: 'Angebote strukturieren, Verträge formulieren, Prozesse definieren' },
+  { toneNumber: 5,  tone: 'Übertönend',      power: 'Befähigt',     qualities: 'Kernkraft, Strahlung, Befähigung, Stärke',              goodFor: 'Präsentationen mit Überzeugungskraft, Führung zeigen, Stärke demonstrieren' },
+  { toneNumber: 6,  tone: 'Rhythmisch',      power: 'Organisiert',  qualities: 'Gleichgewicht, Organisation, Ordnung herstellen',       goodFor: 'Systeme aufbauen, Routinen einführen, Abläufe optimieren' },
+  { toneNumber: 7,  tone: 'Resonant',        power: 'Kanalisiert',  qualities: 'Inspiration, Kanal, Abstimmung, Intuition',             goodFor: 'Kreative Arbeit, intuitive Entscheidungen, tiefe Gespräche' },
+  { toneNumber: 8,  tone: 'Galaktisch',      power: 'Harmonisiert', qualities: 'Integrität, Modell sein, Harmonie, Ausrichtung',        goodFor: 'Vertrauen aufbauen, Qualität zeigen, Vorbildfunktion' },
+  { toneNumber: 9,  tone: 'Solar',           power: 'Pulsiert',     qualities: 'Intention, Realisierung, Pulsation, Antrieb',           goodFor: 'Intensive Aktionsphasen, Deadlines einhalten, maximale Energie' },
+  { toneNumber: 10, tone: 'Planetar',        power: 'Manifestiert', qualities: 'Manifestation, Vollendung, Produktion, sichtbar werden', goodFor: 'Abschlüsse, Launches, Auslieferung, Ergebnisse sichtbar machen' },
+  { toneNumber: 11, tone: 'Spektral',        power: 'Löst auf',     qualities: 'Auflösung, Loslassen, Befreiung, Reinigung',            goodFor: 'Altes loslassen, beenden, bereinigen – nicht für neue Starts' },
+  { toneNumber: 12, tone: 'Kristallin',      power: 'Weiht',        qualities: 'Kooperation, Universalisierung, Widmung, Zusammenarbeit', goodFor: 'Kooperationen besiegeln, Partnerschaften, Gemeinschaftsprojekte' },
+  { toneNumber: 13, tone: 'Kosmisch',        power: 'Überdauert',   qualities: 'Transzendenz, Präsenz, Erleuchtung, Zyklusabschluss',   goodFor: 'Abschluss eines Zyklus, tiefe Reflexion – Neues startet im nächsten Zyklus' },
+]
+
+function getSealKnowledge(sealName) {
+  return SEAL_KNOWLEDGE.find(s => s.seal === sealName) || null
+}
+function getToneKnowledge(toneNumber) {
+  return TONE_KNOWLEDGE.find(t => t.toneNumber === toneNumber) || null
+}
+
 // Generate Kin table from today through endDate (inclusive)
+// Each row includes verifiable Dreamspell qualities for seal and tone
 function generateKinTable(today, endDate) {
   const rows = []
   const cursor = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()))
@@ -41,7 +90,10 @@ function generateKinTable(today, endDate) {
     const dateStr = cursor.toISOString().split('T')[0]
     const k = calculateKin(dateStr)
     const display = cursor.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC' })
-    rows.push(`${display} = Kin ${k.kin} | ${k.tone} ${k.seal} | Ton ${k.toneNumber} (${k.tonePower}) | Antipode: ${k.antipode}`)
+    const sk = getSealKnowledge(k.seal)
+    const tk = getToneKnowledge(k.toneNumber)
+    const goodFor = sk && tk ? `Gut für: ${sk.goodFor} | Ton-Qualität: ${tk.qualities}` : ''
+    rows.push(`${display} = Kin ${k.kin} | ${k.tone} ${k.seal} | Ton ${k.toneNumber} (${k.tonePower}) | ${goodFor}`)
     cursor.setUTCDate(cursor.getUTCDate() + 1)
   }
   return rows
@@ -288,8 +340,15 @@ Datum: ${today.toISOString().split('T')[0]}
 Heutiges Kin: Kin ${todayKin.kin} – ${todayKin.tone} ${todayKin.seal}${dateKinSection}
 
 VOLLSTÄNDIGE KIN-TABELLE (heute + 2 Monate) – EXAKT UND VERBINDLICH:
-WICHTIG: Diese Tabelle wurde mathematisch berechnet. Verwende für JEDES Datum ausschließlich die Werte aus dieser Tabelle. Niemals schätzen, niemals aus dem Gedächtnis antworten. Dieselbe Frage muss immer dieselbe Antwort ergeben.
+WICHTIG: Diese Tabelle wurde mathematisch berechnet und enthält verifizierbare Dreamspell-Qualitäten pro Tag. Verwende für JEDES Datum ausschließlich die Werte aus dieser Tabelle. Niemals schätzen, niemals aus dem Gedächtnis antworten. Dieselbe Frage muss immer dieselbe Antwort ergeben.
 ${kinTableRows.join('\n')}
+
+DREAMSPELL-WISSENSMODELL (Grundlage für alle Begründungen):
+SIEGEL-QUALITÄTEN:
+${SEAL_KNOWLEDGE.map(s => `${s.seal}: Qualitäten="${s.qualities}" | Gut für="${s.goodFor}" | Vermeiden="${s.avoidFor}"`).join('\n')}
+
+TON-QUALITÄTEN:
+${TONE_KNOWLEDGE.map(t => `Ton ${t.toneNumber} ${t.tone} (${t.power}): Qualitäten="${t.qualities}" | Gut für="${t.goodFor}"`).join('\n')}
 ${topicRules}
 
 GESPRÄCHSREGELN:
@@ -303,7 +362,8 @@ GESPRÄCHSREGELN:
 - Halte Antworten fokussiert: 150–400 Wörter, außer der Nutzer fragt nach einer Analyse
 - Sei warm, weise und direkt
 - WICHTIG: Nenne niemals ein Kin aus dem Gedächtnis oder durch Schätzen. Die KIN-TABELLE oben enthält exakte Werte für die nächsten 2 Monate. Nutze ausschließlich diese Werte. Für Daten außerhalb der Tabelle: erkläre, dass du nur für die nächsten 2 Monate exakte Daten hast.
-- Wenn nach mehreren Tagen gefragt wird (z.B. "alle Akquise-Tage bis Jahresende"), liste jeden relevanten Tag mit Datum, Kin, Siegel und kurzer Begründung auf. Die Antwort muss bei wiederholter identischer Frage exakt gleich sein.`
+- Wenn nach mehreren Tagen gefragt wird (z.B. "alle Akquise-Tage bis Jahresende"), liste jeden relevanten Tag mit Datum, Kin, Siegel und kurzer Begründung auf. Die Antwort muss bei wiederholter identischer Frage exakt gleich sein.
+- BEGRÜNDUNGSPFLICHT: Jede Empfehlung (z.B. "dieser Tag ist gut für Akquise") MUSS mit den Qualitäten aus der Tabelle begründet werden. Beispiel: "Der 03.11.2026 ist Kin 76, Gelbe Spektrale Kriegerin. Der Gelbe Krieger steht laut Dreamspell für Intelligenz, Mut und Furchtlosigkeit – ideal für Akquise und direkte Ansprache. Der Spektrale Ton (11) steht für Auflösung und Loslassen – gut zum Abschluss alter Hemmnisse, aber weniger für neue Starts." Damit ist jede Aussage für den Nutzer nachprüfbar.`
 
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
