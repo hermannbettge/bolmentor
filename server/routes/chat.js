@@ -159,13 +159,14 @@ async function requireAuth(req, res, next) {
 
 // GET /api/chat/status — returns limit, used, remaining, allowedTopics
 router.get('/status', requireAuth, async (req, res) => {
-  const { data: profile } = await supabase.from('profiles').select('subscription_plan, purchased_analyses').eq('id', req.user.id).single()
+  const { data: profile } = await supabase.from('profiles').select('subscription_plan, purchased_analyses, is_admin, chat_messages_limit').eq('id', req.user.id).single()
   if (!profile) return res.status(400).json({ error: 'Profil nicht gefunden' })
 
   const isAdmin = profile.is_admin === true
   const plan = profile.subscription_plan || 'monthly'
   const purchased = profile.purchased_analyses || []
-  const limit = isAdmin ? null : getDailyLimit(plan, purchased)
+  // Admin-set limit overrides plan-based limit; admins themselves have no limit
+  const limit = isAdmin ? null : (profile.chat_messages_limit ?? getDailyLimit(plan, purchased))
   const allowedTopics = isAdmin ? Object.keys(TOPIC_META) : getAllowedTopics(plan, purchased)
 
   const todayStr = new Date().toISOString().split('T')[0]
@@ -196,7 +197,7 @@ router.post('/', requireAuth, async (req, res) => {
     const isAdmin = profile.is_admin === true
     const plan = profile.subscription_plan || 'monthly'
     const purchased = profile.purchased_analyses || []
-    const limit = isAdmin ? Infinity : getDailyLimit(plan, purchased)
+    const limit = isAdmin ? Infinity : (profile.chat_messages_limit ?? getDailyLimit(plan, purchased))
     const allowedTopics = isAdmin ? Object.keys(TOPIC_META) : getAllowedTopics(plan, purchased)
 
     // Check daily usage
