@@ -11,6 +11,23 @@ const SUGGESTIONS = [
   'Was ist meine größte Herausforderung?',
 ]
 
+const WELCOME = {
+  role: 'assistant',
+  content: 'Ich bin MAYA, deine persönliche Maya-Kalender-KI. Ich kenne dein vollständiges Profil und beantworte all deine Fragen rund um deine Energie, dein Kin und deinen Lebensweg. Was möchtest du wissen?',
+}
+
+function loadMessages(userId) {
+  try {
+    const raw = localStorage.getItem(`maya_chat_${userId}`)
+    if (raw) return JSON.parse(raw)
+  } catch {}
+  return [WELCOME]
+}
+
+function saveMessages(userId, msgs) {
+  try { localStorage.setItem(`maya_chat_${userId}`, JSON.stringify(msgs)) } catch {}
+}
+
 export default function MayaChat() {
   const { user } = useAuth()
   const isMobile = useIsMobile()
@@ -22,14 +39,15 @@ export default function MayaChat() {
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
 
+  // Load persisted messages when user is known
   useEffect(() => {
-    if (open && messages.length === 0) {
-      setMessages([{
-        role: 'assistant',
-        content: 'Ich bin MAYA, deine persönliche Maya-Kalender-KI. Ich kenne dein vollständiges Profil und beantworte all deine Fragen rund um deine Energie, dein Kin und deinen Lebensweg. Was möchtest du wissen?',
-      }])
-    }
-  }, [open])
+    if (user) setMessages(loadMessages(user.id))
+  }, [user?.id])
+
+  // Persist messages on every change
+  useEffect(() => {
+    if (user && messages.length > 0) saveMessages(user.id, messages)
+  }, [messages, user?.id])
 
   useEffect(() => {
     if (open) {
@@ -124,7 +142,7 @@ export default function MayaChat() {
               <div style={{ color: 'var(--text-2)', fontSize: '0.74rem' }}>Deine persönliche Maya-KI</div>
             </div>
             <button
-              onClick={() => { setMessages([]); setOpen(false) }}
+              onClick={() => { const fresh = [WELCOME]; setMessages(fresh); if (user) saveMessages(user.id, fresh) }}
               style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--text-2)', cursor: 'pointer', fontSize: '0.8rem', padding: '4px 8px', borderRadius: '4px' }}
             >
               Chat leeren
