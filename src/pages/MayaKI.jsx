@@ -13,6 +13,18 @@ const SUGGESTIONS = [
   'Was blockiert mich gerade energetisch?',
 ]
 
+function loadPersistedMessages(userId) {
+  try {
+    const raw = localStorage.getItem(`mayaki_chat_${userId}`)
+    if (raw) return JSON.parse(raw)
+  } catch {}
+  return []
+}
+
+function persistMessages(userId, msgs) {
+  try { localStorage.setItem(`mayaki_chat_${userId}`, JSON.stringify(msgs)) } catch {}
+}
+
 export default function MayaKI() {
   const { profile } = useAuth()
   const navigate = useNavigate()
@@ -24,6 +36,11 @@ export default function MayaKI() {
   const [status, setStatus] = useState(null) // { limit, used, remaining, allowedTopicLabels, plan }
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
+
+  // Load persisted messages once profile (and thus userId) is known
+  useEffect(() => {
+    if (profile?.id) setMessages(loadPersistedMessages(profile.id))
+  }, [profile?.id])
 
   useEffect(() => {
     loadStatus()
@@ -51,6 +68,7 @@ export default function MayaKI() {
 
     const updated = [...messages, { role: 'user', content: userMsg }]
     setMessages(updated)
+    if (profile?.id) persistMessages(profile.id, updated)
     setLoading(true)
 
     try {
@@ -68,7 +86,9 @@ export default function MayaKI() {
 
       if (!res.ok) {
         if (data.error === 'DAILY_LIMIT_REACHED') {
-          setMessages(prev => [...prev.slice(0, -1)]) // remove the user msg that didn't go through
+          const reverted = updated.slice(0, -1)
+          setMessages(reverted)
+          if (profile?.id) persistMessages(profile.id, reverted)
           setError(data.message)
           setInput(userMsg) // restore input
         } else {
@@ -77,7 +97,9 @@ export default function MayaKI() {
         return
       }
 
-      setMessages([...updated, { role: 'assistant', content: data.reply }])
+      const withReply = [...updated, { role: 'assistant', content: data.reply }]
+      setMessages(withReply)
+      if (profile?.id) persistMessages(profile.id, withReply)
       if (data.remaining !== undefined) {
         setStatus(prev => prev ? { ...prev, remaining: data.remaining, used: data.limit - data.remaining } : prev)
       }
@@ -122,6 +144,16 @@ export default function MayaKI() {
               )}
             </div>
           </div>
+
+          {/* Clear chat */}
+          {messages.length > 0 && (
+            <button
+              onClick={() => { setMessages([]); if (profile?.id) persistMessages(profile.id, []) }}
+              style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer', fontSize: '0.75rem', padding: '4px 8px', marginRight: '8px' }}
+            >
+              Chat leeren
+            </button>
+          )}
 
           {/* Usage indicator — hidden for admins */}
           {status && !isAdmin && (
