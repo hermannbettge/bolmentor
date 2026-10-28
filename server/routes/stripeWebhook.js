@@ -52,13 +52,40 @@ async function revokeAnalysis(userId, priceId) {
 router.post('/', async (req, res) => {
   const sig = req.headers['stripe-signature']
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
   let event
   try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
-    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret)
+    // Try classic snapshot format first, fall back to thin event notification
+    try {
+      event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret)
+    } catch {
+      // Thin (v2) event: parse body and fetch full event from Stripe API
+      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
+      const thinEvent = await stripe.v2.core.events.retrieve(body.id)
+      // Normalize to classic event shape so the rest of the handler works unchanged
+      event = {
+        type: thinEvent.type.replace(/^v1\./, ''),
+        data: { object: thinEvent.data?.object || thinEvent.related_object || {} },
+      }
+      // For thin events, fetch the full related object if needed
+      if (thinEvent.related_object?.id && thinEvent.related_object?.type) {
+        try {
+          const resourceType = thinEvent.related_object.type
+          if (resourceType === 'invoice') {
+            event.data.object = await stripe.invoices.retrieve(thinEvent.related_object.id, { expand: ['lines'] })
+          } else if (resourceType === 'checkout.session') {
+            event.data.object = await stripe.checkout.sessions.retrieve(thinEvent.related_object.id, { expand: ['line_items'] })
+          } else if (resourceType === 'subscription') {
+            event.data.object = await stripe.subscriptions.retrieve(thinEvent.related_object.id)
+          }
+        } catch (fetchErr) {
+          console.error('Stripe: Fehler beim Abrufen des Objekts:', fetchErr.message)
+        }
+      }
+    }
   } catch (err) {
-    console.error('Stripe Webhook Signatur-Fehler:', err.message)
+    console.error('Stripe Webhook Fehler:', err.message)
     return res.status(400).json({ error: `Webhook-Fehler: ${err.message}` })
   }
 
