@@ -56,24 +56,25 @@ router.post('/', async (req, res) => {
 
   let event
   try {
-    // Try classic snapshot format first, fall back to thin (v2) event format
+    // Parse raw body first to detect event format
+    const rawBody = Buffer.isBuffer(req.body) ? req.body.toString('utf8') : req.body
+    let parsed
     try {
-      event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret)
+      parsed = typeof rawBody === 'string' ? JSON.parse(rawBody) : rawBody
     } catch {
-      // Thin event: body is a raw Buffer, parse it to get the related_object
-      const rawBody = Buffer.isBuffer(req.body) ? req.body.toString('utf8') : req.body
-      const thin = typeof rawBody === 'string' ? JSON.parse(rawBody) : rawBody
+      return res.status(400).json({ error: 'Ungültiger JSON-Body' })
+    }
 
-      if (!thin?.related_object?.id || !thin?.type) {
-        return res.status(400).json({ error: 'Unbekanntes Webhook-Format' })
+    if (parsed?.object === 'v2.core.event') {
+      // Thin (v2) event format - fetch the full related object via Stripe API
+      if (!parsed?.related_object?.id || !parsed?.type) {
+        return res.status(400).json({ error: 'Unbekanntes Thin-Event-Format' })
       }
 
-      // Normalize event type: strip "v1." prefix
-      const eventType = thin.type.replace(/^v1\./, '')
-      const relatedId = thin.related_object.id
-      const relatedType = thin.related_object.type
+      const eventType = parsed.type.replace(/^v1\./, '')
+      const relatedId = parsed.related_object.id
+      const relatedType = parsed.related_object.type
 
-      // Fetch the full object from Stripe API
       let fullObject = {}
       try {
         if (relatedType === 'checkout.session') {
@@ -88,6 +89,14 @@ router.post('/', async (req, res) => {
       }
 
       event = { type: eventType, data: { object: fullObject } }
+    } else {
+      // Classic snapshot format - verify signature
+      try {
+        event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret)
+      } catch (err) {
+        console.error('Stripe Webhook Signatur-Fehler:', err.message)
+        return res.status(400).json({ error: `Webhook-Fehler: ${err.message}` })
+      }
     }
   } catch (err) {
     console.error('Stripe Webhook Fehler:', err.message)
