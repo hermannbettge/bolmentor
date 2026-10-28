@@ -56,33 +56,38 @@ router.post('/', async (req, res) => {
 
   let event
   try {
-    // Try classic snapshot format first, fall back to thin event notification
+    // Try classic snapshot format first, fall back to thin (v2) event format
     try {
       event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret)
     } catch {
-      // Thin (v2) event: parse body and fetch full event from Stripe API
-      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
-      const thinEvent = await stripe.v2.core.events.retrieve(body.id)
-      // Normalize to classic event shape so the rest of the handler works unchanged
-      event = {
-        type: thinEvent.type.replace(/^v1\./, ''),
-        data: { object: thinEvent.data?.object || thinEvent.related_object || {} },
+      // Thin event: body is a raw Buffer, parse it to get the related_object
+      const rawBody = Buffer.isBuffer(req.body) ? req.body.toString('utf8') : req.body
+      const thin = typeof rawBody === 'string' ? JSON.parse(rawBody) : rawBody
+
+      if (!thin?.related_object?.id || !thin?.type) {
+        return res.status(400).json({ error: 'Unbekanntes Webhook-Format' })
       }
-      // For thin events, fetch the full related object if needed
-      if (thinEvent.related_object?.id && thinEvent.related_object?.type) {
-        try {
-          const resourceType = thinEvent.related_object.type
-          if (resourceType === 'invoice') {
-            event.data.object = await stripe.invoices.retrieve(thinEvent.related_object.id, { expand: ['lines'] })
-          } else if (resourceType === 'checkout.session') {
-            event.data.object = await stripe.checkout.sessions.retrieve(thinEvent.related_object.id, { expand: ['line_items'] })
-          } else if (resourceType === 'subscription') {
-            event.data.object = await stripe.subscriptions.retrieve(thinEvent.related_object.id)
-          }
-        } catch (fetchErr) {
-          console.error('Stripe: Fehler beim Abrufen des Objekts:', fetchErr.message)
+
+      // Normalize event type: strip "v1." prefix
+      const eventType = thin.type.replace(/^v1\./, '')
+      const relatedId = thin.related_object.id
+      const relatedType = thin.related_object.type
+
+      // Fetch the full object from Stripe API
+      let fullObject = {}
+      try {
+        if (relatedType === 'checkout.session') {
+          fullObject = await stripe.checkout.sessions.retrieve(relatedId, { expand: ['line_items'] })
+        } else if (relatedType === 'invoice') {
+          fullObject = await stripe.invoices.retrieve(relatedId, { expand: ['lines'] })
+        } else if (relatedType === 'subscription') {
+          fullObject = await stripe.subscriptions.retrieve(relatedId)
         }
+      } catch (fetchErr) {
+        console.error('Stripe: Fehler beim Abrufen des Objekts:', fetchErr.message)
       }
+
+      event = { type: eventType, data: { object: fullObject } }
     }
   } catch (err) {
     console.error('Stripe Webhook Fehler:', err.message)
