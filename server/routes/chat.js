@@ -375,8 +375,8 @@ router.post('/', requireAuth, async (req, res) => {
     const allText = messages.map(m => m.content).join(' ')
     const dateKins = extractAndCalculateDates(allText, today)
 
-    // Pre-compute full Kin table: today through 6 months ahead
-    const tableEnd = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() + 6, today.getUTCDate()))
+    // Pre-compute full Kin table: today through end of 2027
+    const tableEnd = new Date(Date.UTC(2027, 11, 31))
     const kinTableRows = generateKinTable(today, tableEnd)
 
     // Detect activity and pre-compute verified good days (server-side, not LLM-decided)
@@ -427,7 +427,7 @@ HEUTIGE ENERGIE:
 Datum: ${today.toISOString().split('T')[0]}
 Heutiges Kin: Kin ${todayKin.kin} – ${todayKin.tone} ${todayKin.seal}${dateKinSection}
 
-VOLLSTÄNDIGE KIN-TABELLE (heute + 6 Monate) – EXAKT UND VERBINDLICH:
+VOLLSTÄNDIGE KIN-TABELLE (heute bis 31.12.2027) – EXAKT UND VERBINDLICH:
 WICHTIG: Diese Tabelle wurde mathematisch berechnet. Verwende ausschließlich diese Werte. Niemals schätzen. Dieselbe Frage muss immer dieselbe Antwort ergeben.
 ${kinTableRows.join('\n')}
 ${goodDaysResult ? `
@@ -455,7 +455,7 @@ GESPRÄCHSREGELN:
 - Beginne direkt mit der Antwort
 - Halte Antworten fokussiert: 150–400 Wörter, außer der Nutzer fragt nach einer Analyse
 - Sei warm, weise und direkt
-- WICHTIG: Nenne niemals ein Kin aus dem Gedächtnis oder durch Schätzen. Die KIN-TABELLE oben enthält exakte Werte für die nächsten 6 Monate. Nutze ausschließlich diese Werte. Für Daten außerhalb der Tabelle: erkläre, dass du nur für die nächsten 6 Monate exakte Daten hast.
+- WICHTIG: Nenne niemals ein Kin aus dem Gedächtnis oder durch Schätzen. Die KIN-TABELLE oben enthält exakte Werte für jeden Tag bis 31.12.2027. Nutze ausschließlich diese Werte. Für Daten nach 2027: erkläre, dass du nur bis Ende 2027 exakte Daten hast.
 - Wenn nach mehreren Tagen gefragt wird (z.B. "alle Akquise-Tage bis Jahresende"), liste jeden relevanten Tag mit Datum, Kin, Siegel und kurzer Begründung auf. Die Antwort muss bei wiederholter identischer Frage exakt gleich sein.
 - AKTIVITÄTS-TAGE: Wenn eine "VORAB BERECHNETE AKTIVITÄTS-TAGE"-Liste oben erscheint, darfst du AUSSCHLIESSLICH die dort aufgeführten Tage nennen. Du entscheidest nicht selbst, welche Tage gut sind – du liest die vorberechnete Liste vor und erklärst die genannten Siegel- und Ton-Qualitäten. Kein Tag darf hinzugefügt oder weggelassen werden.
 - BEGRÜNDUNGSPFLICHT: Erkläre bei jedem genannten Tag immer die konkreten Siegel- und Ton-Qualitäten aus der Referenz. Beispiel: "Der 03.11.2026 ist Kin 76, Gelber Krieger – Intelligenz, Mut, Furchtlosigkeit. Ton 11 Spektral steht für Auflösung. Das macht ihn geeignet für direkte Ansprache."`
