@@ -55,6 +55,50 @@ const LABELS = {
   events: 'Ereignisse',
 }
 
+function EventsList({ navigate }) {
+  const { user } = useAuth()
+  const [events, setEvents] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!user) return
+    supabase.from('user_events').select('*').eq('user_id', user.id).order('event_date', { ascending: false })
+      .then(({ data }) => { setEvents(data || []); setLoading(false) })
+  }, [user])
+
+  const CATEGORY_LABELS = {
+    land: 'Land / Nation', job: 'Job / Karriere', beziehung: 'Beziehung / Partnerschaft',
+    unternehmen: 'Unternehmen / Projekt', kauf: 'Kauf / Besitz', sonstiges: 'Ereignis',
+  }
+
+  if (loading) return <div style={{ color: 'var(--text-2)', fontSize: '0.88rem' }}>Wird geladen…</div>
+
+  if (events.length === 0) return (
+    <div style={{ padding: '32px 0', color: 'var(--text-2)', fontSize: '0.9rem', lineHeight: 1.7 }}>
+      Noch keine Ereignisse angelegt. Erstelle deine Ereignisse im Profil unter "Meine Ereignisse".
+    </div>
+  )
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      {events.map(ev => (
+        <button
+          key={ev.id}
+          onClick={() => navigate(`/analyse/event/${ev.id}`)}
+          style={{ display: 'flex', flexDirection: 'column', gap: '4px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px 20px', cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s' }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent)'}
+          onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+        >
+          <span style={{ fontWeight: 500, color: 'var(--text-1)', fontSize: '0.95rem' }}>{ev.name}</span>
+          <span style={{ color: 'var(--text-2)', fontSize: '0.78rem' }}>
+            {CATEGORY_LABELS[ev.category] || 'Ereignis'} · {new Date(ev.event_date).toLocaleDateString('de-DE')}
+          </span>
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export default function AnalysePage() {
   const { type } = useParams()
   const { user, profile, refreshProfile } = useAuth()
@@ -272,6 +316,19 @@ export default function AnalysePage() {
   if (checking) return (
     <div style={{ backgroundColor: 'var(--bg-deep)', minHeight: '100vh', padding: 'clamp(24px,4vw,48px) clamp(16px,4vw,40px)' }}>
       <div style={{ color: TEXT_LIGHT }}>Wird geladen…</div>
+    </div>
+  )
+
+  if (type === 'events') return (
+    <div style={{ backgroundColor: 'var(--bg-deep)', minHeight: '100vh', padding: 'clamp(24px,4vw,48px) clamp(16px,4vw,40px)', fontFamily: 'Inter, sans-serif' }}>
+      <div style={{ maxWidth: '720px' }}>
+        <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '8px' }}>Analyse</div>
+        <h1 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: '2.2rem', color: TEXT, margin: '0 0 12px' }}>Ereignisse</h1>
+        <p style={{ color: TEXT_MID, fontSize: '0.88rem', lineHeight: 1.7, marginBottom: '32px' }}>
+          Wähle ein Ereignis, um täglich, monatlich oder jährlich analysieren wie die Maya-Energie auf es wirkt.
+        </p>
+        <EventsList navigate={navigate} />
+      </div>
     </div>
   )
 

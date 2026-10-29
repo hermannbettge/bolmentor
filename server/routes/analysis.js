@@ -1006,4 +1006,243 @@ router.get('/event/:eventId', requireAuth, async (req, res) => {
   }
 })
 
+// ── Event sub-analyses (daily / monthly / yearly) ──────────────────────────
+
+function buildEventDailyPrompt(profile, event, userKin, dayKin, eventKin, dateLabel) {
+  return `Du bist ein weltklasse Maya-Kalender-Experte. Analysiere wie die Energie des ${dateLabel} auf das Ereignis "${event.name}" wirkt. Schreibe auf Deutsch.
+${SYSTEM_RULES}
+
+PERSON: ${profile.name}
+Geburts-Kin: Kin ${userKin.kin} – ${userKin.tone} ${userKin.seal} | Ton ${userKin.toneNumber} | Lebensthema: ${userKin.lifeTheme}
+
+EREIGNIS: "${event.name}"
+Kin des Ereignisses: Kin ${eventKin.kin} – ${eventKin.tone} ${eventKin.seal} | Ton ${eventKin.toneNumber} | Lebensthema: ${eventKin.lifeTheme}
+
+ENERGIE DES TAGES (${dateLabel}):
+Tages-Kin: Kin ${dayKin.kin} – ${dayKin.tone} ${dayKin.seal} | Ton ${dayKin.toneNumber} | Lebensthema: ${dayKin.lifeTheme}
+
+## ENERGIE DES TAGES FÜR "${event.name.toUpperCase()}"
+Wie wirkt die heutige Kin-Energie auf dieses Ereignis?
+
+## RESONANZ MIT ${profile.name.toUpperCase()}
+Wie spiegelt sich deine Geburtsenergie in der Kombination aus Tages- und Ereignis-Energie?
+
+## KONKRETER IMPULS FÜR HEUTE
+2–3 präzise Handlungsempfehlungen für heute in Bezug auf "${event.name}".
+
+## AFFIRMATION
+Eine kraftvolle Affirmation für diesen Tag.
+
+Länge: 280–340 Wörter. Ton: direkt, konkret, persönlich.`
+}
+
+function buildEventMonthlyPrompt(profile, event, userKin, eventKin, monthName, year) {
+  return `Du bist ein weltklasse Maya-Kalender-Experte. Analysiere wie der ${monthName} ${year} auf das Ereignis "${event.name}" wirkt. Schreibe auf Deutsch.
+${SYSTEM_RULES}
+
+PERSON: ${profile.name}
+Geburts-Kin: Kin ${userKin.kin} – ${userKin.tone} ${userKin.seal} | Lebensthema: ${userKin.lifeTheme}
+
+EREIGNIS: "${event.name}"
+Kin des Ereignisses: Kin ${eventKin.kin} – ${eventKin.tone} ${eventKin.seal} | Lebensthema: ${eventKin.lifeTheme}
+
+## MONATSENERGIE FÜR "${event.name.toUpperCase()}" – ${monthName.toUpperCase()} ${year}
+Was prägt diesen Monat energetisch für dieses Ereignis?
+
+## WOCHE FÜR WOCHE
+4 kurze wöchentliche Schwerpunkte für "${event.name}" im ${monthName}.
+
+## CHANCEN DIESES MONATS
+Welche Potenziale trägt der ${monthName} ${year} für dieses Ereignis?
+
+## HERAUSFORDERUNGEN UND HINWEISE
+Was zu beachten ist.
+
+## EMPFEHLUNG FÜR ${profile.name.toUpperCase()}
+Konkrete Handlungsempfehlung für diesen Monat.
+
+## AFFIRMATION
+Eine kraftvolle Affirmation für den ${monthName}.
+
+Länge: 420–500 Wörter. Sprich ${profile.name} direkt an.`
+}
+
+function buildEventYearlyPrompt(profile, event, userKin, eventKin, year) {
+  return `Du bist ein weltklasse Maya-Kalender-Experte. Erstelle eine Jahresanalyse ${year} für das Ereignis "${event.name}" für ${profile.name}. Schreibe auf Deutsch.
+${SYSTEM_RULES}
+
+PERSON: ${profile.name}
+Geburts-Kin: Kin ${userKin.kin} – ${userKin.tone} ${userKin.seal} | Lebensthema: ${userKin.lifeTheme}
+
+EREIGNIS: "${event.name}"
+Kin des Ereignisses: Kin ${eventKin.kin} – ${eventKin.tone} ${eventKin.seal} | Lebensthema: ${eventKin.lifeTheme}
+
+## JAHRESÜBERBLICK ${year} FÜR "${event.name.toUpperCase()}"
+Die übergreifende Energie des Jahres für dieses Ereignis.
+
+Dann für jeden Monat ein eigener Abschnitt (Januar bis Dezember ${year}):
+## JANUAR ${year}
+## FEBRUAR ${year}
+## MÄRZ ${year}
+## APRIL ${year}
+## MAI ${year}
+## JUNI ${year}
+## JULI ${year}
+## AUGUST ${year}
+## SEPTEMBER ${year}
+## OKTOBER ${year}
+## NOVEMBER ${year}
+## DEZEMBER ${year}
+
+## JAHRESFAZIT UND EMPFEHLUNG
+## AFFIRMATION FÜR ${year}
+
+Jeder Monatsabschnitt 3–4 Sätze. Gesamtlänge: 900–1100 Wörter. Sprich ${profile.name} direkt an.`
+}
+
+function checkEventDateAccess(profile, dateStr) {
+  if (profile.is_admin) return
+  const today = new Date().toISOString().split('T')[0]
+  if (profile.subscription_plan === 'annual') return
+  if (dateStr !== today) throw new Error('Mit dem Monatstarif ist nur der heutige Tag verfügbar.')
+}
+
+function checkEventMonthAccess(profile, year, month) {
+  if (profile.is_admin) return
+  if (profile.subscription_plan === 'annual') return
+  const now = new Date()
+  if (year !== now.getFullYear() || month !== now.getMonth() + 1) {
+    throw new Error('Mit dem Monatstarif ist nur der aktuelle Monat verfügbar.')
+  }
+}
+
+function checkEventYearAccess(profile, year) {
+  if (profile.is_admin) return
+  if (profile.subscription_plan !== 'annual') {
+    throw new Error('Die Jahresanalyse ist nur im Jahrestarif verfügbar.')
+  }
+  const now = new Date()
+  const maxYear = now.getFullYear() + 1
+  if (year < 2020 || year > maxYear) {
+    throw new Error(`Bitte wähle ein Jahr zwischen 2020 und ${maxYear}.`)
+  }
+}
+
+async function getEventForUser(eventId, userId) {
+  const { data: event, error } = await supabase
+    .from('user_events').select('*').eq('id', eventId).eq('user_id', userId).single()
+  if (error || !event) throw new Error('Ereignis nicht gefunden')
+  return event
+}
+
+// Event daily
+router.get('/event/:eventId/daily', requireAuth, async (req, res) => {
+  try {
+    const dateStr = req.query.date || new Date().toISOString().split('T')[0]
+    const { data } = await supabase.from('analyses')
+      .select('content, created_at')
+      .eq('user_id', req.user.id)
+      .eq('type', `event_${req.params.eventId}_daily_${dateStr}`)
+      .order('created_at', { ascending: false }).limit(1).single()
+    res.json({ content: data?.content || null })
+  } catch { res.json({ content: null }) }
+})
+
+router.post('/event/:eventId/daily', requireAuth, async (req, res) => {
+  let prompt, userId, eventId, dateStr
+  try {
+    const profile = await getProfile(req.user.id)
+    checkMembership(profile)
+    eventId = req.params.eventId
+    dateStr = req.body.date || new Date().toISOString().split('T')[0]
+    checkEventDateAccess(profile, dateStr)
+    const event = await getEventForUser(eventId, req.user.id)
+    const dateObj = new Date(dateStr + 'T00:00:00')
+    const dateLabel = `${dateObj.getDate()}. ${GERMAN_MONTHS[dateObj.getMonth()]} ${dateObj.getFullYear()}`
+    const userKin = calculateKinFromDate(profile.birth_date)
+    const dayKin = calculateKinFromDate(dateStr)
+    const eventKin = calculateKinFromDate(event.event_date)
+    prompt = buildEventDailyPrompt(profile, event, userKin, dayKin, eventKin, dateLabel)
+    userId = req.user.id
+  } catch (err) {
+    return res.status(400).json({ error: err.message })
+  }
+  await streamClaude(res, prompt, 4000, async (content) => {
+    await saveAnalysis(userId, `event_${eventId}_daily_${dateStr}`, content, dateStr)
+  })
+})
+
+// Event monthly
+router.get('/event/:eventId/monthly', requireAuth, async (req, res) => {
+  try {
+    const monthYear = req.query.monthYear || new Date().toISOString().slice(0, 7)
+    const { data } = await supabase.from('analyses')
+      .select('content, created_at')
+      .eq('user_id', req.user.id)
+      .eq('type', `event_${req.params.eventId}_monthly_${monthYear}`)
+      .order('created_at', { ascending: false }).limit(1).single()
+    res.json({ content: data?.content || null })
+  } catch { res.json({ content: null }) }
+})
+
+router.post('/event/:eventId/monthly', requireAuth, async (req, res) => {
+  let prompt, userId, eventId, monthYear
+  try {
+    const profile = await getProfile(req.user.id)
+    checkMembership(profile)
+    eventId = req.params.eventId
+    const now = new Date()
+    const year = req.body.year || now.getFullYear()
+    const month = req.body.month || (now.getMonth() + 1)
+    checkEventMonthAccess(profile, year, month)
+    monthYear = `${year}-${String(month).padStart(2, '0')}`
+    const event = await getEventForUser(eventId, req.user.id)
+    const userKin = calculateKinFromDate(profile.birth_date)
+    const eventKin = calculateKinFromDate(event.event_date)
+    prompt = buildEventMonthlyPrompt(profile, event, userKin, eventKin, GERMAN_MONTHS[month - 1], year)
+    userId = req.user.id
+  } catch (err) {
+    return res.status(400).json({ error: err.message })
+  }
+  await streamClaude(res, prompt, 5000, async (content) => {
+    const today = new Date().toISOString().split('T')[0]
+    await saveAnalysis(userId, `event_${eventId}_monthly_${monthYear}`, content, today)
+  })
+})
+
+// Event yearly
+router.get('/event/:eventId/yearly', requireAuth, async (req, res) => {
+  try {
+    const year = req.query.year || new Date().getFullYear()
+    const { data } = await supabase.from('analyses')
+      .select('content, created_at')
+      .eq('user_id', req.user.id)
+      .eq('type', `event_${req.params.eventId}_yearly_${year}`)
+      .order('created_at', { ascending: false }).limit(1).single()
+    res.json({ content: data?.content || null })
+  } catch { res.json({ content: null }) }
+})
+
+router.post('/event/:eventId/yearly', requireAuth, async (req, res) => {
+  let prompt, userId, eventId, year
+  try {
+    const profile = await getProfile(req.user.id)
+    checkMembership(profile)
+    eventId = req.params.eventId
+    year = req.body.year || new Date().getFullYear()
+    checkEventYearAccess(profile, year)
+    const event = await getEventForUser(eventId, req.user.id)
+    const userKin = calculateKinFromDate(profile.birth_date)
+    const eventKin = calculateKinFromDate(event.event_date)
+    prompt = buildEventYearlyPrompt(profile, event, userKin, eventKin, year)
+    userId = req.user.id
+  } catch (err) {
+    return res.status(400).json({ error: err.message })
+  }
+  await streamClaude(res, prompt, 10000, async (content) => {
+    const today = new Date().toISOString().split('T')[0]
+    await saveAnalysis(userId, `event_${eventId}_yearly_${year}`, content, today)
+  })
+})
+
 export default router
