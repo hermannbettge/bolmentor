@@ -332,9 +332,9 @@ function DayDetail({ day, onClose, navigate, profile }) {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
         body: JSON.stringify({ date: day.date }),
       })
-      const data = await res.json()
-      setAnalysis(data.content)
-      setShowAnalysis(true)
+      // Response is SSE stream; consume it fully, then fetch saved result
+      await res.text()
+      await checkExisting()
     } catch {}
     finally { setLoading(false) }
   }
