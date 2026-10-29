@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { useIsMobile } from '../hooks/useIsMobile.js'
 import { supabase } from '../lib/supabase.js'
@@ -16,38 +17,55 @@ const WELCOME = {
   content: 'Ich bin MAYA, deine persönliche Maya-Kalender-KI. Ich kenne dein vollständiges Profil und beantworte all deine Fragen rund um deine Energie, dein Kin und deinen Lebensweg. Was möchtest du wissen?',
 }
 
-function loadMessages(userId) {
+function todayDate() { return new Date().toISOString().split('T')[0] }
+
+async function loadSessionFromDB(userId) {
   try {
-    const raw = localStorage.getItem(`maya_chat_${userId}`)
-    if (raw) return JSON.parse(raw)
+    const date = todayDate()
+    const { data } = await supabase
+      .from('chat_sessions')
+      .select('messages')
+      .eq('user_id', userId)
+      .eq('session_date', date)
+      .single()
+    if (data?.messages?.length > 0) return data.messages
   } catch {}
-  return [WELCOME]
+  return null
 }
 
-function saveMessages(userId, msgs) {
-  try { localStorage.setItem(`maya_chat_${userId}`, JSON.stringify(msgs)) } catch {}
+async function saveSessionToDB(userId, messages) {
+  try {
+    const date = todayDate()
+    await supabase.from('chat_sessions').upsert({
+      user_id: userId,
+      session_date: date,
+      messages,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id,session_date' })
+  } catch {}
 }
 
 export default function MayaChat() {
   const { user, profile } = useAuth()
   const isMobile = useIsMobile()
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false)
-  const [messages, setMessages] = useState([])
+  const [messages, setMessages] = useState([WELCOME])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [sessionLoaded, setSessionLoaded] = useState(false)
   const [error, setError] = useState('')
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
 
-  // Load persisted messages when user is known
+  // Load today's session from DB when chat opens for the first time
   useEffect(() => {
-    if (user) setMessages(loadMessages(user.id))
-  }, [user?.id])
-
-  // Persist messages on every change
-  useEffect(() => {
-    if (user && messages.length > 0) saveMessages(user.id, messages)
-  }, [messages, user?.id])
+    if (!user || sessionLoaded) return
+    setSessionLoaded(true)
+    loadSessionFromDB(user.id).then(msgs => {
+      if (msgs) setMessages(msgs)
+    })
+  }, [user, sessionLoaded])
 
   useEffect(() => {
     if (open) {
@@ -56,7 +74,6 @@ export default function MayaChat() {
     }
   }, [messages, open])
 
-  // Count only user messages (excludes the initial assistant welcome)
   const userMessageCount = messages.filter(m => m.role === 'user').length
   const chatLimit = profile?.chat_messages_limit ?? null
   const limitReached = chatLimit !== null && userMessageCount >= chatLimit
@@ -80,12 +97,21 @@ export default function MayaChat() {
       })
       if (!res.ok) { const e = await res.json(); throw new Error(e.error) }
       const data = await res.json()
-      setMessages(prev => [...prev, { role: 'assistant', content: data.reply }])
+      const withReply = [...newMessages, { role: 'assistant', content: data.reply }]
+      setMessages(withReply)
+      // Persist to DB after each exchange
+      if (user) saveSessionToDB(user.id, withReply)
     } catch (e) {
       setError(e.message)
     } finally {
       setLoading(false)
     }
+  }
+
+  async function clearChat() {
+    const fresh = [WELCOME]
+    setMessages(fresh)
+    if (user) await saveSessionToDB(user.id, fresh)
   }
 
   if (!user || isMobile) return null
@@ -133,7 +159,7 @@ export default function MayaChat() {
 
           {/* Header */}
           <div style={{
-            padding: '16px 20px', borderBottom: '1px solid var(--border)',
+            padding: '14px 16px', borderBottom: '1px solid var(--border)',
             display: 'flex', alignItems: 'center', gap: '12px',
             backgroundColor: 'var(--bg-card)',
           }}>
@@ -146,28 +172,33 @@ export default function MayaChat() {
               <div style={{ color: 'var(--text-1)', fontWeight: 500, fontSize: '0.92rem' }}>MAYA</div>
               <div style={{ color: 'var(--text-2)', fontSize: '0.74rem' }}>Deine persönliche Maya-KI</div>
             </div>
-            <button
-              onClick={() => { const fresh = [WELCOME]; setMessages(fresh); if (user) saveMessages(user.id, fresh) }}
-              style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--text-2)', cursor: 'pointer', fontSize: '0.8rem', padding: '4px 8px', borderRadius: '4px' }}
-            >
-              Chat leeren
-            </button>
+            <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <button
+                onClick={() => { setOpen(false); navigate('/chat-verlauf') }}
+                title="Chat-Verlauf"
+                style={{ background: 'none', border: 'none', color: 'var(--text-2)', cursor: 'pointer', fontSize: '0.75rem', padding: '4px 8px', borderRadius: '4px' }}
+              >
+                Verlauf
+              </button>
+              <button
+                onClick={clearChat}
+                style={{ background: 'none', border: 'none', color: 'var(--text-2)', cursor: 'pointer', fontSize: '0.75rem', padding: '4px 8px', borderRadius: '4px' }}
+              >
+                Leeren
+              </button>
+            </div>
           </div>
 
           {/* Messages */}
           <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {messages.map((m, i) => (
-              <div key={i} style={{
-                display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start',
-              }}>
+              <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
                 <div style={{
-                  maxWidth: '85%',
-                  padding: '10px 14px',
+                  maxWidth: '85%', padding: '10px 14px',
                   borderRadius: m.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
                   backgroundColor: m.role === 'user' ? 'var(--accent)' : 'var(--bg-card)',
                   color: m.role === 'user' ? 'var(--bg-deep)' : 'var(--text-1)',
-                  fontSize: '0.875rem',
-                  lineHeight: 1.65,
+                  fontSize: '0.875rem', lineHeight: 1.65,
                   border: m.role === 'assistant' ? '1px solid var(--border)' : 'none',
                   whiteSpace: 'pre-wrap',
                 }}>

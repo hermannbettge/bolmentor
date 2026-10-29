@@ -20,6 +20,7 @@ import MayaInfo from './pages/MayaInfo.jsx'
 import Checkout from './pages/Checkout.jsx'
 import ZusatzanalysenPage from './pages/ZusatzanalysenPage.jsx'
 import MayaKI from './pages/MayaKI.jsx'
+import ChatHistory from './pages/ChatHistory.jsx'
 
 function ProtectedRoute({ children, requireMembership = false }) {
   const { user, profile, loading } = useAuth()
@@ -67,6 +68,7 @@ function AppRoutes() {
         <Route path="/maya-kalender" element={<ProtectedRoute requireMembership><MayaInfo /></ProtectedRoute>} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/maya-ki" element={<ProtectedRoute requireMembership><MayaKI /></ProtectedRoute>} />
+        <Route path="/chat-verlauf" element={<ProtectedRoute requireMembership><ChatHistory /></ProtectedRoute>} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
