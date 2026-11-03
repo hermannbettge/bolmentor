@@ -13,16 +13,30 @@ const SUGGESTIONS = [
   'Was blockiert mich gerade energetisch?',
 ]
 
-function loadPersistedMessages(userId) {
+function todayDate() { return new Date().toISOString().split('T')[0] }
+
+async function loadSessionFromDB(userId) {
   try {
-    const raw = localStorage.getItem(`mayaki_chat_${userId}`)
-    if (raw) return JSON.parse(raw)
+    const { data } = await supabase
+      .from('chat_sessions')
+      .select('messages')
+      .eq('user_id', userId)
+      .eq('session_date', todayDate())
+      .single()
+    if (data?.messages?.length > 0) return data.messages
   } catch {}
-  return []
+  return null
 }
 
-function persistMessages(userId, msgs) {
-  try { localStorage.setItem(`mayaki_chat_${userId}`, JSON.stringify(msgs)) } catch {}
+async function saveSessionToDB(userId, messages) {
+  try {
+    await supabase.from('chat_sessions').upsert({
+      user_id: userId,
+      session_date: todayDate(),
+      messages,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id,session_date' })
+  } catch {}
 }
 
 export default function MayaKI() {
@@ -34,13 +48,18 @@ export default function MayaKI() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [status, setStatus] = useState(null) // { limit, used, remaining, allowedTopicLabels, plan }
+  const [sessionLoaded, setSessionLoaded] = useState(false)
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
 
-  // Load persisted messages once profile (and thus userId) is known
+  // Load today's session from DB once profile is known
   useEffect(() => {
-    if (profile?.id) setMessages(loadPersistedMessages(profile.id))
-  }, [profile?.id])
+    if (!profile?.id || sessionLoaded) return
+    setSessionLoaded(true)
+    loadSessionFromDB(profile.id).then(msgs => {
+      if (msgs) setMessages(msgs)
+    })
+  }, [profile?.id, sessionLoaded])
 
   useEffect(() => {
     loadStatus()
@@ -68,7 +87,6 @@ export default function MayaKI() {
 
     const updated = [...messages, { role: 'user', content: userMsg }]
     setMessages(updated)
-    if (profile?.id) persistMessages(profile.id, updated)
     setLoading(true)
 
     try {
@@ -88,9 +106,8 @@ export default function MayaKI() {
         if (data.error === 'DAILY_LIMIT_REACHED') {
           const reverted = updated.slice(0, -1)
           setMessages(reverted)
-          if (profile?.id) persistMessages(profile.id, reverted)
           setError(data.message)
-          setInput(userMsg) // restore input
+          setInput(userMsg)
         } else {
           setError(data.error || 'Fehler beim Abrufen der Antwort')
         }
@@ -99,7 +116,7 @@ export default function MayaKI() {
 
       const withReply = [...updated, { role: 'assistant', content: data.reply }]
       setMessages(withReply)
-      if (profile?.id) persistMessages(profile.id, withReply)
+      if (profile?.id) saveSessionToDB(profile.id, withReply)
       if (data.remaining !== undefined) {
         setStatus(prev => prev ? { ...prev, remaining: data.remaining, used: data.limit - data.remaining } : prev)
       }
@@ -145,15 +162,26 @@ export default function MayaKI() {
             </div>
           </div>
 
-          {/* Clear chat */}
-          {messages.length > 0 && (
+          {/* Header actions */}
+          <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
             <button
-              onClick={() => { setMessages([]); if (profile?.id) persistMessages(profile.id, []) }}
-              style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer', fontSize: '0.75rem', padding: '4px 8px', marginRight: '8px' }}
+              onClick={() => navigate('/chat-verlauf')}
+              style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer', fontSize: '0.75rem', padding: '4px 8px' }}
             >
-              Chat leeren
+              Verlauf
             </button>
-          )}
+            {messages.length > 0 && (
+              <button
+                onClick={async () => {
+                  setMessages([])
+                  if (profile?.id) await saveSessionToDB(profile.id, [])
+                }}
+                style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer', fontSize: '0.75rem', padding: '4px 8px' }}
+              >
+                Leeren
+              </button>
+            )}
+          </div>
 
           {/* Usage indicator — hidden for admins */}
           {status && !isAdmin && (
