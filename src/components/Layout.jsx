@@ -4,8 +4,9 @@ import Sidebar from './Sidebar.jsx'
 import Footer from './Footer.jsx'
 import BottomNav from './BottomNav.jsx'
 import MayaChat from './MayaChat.jsx'
+import PullToRefresh from './PullToRefresh.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 const PROTECTED_ROUTES = ['/dashboard', '/tagesenergie', '/kalender', '/monatsanalyse', '/analysen', '/profil', '/analyse/', '/admin', '/maya-ki', '/maya-kalender', '/checkout']
 
@@ -36,12 +37,15 @@ export default function Layout({ children }) {
   }
 
   if (user && isProtected && isMobile) {
+    const handleRefresh = () => window.location.reload()
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg-deep)', paddingBottom: 'calc(70px + env(safe-area-inset-bottom, 0px))' }}>
-        {children}
-        <BottomNav />
-        <MayaChat />
-      </div>
+      <PullToRefresh onRefresh={handleRefresh}>
+        <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg-deep)', paddingBottom: 'calc(70px + env(safe-area-inset-bottom, 0px))' }}>
+          {children}
+          <BottomNav />
+          <MayaChat />
+        </div>
+      </PullToRefresh>
     )
   }
 
