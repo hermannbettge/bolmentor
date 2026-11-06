@@ -39,13 +39,15 @@ export default function Layout({ children }) {
   if (user && isProtected && isMobile) {
     const handleRefresh = () => window.location.reload()
     return (
-      <PullToRefresh onRefresh={handleRefresh}>
-        <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg-deep)', paddingBottom: 'calc(70px + env(safe-area-inset-bottom, 0px))' }}>
-          {children}
-          <BottomNav />
-          <MayaChat />
-        </div>
-      </PullToRefresh>
+      <>
+        <PullToRefresh onRefresh={handleRefresh}>
+          <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg-deep)', paddingBottom: 'calc(70px + env(safe-area-inset-bottom, 0px))' }}>
+            {children}
+            <MayaChat />
+          </div>
+        </PullToRefresh>
+        <BottomNav />
+      </>
     )
   }
 
