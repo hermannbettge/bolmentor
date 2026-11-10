@@ -541,7 +541,7 @@ export default function Salespage() {
             {/* Zusatzanalysen */}
             <div style={{ backgroundColor: '#DDD5C2', padding: '40px 32px', display: 'flex', flexDirection: 'column' }}>
               <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: COPPER, marginBottom: '20px' }}>Zusatzanalysen</div>
-              <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.2rem', fontWeight: 400, color: TEXT, marginBottom: '8px', lineHeight: 1.4 }}>Einzeln buchbar.</div>
+              <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.2rem', fontWeight: 400, color: TEXT, marginBottom: '8px', lineHeight: 1.4 }}>Einzeln buchbar. <span style={{ fontSize: '1rem', color: COPPER }}>9 € / Analyse</span></div>
               <div style={{ color: TEXT_LIGHT, fontSize: '0.82rem', marginBottom: '32px' }}>Für die Bereiche, die gerade wichtig sind. Monatlich, jederzeit kündbar.</div>
               <Line />
               <div style={{ paddingTop: '24px' }}>
