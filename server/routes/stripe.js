@@ -9,30 +9,24 @@ function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY)
 }
 
-function isAfter2027() {
-  return new Date() >= new Date('2027-01-01T00:00:00Z')
+const PRODUCT_KEY_MAP = {
+  membershipMonthly: () => process.env.STRIPE_PRICE_MEMBERSHIP_MONTHLY,
+  membershipAnnual:  () => process.env.STRIPE_PRICE_MEMBERSHIP_ANNUAL,
+  business:          () => process.env.STRIPE_PRICE_BUSINESS,
+  health:            () => process.env.STRIPE_PRICE_HEALTH,
+  family:            () => process.env.STRIPE_PRICE_FAMILY,
+  selfexpression:    () => process.env.STRIPE_PRICE_SELFEXPRESSION,
+  finance:           () => process.env.STRIPE_PRICE_FINANCE,
+  career:            () => process.env.STRIPE_PRICE_CAREER,
+  lifephases:        () => process.env.STRIPE_PRICE_LIFEPHASES,
+  partnership:       () => process.env.STRIPE_PRICE_PARTNERSHIP,
+  events:            () => process.env.STRIPE_PRICE_EVENTS,
+  relationship:      () => process.env.STRIPE_PRICE_RELATIONSHIP,
+  yearly_select:     () => process.env.STRIPE_PRICE_YEARLY_SELECT,
 }
 
-// Maps product key to Stripe price ID (picks 2027 price if after cutoff)
-const PRODUCT_KEY_MAP = {
-  membershipMonthly: () => isAfter2027()
-    ? process.env.STRIPE_PRICE_MEMBERSHIP_MONTHLY_2027 || process.env.STRIPE_PRICE_MEMBERSHIP_MONTHLY
-    : process.env.STRIPE_PRICE_MEMBERSHIP_MONTHLY,
-  membershipAnnual: () => isAfter2027()
-    ? process.env.STRIPE_PRICE_MEMBERSHIP_ANNUAL_2027 || process.env.STRIPE_PRICE_MEMBERSHIP_ANNUAL
-    : process.env.STRIPE_PRICE_MEMBERSHIP_ANNUAL,
-  business: () => isAfter2027() ? process.env.STRIPE_PRICE_BUSINESS_2027 || process.env.STRIPE_PRICE_BUSINESS : process.env.STRIPE_PRICE_BUSINESS,
-  health: () => isAfter2027() ? process.env.STRIPE_PRICE_HEALTH_2027 || process.env.STRIPE_PRICE_HEALTH : process.env.STRIPE_PRICE_HEALTH,
-  family: () => isAfter2027() ? process.env.STRIPE_PRICE_FAMILY_2027 || process.env.STRIPE_PRICE_FAMILY : process.env.STRIPE_PRICE_FAMILY,
-  selfexpression: () => isAfter2027() ? process.env.STRIPE_PRICE_SELFEXPRESSION_2027 || process.env.STRIPE_PRICE_SELFEXPRESSION : process.env.STRIPE_PRICE_SELFEXPRESSION,
-  finance: () => isAfter2027() ? process.env.STRIPE_PRICE_FINANCE_2027 || process.env.STRIPE_PRICE_FINANCE : process.env.STRIPE_PRICE_FINANCE,
-  career: () => isAfter2027() ? process.env.STRIPE_PRICE_CAREER_2027 || process.env.STRIPE_PRICE_CAREER : process.env.STRIPE_PRICE_CAREER,
-  lifephases: () => isAfter2027() ? process.env.STRIPE_PRICE_LIFEPHASES_2027 || process.env.STRIPE_PRICE_LIFEPHASES : process.env.STRIPE_PRICE_LIFEPHASES,
-  partnership: () => isAfter2027() ? process.env.STRIPE_PRICE_PARTNERSHIP_2027 || process.env.STRIPE_PRICE_PARTNERSHIP : process.env.STRIPE_PRICE_PARTNERSHIP,
-  events: () => isAfter2027() ? process.env.STRIPE_PRICE_EVENTS_2027 || process.env.STRIPE_PRICE_EVENTS : process.env.STRIPE_PRICE_EVENTS,
-  relationship: () => isAfter2027() ? process.env.STRIPE_PRICE_RELATIONSHIP_2027 || process.env.STRIPE_PRICE_RELATIONSHIP : process.env.STRIPE_PRICE_RELATIONSHIP,
-  yearly_select: () => process.env.STRIPE_PRICE_YEARLY_SELECT,
-}
+const TRIAL_DAYS = 3
+const MEMBERSHIP_KEYS = new Set(['membershipMonthly', 'membershipAnnual'])
 
 // What a product key unlocks
 const PRODUCT_META = {
@@ -96,6 +90,8 @@ router.post('/create-checkout-session', requireAuth, async (req, res) => {
       ? { customer: profile.stripe_customer_id }
       : { customer_email: req.user.email }
 
+    const isMembership = MEMBERSHIP_KEYS.has(productKey)
+
     const session = await stripe.checkout.sessions.create({
       mode,
       line_items: [{ price: priceId, quantity: 1 }],
@@ -107,6 +103,7 @@ router.post('/create-checkout-session', requireAuth, async (req, res) => {
         product_key: productKey,
       },
       allow_promotion_codes: true,
+      ...(isMembership && mode === 'subscription' ? { subscription_data: { trial_period_days: TRIAL_DAYS } } : {}),
     })
 
     res.json({ url: session.url })
@@ -135,12 +132,15 @@ router.post('/guest-checkout', async (req, res) => {
     const stripePrice = await stripe.prices.retrieve(priceId)
     const mode = stripePrice.type === 'recurring' ? 'subscription' : 'payment'
 
+    const isMembership = MEMBERSHIP_KEYS.has(productKey)
+
     const session = await stripe.checkout.sessions.create({
       mode,
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${appUrl}/registrieren?stripe_session={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/`,
       allow_promotion_codes: true,
+      ...(isMembership && mode === 'subscription' ? { subscription_data: { trial_period_days: TRIAL_DAYS } } : {}),
     })
 
     res.json({ url: session.url })

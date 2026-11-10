@@ -140,7 +140,7 @@ export default function Checkout() {
         </button>
 
         <p style={{ color: 'var(--text-2)', fontSize: '0.78rem', marginTop: '16px', textAlign: 'center', lineHeight: 1.6 }}>
-          Sichere Zahlung über Stripe. Du wirst auf die Stripe-Zahlungsseite weitergeleitet.
+          {MEMBERSHIP_KEYS.includes(productKey) ? '3 Tage kostenlos testen — Zahlung erst danach. ' : ''}Sichere Zahlung über Stripe.
         </p>
       </div>
     </div>
