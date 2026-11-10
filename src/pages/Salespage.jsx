@@ -511,14 +511,24 @@ export default function Salespage() {
               <Line dark />
               <div style={{ paddingTop: '24px' }}>
                 {[
-                  'Alles aus der Mitgliedschaft',
+                  'Alles aus der monatlichen Mitgliedschaft',
                   'Vollständiger Energiekalender',
                   'Tagesanalysen für jedes Datum',
                   '12 Ereignis-Analysen inklusive',
                   'Jahresanalyse für jeden Bereich',
+                  'Business-Analyse inklusive',
+                  'Gesundheitsanalyse inklusive',
+                  'Familienanalyse inklusive',
+                  'Selbstausdruck-Analyse inklusive',
+                  'Finanzanalyse inklusive',
+                  'Karriere-Analyse inklusive',
+                  'Lebensphasen-Analyse inklusive',
+                  'Beziehungsmuster inklusive',
+                  'Partnerschaftsanalyse inklusive',
                   '2 Monate kostenlos',
+                  '✦ MAYA KI — nur bei Sonderaktionen',
                 ].map((item, i) => (
-                  <div key={i} style={{ color: 'rgba(244,239,230,0.8)', fontWeight: 300, fontSize: '0.88rem', marginBottom: '11px', display: 'flex', gap: '12px' }}>
+                  <div key={i} style={{ color: item.startsWith('✦') ? COPPER_LIGHT : 'rgba(244,239,230,0.8)', fontWeight: item.startsWith('✦') ? 500 : 300, fontSize: '0.88rem', marginBottom: '11px', display: 'flex', gap: '12px' }}>
                     <span style={{ color: COPPER_LIGHT, flexShrink: 0 }}>·</span> {item}
                   </div>
                 ))}
