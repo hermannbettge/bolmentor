@@ -110,6 +110,51 @@ function InputModal({ label, onConfirm, onCancel }) {
   )
 }
 
+function CreateUserModal({ onConfirm, onCancel, loading }) {
+  const [form, setForm] = useState({ email: '', name: '', birth_date: '' })
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
+  const valid = form.email.includes('@')
+  return (
+    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px' }}>
+      <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '4px', padding: '32px', maxWidth: '460px', width: '100%' }}>
+        <div style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.14em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: '20px' }}>Nutzer anlegen</div>
+        {[
+          { key: 'email', label: 'E-Mail', type: 'email', required: true, placeholder: 'name@beispiel.de' },
+          { key: 'name', label: 'Name (optional)', type: 'text', placeholder: 'Vorname Nachname' },
+          { key: 'birth_date', label: 'Geburtsdatum (optional)', type: 'date', placeholder: '' },
+        ].map(({ key, label, type, required, placeholder }) => (
+          <div key={key} style={{ marginBottom: '16px' }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-2)', marginBottom: '6px' }}>{label}</div>
+            <input
+              autoFocus={key === 'email'}
+              type={type}
+              value={form[key]}
+              onChange={e => set(key, e.target.value)}
+              placeholder={placeholder}
+              style={{ width: '100%', padding: '10px 12px', backgroundColor: 'var(--bg-deep)', border: '1px solid var(--border)', borderRadius: '2px', color: 'var(--text-1)', fontSize: '0.9rem', boxSizing: 'border-box' }}
+            />
+          </div>
+        ))}
+        <div style={{ fontSize: '0.75rem', color: 'var(--text-2)', marginBottom: '24px', lineHeight: 1.6 }}>
+          Der Nutzer erhält automatisch eine E-Mail zum Festlegen seines Passworts.
+        </div>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button onClick={onCancel} style={{ flex: 1, padding: '12px', backgroundColor: 'var(--bg-deep)', border: '1px solid var(--border)', color: 'var(--text-2)', cursor: 'pointer', borderRadius: '2px', fontSize: '0.88rem' }}>
+            Abbrechen
+          </button>
+          <button
+            onClick={() => valid && onConfirm(form)}
+            disabled={!valid || loading}
+            style={{ flex: 1, padding: '12px', backgroundColor: 'rgba(var(--accent-rgb,184,151,90),0.15)', border: '1px solid rgba(var(--accent-rgb,184,151,90),0.4)', color: 'var(--accent)', cursor: valid && !loading ? 'pointer' : 'not-allowed', borderRadius: '2px', fontSize: '0.88rem', fontWeight: 600, opacity: !valid || loading ? 0.5 : 1 }}
+          >
+            {loading ? 'Wird angelegt…' : 'Anlegen'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function Admin() {
   const { user, profile } = useAuth()
   const navigate = useNavigate()
@@ -125,6 +170,8 @@ export default function Admin() {
   const [backupLoading, setBackupLoading] = useState(false)
   const [restoreLoading, setRestoreLoading] = useState(false)
   const [restoreResult, setRestoreResult] = useState(null)
+  const [createModal, setCreateModal] = useState(false)
+  const [createLoading, setCreateLoading] = useState(false)
 
   useEffect(() => {
     if (profile && !profile.is_admin) navigate('/')
@@ -324,6 +371,20 @@ export default function Admin() {
     )
   }
 
+  async function createUser(form) {
+    setCreateLoading(true)
+    try {
+      await apiCall('/users', 'POST', form)
+      setMsg(`Nutzer ${form.email} angelegt. Passwort-Mail wurde gesendet.`)
+      setCreateModal(false)
+      await loadAll()
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setCreateLoading(false)
+    }
+  }
+
   async function downloadBackup() {
     setBackupLoading(true)
     setError('')
@@ -458,9 +519,14 @@ export default function Admin() {
             <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: '4px', border: '1px solid var(--border)', overflow: 'hidden' }}>
               <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.82rem', fontWeight: 500, color: 'var(--text-1)' }}>{users.length} aktive Nutzer</span>
-                <button onClick={loadAll} style={{ background: 'none', border: 'none', color: 'var(--text-2)', cursor: 'pointer', fontSize: '0.8rem' }}>
-                  Aktualisieren
-                </button>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                  <button onClick={loadAll} style={{ background: 'none', border: 'none', color: 'var(--text-2)', cursor: 'pointer', fontSize: '0.8rem' }}>
+                    Aktualisieren
+                  </button>
+                  <button onClick={() => setCreateModal(true)} style={{ padding: '6px 14px', backgroundColor: 'rgba(var(--accent-rgb,184,151,90),0.12)', border: '1px solid rgba(var(--accent-rgb,184,151,90),0.35)', color: 'var(--accent)', cursor: 'pointer', borderRadius: '2px', fontSize: '0.8rem', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                    + Nutzer anlegen
+                  </button>
+                </div>
               </div>
               <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', minWidth: isMobile ? 'unset' : '600px', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
@@ -802,6 +868,13 @@ export default function Admin() {
         label={modal.label}
         onConfirm={modal.onConfirm}
         onCancel={closeModal}
+      />
+    )}
+    {createModal && (
+      <CreateUserModal
+        loading={createLoading}
+        onConfirm={createUser}
+        onCancel={() => setCreateModal(false)}
       />
     )}
     </>

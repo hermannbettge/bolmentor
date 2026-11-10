@@ -125,6 +125,36 @@ router.patch('/users/:id/email', requireAdmin, async (req, res) => {
   res.json({ success: true })
 })
 
+// Nutzer anlegen (Admin erstellt Account, sendet Passwort-Reset-Mail)
+router.post('/users', requireAdmin, async (req, res) => {
+  const { email, name, birth_date } = req.body
+  if (!email) return res.status(400).json({ error: 'E-Mail fehlt' })
+
+  // Zufälliges temporäres Passwort — wird sofort per Reset-Mail überschrieben
+  const tempPassword = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2).toUpperCase() + '!1'
+
+  const { data: authData, error: createError } = await supabase.auth.admin.createUser({
+    email,
+    password: tempPassword,
+    email_confirm: true,
+  })
+  if (createError) return res.status(500).json({ error: createError.message })
+
+  const userId = authData.user.id
+
+  // Profil anlegen
+  const profileData = { id: userId, updated_at: new Date().toISOString() }
+  if (name) profileData.name = name
+  if (birth_date) profileData.birth_date = birth_date
+  await supabase.from('profiles').upsert(profileData)
+
+  // Passwort-Reset-Mail senden damit der Nutzer sein Passwort selbst setzt
+  const appUrl = process.env.APP_URL || 'http://localhost:5173'
+  await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${appUrl}/passwort-setzen` })
+
+  res.json({ success: true, id: userId })
+})
+
 // Passwort-Reset
 router.post('/users/:id/reset-password', requireAdmin, async (req, res) => {
   const { data: profile } = await supabase.from('profiles').select('id').eq('id', req.params.id).single()
