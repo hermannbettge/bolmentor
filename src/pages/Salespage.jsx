@@ -522,9 +522,6 @@ export default function Salespage() {
                     <span style={{ color: COPPER_LIGHT, flexShrink: 0 }}>·</span> {item}
                   </div>
                 ))}
-                <div style={{ color: CREAM, fontWeight: 500, fontSize: '0.88rem', marginBottom: '11px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-                  <span style={{ color: COPPER_LIGHT, flexShrink: 0 }}>✦</span> MAYA KI — persönliche KI-Beraterin
-                </div>
               </div>
               <div style={{ marginTop: 'auto', paddingTop: '32px' }}>
                 <PillButton to="/checkout?product=membershipAnnual" variant="copper">Jahrestarif wählen →</PillButton>
