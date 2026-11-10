@@ -5,7 +5,9 @@ import { PRICE_MAP } from './stripe.js'
 
 const router = Router()
 
-async function fulfillOrder(userId, priceId) {
+// trialing = Testphase: Mitgliedschaft aktiv, aber nur 1 Ereignis-Analyse, keine Zusatzanalysen, keine MAYA KI
+// active   = nach Zahlung: alles freischalten
+async function fulfillOrder(userId, priceId, isTrial = false) {
   const mapping = PRICE_MAP[priceId]
   if (!mapping) {
     console.warn('Stripe: unbekannte priceId', priceId)
@@ -19,9 +21,12 @@ async function fulfillOrder(userId, priceId) {
       subscription_plan: mapping.plan,
       updated_at: new Date().toISOString(),
     }
-    // Annual plan includes all analyses
-    if (mapping.plan === 'annual') {
+    if (mapping.plan === 'annual' && !isTrial) {
+      // Vollzugang erst nach echter Zahlung
       updateData.purchased_analyses = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership', 'relationship', 'events']
+    } else if (mapping.plan === 'annual' && isTrial) {
+      // Testphase: nur 1 Ereignis-Analyse
+      updateData.purchased_analyses = ['events']
     }
     await supabase.from('profiles').update(updateData).eq('id', userId)
   } else if (mapping.type === 'analysis') {
@@ -130,9 +135,10 @@ router.post('/', async (req, res) => {
           await fulfillOrder(userId, priceId)
         } else if (session.mode === 'subscription' && userId) {
           const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
-          const fullSession = await stripe.checkout.sessions.retrieve(session.id, { expand: ['line_items'] })
+          const fullSession = await stripe.checkout.sessions.retrieve(session.id, { expand: ['line_items', 'subscription'] })
           const itemPriceId = fullSession.line_items?.data?.[0]?.price?.id
-          if (itemPriceId) await fulfillOrder(userId, itemPriceId)
+          const isTrial = fullSession.subscription?.status === 'trialing'
+          if (itemPriceId) await fulfillOrder(userId, itemPriceId, isTrial)
 
           // If this was an annual upgrade, cancel the old monthly membership + analysis subs
           if (session.metadata?.upgrade_from_monthly === 'true' && customerId) {
@@ -169,8 +175,9 @@ router.post('/', async (req, res) => {
         }
 
         if (subscription.status === 'active' || subscription.status === 'trialing') {
+          const isTrial = subscription.status === 'trialing'
           for (const item of items) {
-            await fulfillOrder(profile.id, item.price?.id)
+            await fulfillOrder(profile.id, item.price?.id, isTrial)
           }
           // If upgraded to annual, cancel any remaining analysis subscriptions (included in annual)
           const isNowAnnual = items.some(item => {

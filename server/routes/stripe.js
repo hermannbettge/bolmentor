@@ -158,7 +158,7 @@ router.post('/claim-session', requireAuth, async (req, res) => {
     if (!session_id) return res.status(400).json({ error: 'session_id fehlt' })
 
     const session = await stripe.checkout.sessions.retrieve(session_id, {
-      expand: ['line_items'],
+      expand: ['line_items', 'subscription'],
     })
 
     if (session.status !== 'complete' && session.payment_status !== 'paid') {
@@ -171,6 +171,7 @@ router.post('/claim-session', requireAuth, async (req, res) => {
     if (!mapping) return res.status(400).json({ error: 'Produkt nicht erkannt' })
 
     const now = new Date()
+    const isTrial = session.subscription?.status === 'trialing'
 
     if (mapping.type === 'membership') {
       const updateData = {
@@ -180,8 +181,10 @@ router.post('/claim-session', requireAuth, async (req, res) => {
         stripe_customer_id: session.customer || null,
         updated_at: now.toISOString(),
       }
-      if (mapping.plan === 'annual') {
+      if (mapping.plan === 'annual' && !isTrial) {
         updateData.purchased_analyses = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership', 'relationship', 'events']
+      } else if (mapping.plan === 'annual' && isTrial) {
+        updateData.purchased_analyses = ['events']
       }
       const { error: updateErr } = await supabase.from('profiles').update(updateData).eq('id', req.user.id)
       if (updateErr) {
