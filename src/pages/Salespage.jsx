@@ -448,13 +448,13 @@ export default function Salespage() {
               <div style={{ fontSize: '0.9rem', color: 'rgba(244,239,230,0.92)', lineHeight: 1.8, fontWeight: 300, fontStyle: 'italic' }}>
                 „Du trägst den Weißen Magier als Siegel. Das bedeutet, du wirkst durch Ausrichtung, nicht durch Kraft. Wenn du gerade das Gefühl hast, gegen Widerstände zu arbeiten, frag dich, ob du wirklich ausgerichtet bist oder es aus Pflicht tust. Heute ist ein guter Tag, um loszulassen, was du nicht wirklich willst."
               </div>
-              <div style={{ marginTop: '24px', display: 'flex', gap: '8px' }}>
+              <div style={{ marginTop: '24px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {[
                   'Warum läuft das immer gleich ab?',
                   'Was trägt dieser Tag energetisch?',
                   'Was blockiert mich gerade?',
                 ].map((s, i) => (
-                  <div key={i} style={{ backgroundColor: 'rgba(244,239,230,0.08)', border: '1px solid rgba(244,239,230,0.18)', borderRadius: '16px', padding: '6px 12px', fontSize: '0.72rem', color: 'rgba(244,239,230,0.7)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: m ? '120px' : '160px' }}>
+                  <div key={i} style={{ backgroundColor: 'rgba(244,239,230,0.08)', border: '1px solid rgba(244,239,230,0.18)', borderRadius: '16px', padding: '6px 12px', fontSize: '0.72rem', color: 'rgba(244,239,230,0.7)' }}>
                     {s}
                   </div>
                 ))}
