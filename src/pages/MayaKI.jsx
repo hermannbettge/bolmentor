@@ -189,10 +189,8 @@ export default function MayaKI() {
             </button>
             {messages.length > 0 && (
               <button
-                onClick={async () => {
-                  setMessages([])
-                  if (profile?.id) await saveSessionToDB(profile.id, [])
-                }}
+                onClick={() => setMessages([])}
+
                 style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer', fontSize: '0.75rem', padding: '4px 8px' }}
               >
                 Leeren

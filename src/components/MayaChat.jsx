@@ -118,10 +118,8 @@ export default function MayaChat() {
     }
   }
 
-  async function clearChat() {
-    const fresh = [WELCOME]
-    setMessages(fresh)
-    if (user) await saveSessionToDB(user.id, fresh)
+  function clearChat() {
+    setMessages([WELCOME])
   }
 
   if (!user || isMobile || kiLocked) return null
