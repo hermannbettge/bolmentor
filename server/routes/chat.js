@@ -310,10 +310,13 @@ async function requireAuth(req, res, next) {
 
 // GET /api/chat/status — returns limit, used, remaining, allowedTopics
 router.get('/status', requireAuth, async (req, res) => {
-  const { data: profile } = await supabase.from('profiles').select('subscription_plan, purchased_analyses, is_admin, chat_messages_limit').eq('id', req.user.id).single()
+  const { data: profile } = await supabase.from('profiles').select('subscription_plan, purchased_analyses, is_admin, chat_messages_limit, maya_ki_enabled').eq('id', req.user.id).single()
   if (!profile) return res.status(400).json({ error: 'Profil nicht gefunden' })
 
   const isAdmin = profile.is_admin === true
+  const kiEnabled = isAdmin || profile.maya_ki_enabled === true
+  if (!kiEnabled) return res.status(403).json({ error: 'MAYA_KI_LOCKED', message: 'MAYA KI ist für deinen Account noch nicht freigeschaltet.' })
+
   const plan = profile.subscription_plan || 'monthly'
   const purchased = profile.purchased_analyses || []
   // Admin-set limit overrides plan-based limit; admins themselves have no limit
@@ -346,6 +349,9 @@ router.post('/', requireAuth, async (req, res) => {
     if (!profile) return res.status(400).json({ error: 'Profil nicht gefunden' })
 
     const isAdmin = profile.is_admin === true
+    const kiEnabled = isAdmin || profile.maya_ki_enabled === true
+    if (!kiEnabled) return res.status(403).json({ error: 'MAYA_KI_LOCKED', message: 'MAYA KI ist für deinen Account noch nicht freigeschaltet.' })
+
     const plan = profile.subscription_plan || 'monthly'
     const purchased = profile.purchased_analyses || []
     const limit = isAdmin ? Infinity : (profile.chat_messages_limit ?? getDailyLimit(plan, purchased))

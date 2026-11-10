@@ -232,6 +232,17 @@ export default function Admin() {
     }
   }
 
+  async function toggleMayaKI(userId, enabled) {
+    try {
+      await apiCall(`/users/${userId}/maya-ki`, 'PATCH', { maya_ki_enabled: enabled })
+      setMsg(enabled ? 'MAYA KI freigeschaltet.' : 'MAYA KI gesperrt.')
+      await loadAll()
+      if (selectedUser?.id === userId) setSelectedUser(u => ({ ...u, maya_ki_enabled: enabled }))
+    } catch (e) {
+      setError(e.message)
+    }
+  }
+
   function changeEmail(userId) {
     showInput('Neue E-Mail-Adresse:', async (newEmail) => {
       closeModal()
@@ -625,6 +636,18 @@ export default function Admin() {
                   <div style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-2)', marginBottom: '12px' }}>
                     Rechte
                   </div>
+                  <button
+                    onClick={() => toggleMayaKI(selectedUser.id, !selectedUser.maya_ki_enabled)}
+                    style={{
+                      width: '100%', padding: '10px', marginBottom: '8px',
+                      backgroundColor: selectedUser.maya_ki_enabled ? 'rgba(184,151,90,0.15)' : 'var(--bg-deep)',
+                      border: selectedUser.maya_ki_enabled ? '1px solid rgba(184,151,90,0.6)' : '1px solid var(--border)',
+                      color: selectedUser.maya_ki_enabled ? 'var(--accent)' : 'var(--text-2)',
+                      cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem', textAlign: 'left',
+                    }}
+                  >
+                    {selectedUser.maya_ki_enabled ? '✦ MAYA KI aktiv — sperren' : '✦ MAYA KI freischalten'}
+                  </button>
                   <button
                     onClick={() => toggleAdmin(selectedUser.id, !selectedUser.is_admin)}
                     style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-deep)', border: '1px solid var(--border)', color: selectedUser.is_admin ? '#ef4444' : 'var(--text-2)', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem' }}

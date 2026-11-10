@@ -54,14 +54,24 @@ export default function MayaChat() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [sessionLoaded, setSessionLoaded] = useState(false)
+  const [kiLocked, setKiLocked] = useState(null) // null=unbekannt, true=gesperrt, false=frei
   const [error, setError] = useState('')
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
 
-  // Load today's session from DB when chat opens for the first time
+  // Check KI access and load session
   useEffect(() => {
     if (!user || sessionLoaded) return
     setSessionLoaded(true)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      fetch('/api/chat/status', { headers: { Authorization: `Bearer ${session.access_token}` } })
+        .then(r => r.json().then(d => ({ ok: r.ok, data: d })))
+        .then(({ ok, data }) => {
+          if (!ok && data.error === 'MAYA_KI_LOCKED') { setKiLocked(true); return }
+          setKiLocked(false)
+        })
+        .catch(() => setKiLocked(false))
+    })
     loadSessionFromDB(user.id).then(msgs => {
       if (msgs) setMessages(msgs)
     })
@@ -114,7 +124,7 @@ export default function MayaChat() {
     if (user) await saveSessionToDB(user.id, fresh)
   }
 
-  if (!user || isMobile) return null
+  if (!user || isMobile || kiLocked) return null
 
   return (
     <>

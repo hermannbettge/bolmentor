@@ -47,7 +47,8 @@ export default function MayaKI() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [status, setStatus] = useState(null) // { limit, used, remaining, allowedTopicLabels, plan }
+  const [status, setStatus] = useState(null)
+  const [kiLocked, setKiLocked] = useState(false)
   const [sessionLoaded, setSessionLoaded] = useState(false)
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
@@ -75,7 +76,9 @@ export default function MayaKI() {
       const res = await fetch('/api/chat/status', {
         headers: { 'Authorization': `Bearer ${session.access_token}` },
       })
-      if (res.ok) setStatus(await res.json())
+      const data = await res.json()
+      if (res.status === 403 && data.error === 'MAYA_KI_LOCKED') { setKiLocked(true); return }
+      if (res.ok) setStatus(data)
     } catch (_) {}
   }
 
@@ -139,6 +142,20 @@ export default function MayaKI() {
   const isAdmin = status?.isAdmin === true
   const remaining = status?.remaining ?? null
   const isLimitReached = !isAdmin && remaining !== null && remaining <= 0
+
+  if (kiLocked) return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: m ? 'calc(100vh - 70px)' : '100vh', backgroundColor: 'var(--color-bg-deep)', padding: '32px 24px', textAlign: 'center' }}>
+      <div style={{ fontSize: '2.5rem', marginBottom: '20px' }}>☽</div>
+      <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--color-gold-muted)', marginBottom: '12px' }}>MAYA KI</div>
+      <h2 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: '1.6rem', color: 'var(--color-text-primary)', margin: '0 0 16px' }}>Noch nicht freigeschaltet</h2>
+      <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', lineHeight: 1.7, maxWidth: '360px', margin: '0 0 28px' }}>
+        MAYA KI ist ein exklusiver Vorteil des Jahrestarifs und wird persönlich freigeschaltet. Erfahre im nächsten Live auf TikTok wie.
+      </p>
+      <button onClick={() => navigate('/dashboard')} style={{ backgroundColor: 'var(--color-gold)', color: '#000', border: 'none', borderRadius: '20px', padding: '10px 24px', fontSize: '0.88rem', fontWeight: 500, cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}>
+        Zum Dashboard
+      </button>
+    </div>
+  )
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: m ? 'calc(100vh - 70px)' : '100vh', backgroundColor: 'var(--color-bg-deep)', overflow: 'hidden' }}>

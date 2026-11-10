@@ -3,13 +3,12 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 import { redirectToCheckout, redirectToGuestCheckout } from '../lib/stripe.js'
 import { useAuth } from '../hooks/useAuth.jsx'
 
-const isIntro = new Date() < new Date('2027-01-01T00:00:00Z')
-const analysisPrice = isIntro ? '7 € / Monat' : '9 € / Monat'
-const analysisNote = isIntro ? 'Einführungspreis bis 31.12.2026, danach 9 € / Monat. Jederzeit kündbar.' : '9 € / Monat. Jederzeit kündbar.'
+const analysisPrice = '9 € / Monat'
+const analysisNote = '9 € / Monat. Jederzeit kündbar.'
 
 const PRODUCTS = [
-  { key: 'membershipMonthly', label: 'Monatsmitgliedschaft', price: isIntro ? '17 € / Monat' : '27 € / Monat', desc: isIntro ? 'Einführungspreis bis 31.12.2026, danach 27 € / Monat. Jederzeit kündbar.' : '27 € / Monat. Jederzeit kündbar.' },
-  { key: 'membershipAnnual',  label: 'Jahrestarif', price: isIntro ? '170 € / Jahr' : '270 € / Jahr', desc: isIntro ? 'Einführungspreis bis 31.12.2026 (14,17 € / Monat). Danach 270 € / Jahr.' : '270 € / Jahr (22,50 € / Monat).' },
+  { key: 'membershipMonthly', label: 'Monatsmitgliedschaft', price: '27 € / Monat', desc: '27 € / Monat. Jederzeit kündbar.' },
+  { key: 'membershipAnnual',  label: 'Jahrestarif', price: '197 € / Jahr', desc: '197 € / Jahr (16,42 € / Monat). Inkl. MAYA KI.' },
   { key: 'business',         label: 'Business-Analyse', price: analysisPrice, desc: analysisNote },
   { key: 'health',           label: 'Gesundheitsanalyse', price: analysisPrice, desc: analysisNote },
   { key: 'family',           label: 'Familienanalyse', price: analysisPrice, desc: analysisNote },
@@ -96,11 +95,11 @@ export default function Checkout() {
             <>
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                 <span style={{ color: 'var(--text-2)', fontSize: '0.88rem' }}>Monatsmitgliedschaft (erforderlich)</span>
-                <span style={{ color: 'var(--accent)', fontWeight: 500, fontSize: '0.88rem' }}>{isIntro ? '17 € / Monat' : '27 € / Monat'}</span>
+                <span style={{ color: 'var(--accent)', fontWeight: 500, fontSize: '0.88rem' }}>27 € / Monat</span>
               </div>
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ color: 'var(--text-1)', fontWeight: 600 }}>Gesamt</span>
-                <span style={{ color: 'var(--accent)', fontWeight: 700 }}>{isIntro ? `${7 + 17} € / Monat` : `${9 + 27} € / Monat`}</span>
+                <span style={{ color: 'var(--accent)', fontWeight: 700 }}>{`${9 + 27} € / Monat`}</span>
               </div>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-2)', marginTop: '10px', lineHeight: 1.5 }}>
                 Die Mitgliedschaft wird separat als erster Schritt abgeschlossen. Nach der Registrierung kannst du die Analyse direkt buchen.

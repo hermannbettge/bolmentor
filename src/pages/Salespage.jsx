@@ -235,10 +235,8 @@ function FaqItem({ question, answer }) {
 }
 
 export default function Salespage() {
-  const now = new Date()
-  const isIntroPrice = now < new Date('2026-11-01')
-  const jahresPreis = isIntroPrice ? '170 €' : '270 €'
-  const jahresMonat = isIntroPrice ? '≈ 14,17 €/Monat' : '≈ 22,50 €/Monat'
+  const jahresPreis = '197 €'
+  const jahresMonat = '≈ 16,42 €/Monat'
   const m = useIsMobile()
 
   const grid2 = {
@@ -280,9 +278,9 @@ export default function Salespage() {
             </P>
           </div>
 
-          <PillButton onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })} variant="copper">ab 17 € / Monat · Jetzt Zugang sichern →</PillButton>
+          <PillButton onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })} variant="copper">ab 27 € / Monat · Jetzt Zugang sichern →</PillButton>
           <p style={{ color: TEXT_LIGHT, fontSize: '0.78rem', marginTop: '14px' }}>
-            Einführungspreis gültig bis 31.12.2026 · Danach 27 €/Monat<br />Jederzeit kündbar
+            27 €/Monat · Jederzeit kündbar
           </p>
         </div>
       </section>
@@ -472,19 +470,14 @@ export default function Salespage() {
           <Tag>Dein Zugang</Tag>
           <H2>Wähle deinen Einstieg.</H2>
 
-          {/* Intro-Preis Banner */}
-          <div style={{ backgroundColor: COPPER, borderRadius: '2px', padding: '14px 24px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-            <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#FFF8F2' }}>Einführungspreis</div>
-            <div style={{ color: '#FFF8F2', fontSize: '0.88rem', fontWeight: 300 }}>Starte für <strong>17 €</strong> statt 27 €. Der Einführungspreis gilt bis einschließlich 31. Dezember 2026.<br />Ab dem 1. Januar 2027 gilt der reguläre Preis von 27 €/Monat.</div>
-          </div>
 
           <div style={{ ...grid3, marginTop: '8px' }}>
             {/* Basis Mitgliedschaft */}
             <div style={{ backgroundColor: DEEP, padding: '40px 32px', display: 'flex', flexDirection: 'column' }}>
               <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: COPPER_LIGHT, marginBottom: '20px' }}>Mitgliedschaft</div>
-              <div style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontSize: '2.8rem', fontWeight: 400, color: CREAM, lineHeight: 1 }}>17 €</div>
+              <div style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontSize: '2.8rem', fontWeight: 400, color: CREAM, lineHeight: 1 }}>27 €</div>
               <div style={{ color: 'rgba(244,239,230,0.85)', fontSize: '0.78rem', marginBottom: '4px', marginTop: '4px' }}>pro Monat</div>
-              <div style={{ color: COPPER_LIGHT, fontSize: '0.78rem', marginBottom: '32px' }}>danach 27 €/Monat</div>
+              <div style={{ color: COPPER_LIGHT, fontSize: '0.78rem', marginBottom: '32px' }}>jederzeit kündbar</div>
               <Line dark />
               <div style={{ paddingTop: '24px' }}>
                 {[
@@ -492,7 +485,6 @@ export default function Salespage() {
                   'Monatliche Tiefenanalyse',
                   'Energiekalender (Heute)',
                   '1 Ereignis im 1. Monat, +1 pro Monat',
-                  'Maya KI, persönliche Beraterin',
                   'PDF-Download jeder Analyse',
                   'Persönliches Maya-Profil',
                   'Jederzeit kündbar',
@@ -514,7 +506,7 @@ export default function Salespage() {
               </div>
               <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: COPPER_LIGHT, marginBottom: '20px' }}>Jahrestarif</div>
               <div style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontSize: '2.8rem', fontWeight: 400, color: CREAM, lineHeight: 1 }}>{jahresPreis}</div>
-              <div style={{ color: 'rgba(244,239,230,0.85)', fontSize: '0.78rem', marginBottom: '4px', marginTop: '4px' }}>pro Jahr{isIntroPrice ? ' · Einführungspreis bis 31.12.2026' : ''}</div>
+              <div style={{ color: 'rgba(244,239,230,0.85)', fontSize: '0.78rem', marginBottom: '4px', marginTop: '4px' }}>pro Jahr</div>
               <div style={{ color: COPPER_LIGHT, fontSize: '0.78rem', marginBottom: '32px' }}>{jahresMonat}</div>
               <Line dark />
               <div style={{ paddingTop: '24px' }}>
@@ -530,6 +522,9 @@ export default function Salespage() {
                     <span style={{ color: COPPER_LIGHT, flexShrink: 0 }}>·</span> {item}
                   </div>
                 ))}
+                <div style={{ color: CREAM, fontWeight: 500, fontSize: '0.88rem', marginBottom: '11px', display: 'flex', gap: '12px', alignItems: 'center' }}>
+                  <span style={{ color: COPPER_LIGHT, flexShrink: 0 }}>✦</span> MAYA KI — persönliche KI-Beraterin
+                </div>
               </div>
               <div style={{ marginTop: 'auto', paddingTop: '32px' }}>
                 <PillButton to="/checkout?product=membershipAnnual" variant="copper">Jahrestarif wählen →</PillButton>
@@ -576,9 +571,9 @@ export default function Salespage() {
             Die spannendere Frage ist, welches Muster heute noch dafür sorgt, dass bestimmte Situationen immer wieder ähnlich verlaufen.<br />Genau dort beginnt der nächste Schritt.
           </P>
           <div style={{ marginTop: '40px', display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <PillButton onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })} variant="copper">ab 17 € / Monat · Jetzt Zugang sichern →</PillButton>
+            <PillButton onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })} variant="copper">ab 27 € / Monat · Jetzt Zugang sichern →</PillButton>
           </div>
-          <p style={{ color: TEXT_LIGHT, fontSize: '0.78rem', marginTop: '14px' }}>Einführungspreis gültig bis 31.12.2026 · Danach 27 €/Monat<br />Jederzeit kündbar</p>
+          <p style={{ color: TEXT_LIGHT, fontSize: '0.78rem', marginTop: '14px' }}>27 €/Monat · Jederzeit kündbar</p>
         </div>
       </section>
 

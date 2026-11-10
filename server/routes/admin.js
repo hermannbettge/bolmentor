@@ -109,6 +109,13 @@ router.patch('/users/:id/chat-limit', requireAdmin, async (req, res) => {
   res.json(data)
 })
 
+router.patch('/users/:id/maya-ki', requireAdmin, async (req, res) => {
+  const { maya_ki_enabled } = req.body
+  const { data, error } = await supabase.from('profiles').update({ maya_ki_enabled: !!maya_ki_enabled, updated_at: new Date().toISOString() }).eq('id', req.params.id).select().single()
+  if (error) return res.status(500).json({ error: error.message })
+  res.json(data)
+})
+
 // E-Mail ändern
 router.patch('/users/:id/email', requireAdmin, async (req, res) => {
   const { email } = req.body
