@@ -225,7 +225,7 @@ function MonthView({ days, firstDay, todayStr, selected, setSelected, isMobile }
                     lineHeight: 1, flexShrink: 0,
                   }}>{day.day}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '2px', flexShrink: 0 }}>
-                    {regenInfo && !isMobile && (
+                    {regenInfo && (
                       <span style={{ fontSize: '0.65rem', color: regenInfo.color, lineHeight: 1, fontWeight: 600 }}>
                         {regenInfo.symbol}
                       </span>
