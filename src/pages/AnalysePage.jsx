@@ -17,7 +17,7 @@ function AnnualUpgradeModal({ onClose, onConfirm, loading }) {
         </h2>
         <p style={{ color: 'var(--text-2)', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: '24px' }}>
           {isIntro
-            ? 'Jahrestarif: 170 € / Jahr (14,17 € / Monat) bis 31.12.2026, danach 270 € / Jahr. Alle Zusatzanalysen inklusive. Der bereits gezahlte Monatsbeitrag wird anteilig angerechnet.'
+            ? 'Jahrestarif: 270 € / Jahr (22,50 € / Monat). Alle Zusatzanalysen inklusive. Der bereits gezahlte Monatsbeitrag wird anteilig angerechnet.'
             : 'Jahrestarif: 270 € / Jahr (22,50 € / Monat). Alle Zusatzanalysen inklusive. Der bereits gezahlte Monatsbeitrag wird anteilig angerechnet.'}
         </p>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
