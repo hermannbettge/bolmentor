@@ -8,7 +8,7 @@ const analysisNote = '9 € / Monat. Jederzeit kündbar.'
 
 const PRODUCTS = [
   { key: 'membershipMonthly', label: 'Monatsmitgliedschaft', price: '27 € / Monat', desc: '27 € / Monat. Jederzeit kündbar.' },
-  { key: 'membershipAnnual',  label: 'Jahrestarif', price: '197 € / Jahr', desc: '197 € / Jahr (16,42 € / Monat). Inkl. MAYA KI.' },
+  { key: 'membershipAnnual',  label: 'Jahrestarif', price: '270 € / Jahr', desc: '270 € / Jahr (22,50 € / Monat). Inkl. MAYA KI.' },
   { key: 'business',         label: 'Business-Analyse', price: analysisPrice, desc: analysisNote },
   { key: 'health',           label: 'Gesundheitsanalyse', price: analysisPrice, desc: analysisNote },
   { key: 'family',           label: 'Familienanalyse', price: analysisPrice, desc: analysisNote },

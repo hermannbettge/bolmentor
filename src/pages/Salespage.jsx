@@ -235,8 +235,8 @@ function FaqItem({ question, answer }) {
 }
 
 export default function Salespage() {
-  const jahresPreis = '197 €'
-  const jahresMonat = '≈ 16,42 €/Monat'
+  const jahresPreis = '270 €'
+  const jahresMonat = '≈ 22,50 €/Monat'
   const m = useIsMobile()
 
   const grid2 = {
@@ -516,7 +516,7 @@ export default function Salespage() {
                   'Tagesanalysen für jedes Datum',
                   '12 Ereignis-Analysen inklusive',
                   'Jahresanalyse für jeden Bereich',
-                  '2 Monate geschenkt',
+                  '2 Monate kostenlos',
                 ].map((item, i) => (
                   <div key={i} style={{ color: 'rgba(244,239,230,0.8)', fontWeight: 300, fontSize: '0.88rem', marginBottom: '11px', display: 'flex', gap: '12px' }}>
                     <span style={{ color: COPPER_LIGHT, flexShrink: 0 }}>·</span> {item}
