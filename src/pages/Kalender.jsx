@@ -1,3 +1,4 @@
+import { civilDateISO } from '../lib/mayanCalendar.js'
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
@@ -10,10 +11,10 @@ const GERMAN_MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','A
 const WEEKDAYS = ['Mo','Di','Mi','Do','Fr','Sa','So']
 
 const ENERGY = {
-  action:   { label: 'Aktion',    color: '#4CAF7D', bg: 'rgba(76,175,125,0.12)',  desc: 'Ideal für Sport, Entscheidungen, Meetings' },
-  creative: { label: 'Kreativ',   color: '#7B9ED9', bg: 'rgba(123,158,217,0.12)', desc: 'Ideal für Ideen, kreative Arbeit, soziale Kontakte' },
-  balance:  { label: 'Balance',   color: '#E6B84A', bg: 'rgba(230,184,74,0.12)',  desc: 'Ideal für Routinen, Struktur, Planung' },
-  rest:     { label: 'Ruhe',      color: '#C47A5A', bg: 'rgba(196,122,90,0.12)',  desc: 'Ideal für Rückzug, Meditation, Loslassen' },
+  action:   { label: 'Aktion',    color: '#4CAF7D', bg: 'rgba(76,175,125,0.12)',  desc: 'App-Impuls für Aktivität und bewusste Entscheidungen' },
+  creative: { label: 'Kreativ',   color: '#7B9ED9', bg: 'rgba(123,158,217,0.12)', desc: 'App-Impuls für Ideen und kreative Arbeit' },
+  balance:  { label: 'Balance',   color: '#E6B84A', bg: 'rgba(230,184,74,0.12)',  desc: 'App-Impuls für Routinen, Struktur und Planung' },
+  rest:     { label: 'Ruhe',      color: '#C47A5A', bg: 'rgba(196,122,90,0.12)',  desc: 'App-Impuls für Reflexion und freiwillige Pausen' },
 }
 
 const RESONANCE_STYLE = {
@@ -71,7 +72,7 @@ export default function Kalender() {
   // First weekday of month (0=Mon … 6=Sun)
   const firstDay = days.length > 0 ? ((new Date(year, month - 1, 1).getDay() + 6) % 7) : 0
 
-  const todayStr = now.toISOString().split('T')[0]
+  const todayStr = civilDateISO(now)
 
   return (
     <div style={{ backgroundColor: 'var(--bg-deep)', minHeight: '100vh', padding: isMobile ? '16px 8px' : 'clamp(16px, 4vw, 40px) clamp(12px, 3vw, 32px)', fontFamily: 'Inter, sans-serif', overflowX: 'hidden' }}>
@@ -297,7 +298,7 @@ function DayDetail({ day, onClose, navigate, profile }) {
   const res = RESONANCE_STYLE[day.resonance]
   const dateObj = new Date(day.date + 'T00:00:00')
   const weekday = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'][dateObj.getDay()]
-  const todayDate = new Date().toISOString().split('T')[0]
+  const todayDate = civilDateISO()
   const isToday = day.date === todayDate
   const canCreateForDate = profile?.is_admin || profile?.subscription_plan === 'annual' || isToday
 
@@ -386,7 +387,7 @@ function DayDetail({ day, onClose, navigate, profile }) {
 
         <div style={{ padding: '14px 16px', borderRadius: '8px', backgroundColor: en.bg, border: `1px solid ${en.color}30`, marginBottom: '12px' }}>
           <div style={{ fontSize: '0.78rem', fontWeight: 600, color: en.color, marginBottom: '4px' }}>{en.label}energie</div>
-          <div style={{ fontSize: '0.82rem', color: 'var(--text-1)' }}>{en.desc}</div>
+          <div style={{ fontSize: '0.82rem', color: 'var(--text-1)' }}>{day.specialDay ? '29. Februar. 0.0 Hunab Ku, kein reguläres Kin, kein galaktischer Ton und keine Wellenposition.' : en.desc}</div>
         </div>
 
         {day.resonance !== 'none' && (
@@ -404,12 +405,12 @@ function DayDetail({ day, onClose, navigate, profile }) {
             </div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-2)', lineHeight: 1.6 }}>
               {regen.wave
-                ? 'Sturmwelle · Heilwelle: Ideale Zeit für Urlaub, Regeneration und Heilungsprozesse. Diese 13-tägige Periode gilt für alle Menschen.'
+                ? 'Dreamspell-Sturmwelle, Kin 79 bis 91. Redaktioneller Ruheimpuls der App, keine allgemeine Ruhepflicht oder Heilwirkung.'
                 : [
-                  'Leichter Ruhetag. Tempo ein wenig herausnehmen, unnötige Termine vermeiden. Der Körper dankt kurze Pausen.',
-                  'Bewusster Pausentag. Weniger planen, mehr sein lassen. Wichtige Entscheidungen und intensive Gespräche auf morgen verschieben.',
-                  'Starker Regenerationstag. Rückzug empfohlen. Kein Stress, kein voller Terminkalender. Körper und Geist brauchen heute echte Stille.',
-                  'Maximaler Regenerationstag. Unbedingt Ruhe einplanen. Wer heute gegen den Strom schwimmt, zahlt einen hohen Preis. Vollständiger Rückzug ist keine Schwäche, sondern Intelligenz.',
+                  'Ruheimpuls Stufe 0. Optional kurze Pausen einplanen. Redaktionelle App-Einordnung, keine gesundheitliche Bewertung.',
+                  'Ruheimpuls Stufe 1. Prüfe selbst, ob heute mehr Zeit für Erholung passt. Wichtige Entscheidungen hängen von deiner Situation ab.',
+                  'Ruheimpuls Stufe 2. Einladung, bewusst Raum für Erholung zu schaffen, wenn es für dich passt.',
+                  'Ruheimpuls Stufe 3. Redaktionelle Einladung zu einer längeren selbst gewählten Pause. Daraus folgt keine Pflicht und keine negative Prognose.',
                 ][regen.level] || 'Leichter Ruhetag. Tempo ein wenig herausnehmen.'}
             </div>
           </div>

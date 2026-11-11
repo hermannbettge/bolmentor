@@ -1,19 +1,17 @@
-// Universelle Regenerations- und Ruhetage basierend auf dem Maya Tzolkin-Kalender.
-// Gelten für alle Menschen gleich — nicht personalisiert.
-// Quelle: Tzolkin-Wellenmuster, Sturmwelle = Heilwelle = 13-tägige Regenerationsperiode.
-//
-// Level 0 = Regenerationstag (✦)
-// Level 1 = Wichtiger Regenerationstag (✦✦)
-// Level 2 = Starker Regenerationstag (✦✦✦)
-// Level 3 = Sehr starker Regenerationstag (✦✦✦✦)
-// wave    = Sturmwelle / Heilwelle (〰)
-
-const REGEN_DAYS = {
+// App-authored pause suggestions; not universal medical or traditional Maya rules.
+// Original 2026–2027 dates and all four levels preserved without inventing provenance.
+// Only the wave=true spans can be verified mathematically as Dreamspell wave 7.
+export const REGEN_PROVENANCE = {
+  status: 'editorial-unverified',
+  coverage: { from: '2026-10-04', to: '2027-12-26' },
+  note: 'Herkunft und Ableitungsregel der einzelnen Ruhegrade sind im Export nicht dokumentiert. Keine Aussage zur körperlichen Regeneration. Fehlender Eintrag bedeutet keine Aussage.',
+}
+export const REGEN_DAYS = {
   '2026-10-04': { level: 2 },
   '2026-10-12': { level: 0 },
   '2026-10-24': { level: 0 },
   '2026-11-01': { level: 0 },
-  // Sturmwelle / Heilwelle 13.–25. Nov 2026
+  // Sturmwelle (Dreamspell-Welle 7) 13.–25. Nov 2026
   '2026-11-13': { level: 0, wave: true },
   '2026-11-14': { level: 0, wave: true },
   '2026-11-15': { level: 0, wave: true },
@@ -50,7 +48,7 @@ const REGEN_DAYS = {
   '2027-06-29': { level: 0 },
   '2027-07-11': { level: 0 },
   '2027-07-19': { level: 0 },
-  // Sturmwelle / Heilwelle 31.07–12.08 2027
+  // Sturmwelle (Dreamspell-Welle 7) 31.07–12.08 2027
   '2027-07-31': { level: 0, wave: true },
   '2027-08-01': { level: 0, wave: true },
   '2027-08-02': { level: 0, wave: true },
@@ -86,16 +84,16 @@ export function getRegenDay(dateStr) {
 
 export function getRegenSymbol(regen) {
   if (!regen) return null
-  if (regen.wave) return { symbol: '〰', label: 'Sturmwelle · Heilwelle', color: '#7B9ED9' }
+  if (regen.wave) return { symbol: '〰', label: 'Sturmwelle · App-Ruheimpuls', color: '#7B9ED9' }
   const symbols = ['✦', '✦✦', '✦✦✦', '✦✦✦✦']
-  const labels = ['Regenerationstag', 'Wichtiger Regenerationstag', 'Starker Regenerationstag', 'Sehr starker Regenerationstag']
+  const labels = ['Ruheimpuls Stufe 0', 'Ruheimpuls Stufe 1', 'Ruheimpuls Stufe 2', 'Ruheimpuls Stufe 3']
   return { symbol: symbols[regen.level], label: labels[regen.level], color: '#C47A5A' }
 }
 
 export const REGEN_LEGEND = [
-  { symbol: '✦', label: 'Regenerationstag', desc: 'Kraft tanken, Tempo herausnehmen' },
-  { symbol: '✦✦', label: 'Wichtiger Regenerationstag', desc: 'Bewusst pausieren, wenig planen' },
-  { symbol: '✦✦✦', label: 'Starker Regenerationstag', desc: 'Rückzug empfohlen, kein Stress' },
-  { symbol: '✦✦✦✦', label: 'Sehr starker Regenerationstag', desc: 'Unbedingt Ruhe einplanen' },
-  { symbol: '〰', label: 'Sturmwelle · Heilwelle', desc: '13-tägige Regenerationsperiode, ideale Zeit für Urlaub, Auszeit und Heilung' },
+  { symbol: '✦', label: 'Ruheimpuls Stufe 0', desc: 'Kraft tanken, Tempo herausnehmen' },
+  { symbol: '✦✦', label: 'Ruheimpuls Stufe 1', desc: 'Bewusst pausieren, wenig planen' },
+  { symbol: '✦✦✦', label: 'Ruheimpuls Stufe 2', desc: 'Optional mehr Raum für Erholung schaffen' },
+  { symbol: '✦✦✦✦', label: 'Ruheimpuls Stufe 3', desc: 'Freiwillig eine längere Pause erwägen' },
+  { symbol: '〰', label: 'Sturmwelle · App-Ruheimpuls', desc: '13 Tage der Sturmwelle. Redaktionelle Einladung zur Reflexion und zu selbst gewählten Pausen.' },
 ]

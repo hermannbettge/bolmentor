@@ -1,3 +1,4 @@
+import { civilDateISO } from '../lib/mayanCalendar.js'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
@@ -20,7 +21,7 @@ export default function PartnerschaftsanalysePage() {
   const [dailyAnalysis, setDailyAnalysis] = useState(null)
   const [dailyLoading, setDailyLoading] = useState(false)
   const [dailyChecking, setDailyChecking] = useState(true)
-  const [dailyDate, setDailyDate] = useState(new Date().toISOString().split('T')[0])
+  const [dailyDate, setDailyDate] = useState(civilDateISO())
 
   const hasPurchased = profile?.is_admin || profile?.purchased_analyses?.includes('partnership')
   const hasPartnerData = !!profile?.partner_birth_date
@@ -48,7 +49,7 @@ export default function PartnerschaftsanalysePage() {
     check()
   }, [user])
 
-  const todayIso = new Date().toISOString().split('T')[0]
+  const todayIso = civilDateISO()
 
   useEffect(() => {
     if (!user || !hasPartnerData) { setDailyChecking(false); return }

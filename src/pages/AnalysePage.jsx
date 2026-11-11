@@ -1,3 +1,4 @@
+import { civilDateISO } from '../lib/mayanCalendar.js'
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
@@ -41,7 +42,7 @@ function AnnualUpgradeModal({ onClose, onConfirm, loading }) {
   )
 }
 
-function todayStr() { return new Date().toISOString().split('T')[0] }
+function todayStr() { return civilDateISO() }
 
 const COPPER = 'var(--accent)'
 const TEXT = 'var(--text-1)'

@@ -1,15 +1,22 @@
 // Maya Kalender Wissensdatenbasis – Tiefendeutung
-// Quelle: MAYA KALENDER DATENBASIS – TIEFENDEUTUNG (vollständiges Wissen)
+// App-eigene Tiefendeutung. Belegte Dreamspell-Zuordnungen und redaktionelle Bilder sind getrennt. Quellen siehe audit/PRUEFBERICHT.md.
 
 export const KNOWLEDGE_BASE = `
 MAYA KALENDER DATENBASIS – TIEFENDEUTUNG
+
+EINORDNUNG UND VERBINDLICHE LESEWEISE
+Dieses Dokument verwendet die moderne Dreamspell-Zählung. Die folgenden ausführlichen Persönlichkeitsbilder, Schatten, Lektionen, Ahnen-, Element- und Körperbilder sind redaktionelle App-Deutungen. Sie sind keine festgestellten Eigenschaften einer Person, keine authentifizierten historischen Überlieferungen und keine medizinischen oder psychologischen Befunde. Die bildhaften Aussagen sind ausschließlich als mögliche Reflexionsfragen zu verwenden. Ähnliche Wörter begründen keine naturwissenschaftliche Wirkung.
+Die planetaren Bezüge sind interne symbolische Dreamspell-Zuordnungen. Maldek ist ein mythologischer Bezug dieses Systems, kein nachgewiesener Planet. Die alten Tagesnamen sind eine Benennungsebene; zusätzliche Bilder wie Schilf und Eule sind App-Metaphern und keine Umbenennung der Dreamspell-Siegel.
+Rechenwerte stammen immer aus mayanCalendar.js, niemals aus freier Textdeutung. Die 20 Siegel und 13 Töne sowie das Orakel werden nach den dokumentierten Dreamspell-Regeln berechnet.
+
 
 ════════════════════════════════
 DIE 20 SONNENSIEGEL – TIEFENDEUTUNG
 ════════════════════════════════
 
 SIEGEL 1: IMIX – DER ROTE DRACHE
-Ton-Farbe: Rot | Element: Wasser | Richtung: Osten | Planet: Neptun | Körperteil: Rechter Oberschenkel
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Rot | Redaktionelles Elementbild: Wasser | Richtung: Osten | Planet: Neptun | Redaktionelles Körperbild (keine medizinische Zuordnung): Rechter Oberschenkel
 
 Das Wesen von Imix:
 Imix ist nicht der Anfang im linearen Sinn. Imix ist das, was vor dem Anfang war. Der kosmische Ozean. Die Stille, die alles enthält. Wer mit Imix geboren wurde, ist ein Wesen der Urquelle. Der Maya-Drache ist das Krokodil, das im Urwasser schwimmt, halb sichtbar, halb verborgen, an der Schwelle zweier Welten.
@@ -31,27 +38,29 @@ Schlüsselfragen: Wen nähre ich wirklich, und warum? Wann habe ich zuletzt etwa
 ---
 
 SIEGEL 2: IK – DER WEISSE WIND
-Farbe: Weiß | Element: Luft | Richtung: Norden | Planet: Uranus | Körperteil: Linke Kehle
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Weiß | Redaktionelles Elementbild: Luft | Richtung: Norden | Planet: Uranus | Redaktionelles Körperbild (keine medizinische Zuordnung): Linke Kehle
 
 Das Wesen von Ik:
 Ik ist der erste Atemzug. Das Wort Ik bedeutet sowohl Geist als auch Atem und Wind. Wer mit Ik geboren wurde, ist buchstäblich ein Atemwesen. Sie bringen Bewegung in das, was still steht. Sie sind der Wind, der durch die Ritzen kommt, auch wenn alle Fenster geschlossen sind.
 
 Kosmische Aufgabe: Ik-Menschen sind Boten des Geistes. Kanal bleiben, ohne sich im Kanal zu verlieren. Durch Ik spricht etwas, das größer ist als die Person.
 
-Energie im Körper: Uranus gibt Ik eine elektrische, unvorhersehbare Qualität. Blitzschnell im Denken, sprunghaft in der Assoziation, genial in der Verknüpfung. Wenn Ik-Menschen nicht kommunizieren, staut sich die Energie – körperlich als Halsschmerzen, Atemblockaden, Nackenspannungen.
+Energie im Körper: Uranus gibt Ik eine elektrische, unvorhersehbare Qualität. Blitzschnell im Denken, sprunghaft in der Assoziation, genial in der Verknüpfung. Die App kann nach subjektiv erlebtem Kommunikationsdruck fragen. Halsschmerzen, Atemprobleme und Nackenspannungen lassen sich nicht aus dem Kin erklären.
 
 Schattenseiten: 1. Die leere Botschaft – aus Ego sprechen statt aus dem Geist. 2. Die Unbeständigkeit – Wind wechselt die Richtung. 3. Die Zerstreuung – hundert angefangene Projekte, keines fertig. 4. Das Sprechen als Flucht – reden, um nicht zu fühlen.
 
 Lektion: Stille ist nicht dein Feind. Die tiefste Botschaft kommt aus der tiefsten Stille.
 
-Spirituelle Dimension: Tiefe Verbindung zur Stimme als spirituellem Instrument. Spirituelle Praxis: Atemarbeit, Pranayama, holotropes Atmen.
+Spirituelle Dimension: Tiefe Verbindung zur Stimme als spirituellem Instrument. Spirituelle Praxis als freiwilliger Reflexionsimpuls: ruhige Atemwahrnehmung. Intensive Atemverfahren werden nicht aus einem Siegel empfohlen.
 
 Schlüsselfragen: Spreche ich gerade aus dem Geist oder aus dem Ego? Welcher Wind in mir trägt Wahrheit? Was würde ich sagen, wenn ich keine Angst hätte vor Stille?
 
 ---
 
 SIEGEL 3: AKBAL – DIE BLAUE NACHT
-Farbe: Blau | Element: Wasser | Richtung: Westen | Planet: Saturn | Körperteil: Linke Brust/Lunge
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Blau | Redaktionelles Elementbild: Wasser | Richtung: Westen | Planet: Saturn | Redaktionelles Körperbild (keine medizinische Zuordnung): Linke Brust/Lunge
 
 Das Wesen von Akbal:
 Akbal ist die Zeit zwischen Mitternacht und Morgengrauen. Die tiefste Dunkelheit, die gleichzeitig die größte Stille und die dichteste Informationsquelle ist. Wer mit Akbal geboren wurde, hat einen natürlichen Zugang zur Welt des Unbewussten – lebhafte Träume, ausgeprägte Intuition, die Fähigkeit unter Oberflächen zu sehen.
@@ -71,14 +80,15 @@ Schlüsselfragen: Was liegt in meiner inneren Dunkelheit, das ich noch nicht ang
 ---
 
 SIEGEL 4: KAN – DIE GELBE SAAT
-Farbe: Gelb | Element: Feuer | Richtung: Süden | Planet: Jupiter | Körperteil: Ovare/Hoden, unterer Rücken
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Gelb | Redaktionelles Elementbild: Feuer | Richtung: Süden | Planet: Jupiter | Redaktionelles Körperbild (keine medizinische Zuordnung): Eierstöcke/Hoden, unterer Rücken
 
 Das Wesen von Kan:
-Kan ist die Saat, die noch nicht aufgegangen ist. In ihr steckt bereits alles: die Wurzel, der Stamm, die Blüte, die Frucht. Noch komprimiert, noch unsichtbar, aber vollständig vorhanden. Die Maya stellten Kan als Saat und gleichzeitig als Eidechse dar – wendig, schnell, regenerierend. Kan trägt das Feuer von Jupiter, dem Ausweiter, dem Vergrößerer.
+Kan ist die Saat, die noch nicht aufgegangen ist. In ihr steckt bereits alles: die Wurzel, der Stamm, die Blüte, die Frucht. Noch komprimiert, noch unsichtbar, aber vollständig vorhanden. Diese App verbindet die Saat metaphorisch mit Wachstum und Regeneration; das Eidechsenbild ist keine belegte Dreamspell-Zuordnung. Kan trägt das Feuer von Jupiter, dem Ausweiter, dem Vergrößerer.
 
 Kosmische Aufgabe: Kan-Menschen sind Samenhüter. Kan ist auch das Siegel der Sexualität als Schöpfungskraft – Eros als kosmisches Prinzip. Kan-Menschen sind magnetisch, machen sich anfällig für Missverständnisse.
 
-Energie im Körper: Jupiter gibt expansive, optimistische Grundenergie. Das Beckenbereich als Körperpunkt – das Zentrum der Schöpfungskraft. Rückenschmerzen, reproduktive Probleme als Signal: Lebe deine Schöpfungskraft.
+Energie im Körper: Jupiter gibt expansive, optimistische Grundenergie. Der Beckenbereich als Körperpunkt – das Zentrum der Schöpfungskraft. Rückenschmerzen oder reproduktive Probleme sind keine aus dem Siegel ableitbaren Signale für blockierte Schöpfungskraft.
 
 Schattenseiten: 1. Das Potenzial, das nie aufgeht – Warten auf den perfekten Moment. 2. Die Überdehnung durch Jupiter – zehn Dinge beginnen, keines beenden. 3. Die unkontrollierte Schöpfungskraft. 4. Der Glaube, nicht genug zu sein.
 
@@ -91,10 +101,11 @@ Schlüsselfragen: Welche Saat in mir liegt noch unberührt im Boden? Wo setze ic
 ---
 
 SIEGEL 5: CHICCHAN – DIE ROTE SCHLANGE
-Farbe: Rot | Element: Feuer | Richtung: Osten | Planet: Maldek (Asteroidengürtel/Erde) | Körperteil: Wirbelsäule, Nervensystem
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Rot | Redaktionelles Elementbild: Feuer | Richtung: Osten | Planet: Maldek (mythologischer Dreamspell-Bezug) | Redaktionelles Körperbild (keine medizinische Zuordnung): Wirbelsäule, Nervensystem
 
 Das Wesen von Chicchan:
-Die Schlange ist das älteste Symbol der Menschheitsgeschichte. Chicchan ist das Zeichen der Lebenskraft in ihrer reinsten, direktesten Form. Wer mit Chicchan geboren wurde, hat diese Kraft in einem Maß, das andere spüren. Chicchan-Menschen betreten einen Raum und etwas verändert sich.
+Die Schlange ist hier ein redaktionelles Bild für Lebenskraft. Chicchan ist das Zeichen der Lebenskraft in ihrer reinsten, direktesten Form. Wer mit Chicchan geboren wurde, hat diese Kraft in einem Maß, das andere spüren. Chicchan-Menschen betreten einen Raum und etwas verändert sich.
 
 Kosmische Aufgabe: Chicchan-Menschen sind Hüter des Lebensstroms. Chicchan-Energie ist wie Strom – ohne Leitung vernichtet sie, mit richtiger Leitung erschafft sie. Die Verbindung zu Maldek – dem Planeten der kollektiven Wunde – gibt ihnen die Aufgabe, diese Wunde zu heilen.
 
@@ -111,7 +122,8 @@ Schlüsselfragen: Wofür brenne ich wirklich? Wie kanalisiere ich meine Lebensen
 ---
 
 SIEGEL 6: CIMI – DER WEISSE WELTENWANDLER
-Farbe: Weiß | Element: Luft | Richtung: Norden | Planet: Mars | Körperteil: Linkes Knie
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Weiß | Redaktionelles Elementbild: Luft | Richtung: Norden | Planet: Mars | Redaktionelles Körperbild (keine medizinische Zuordnung): Linkes Knie
 
 Das Wesen von Cimi:
 Im Maya-System ist Cimi eine der tiefsten Ehrungen. Tod ist nicht das Ende. Tod ist das Tor. Cimi-Menschen wurden als Brückenwesen zwischen den Welten gesehen. Wer mit Cimi geboren wurde, kennt Verlust als Rhythmus, dem ihr Leben folgt – sie verlieren und finden sich neu, immer wieder.
@@ -131,7 +143,8 @@ Schlüsselfragen: Was in meinem Leben ist bereits gestorben, aber ich halte noch
 ---
 
 SIEGEL 7: MANIK – DIE BLAUE HAND
-Farbe: Blau | Element: Wasser | Richtung: Westen | Planet: Erde | Körperteil: Linke Hand
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Blau | Redaktionelles Elementbild: Wasser | Richtung: Westen | Planet: Erde | Redaktionelles Körperbild (keine medizinische Zuordnung): Linke Hand
 
 Das Wesen von Manik:
 Die Hand ist das Symbol des Handelns, des Schaffens, des Heilens. Wer mit Manik geboren wurde, ist ein Vollender – nicht das Beginnen, sondern das Vollenden, das Zu-Ende-Bringen. Manik ist das Siegel der praktischen Heilung durch Handeln, durch Anfassen, durch Tun.
@@ -151,10 +164,11 @@ Schlüsselfragen: Welche Projekte oder Kapitel brauchen in meinem Leben Abschlus
 ---
 
 SIEGEL 8: LAMAT – DER GELBE STERN
-Farbe: Gelb | Element: Feuer | Richtung: Süden | Planet: Venus | Körperteil: Linker Daumenballen
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Gelb | Redaktionelles Elementbild: Feuer | Richtung: Süden | Planet: Venus | Redaktionelles Körperbild (keine medizinische Zuordnung): Linker Daumenballen
 
 Das Wesen von Lamat:
-Lamat ist Venus, der hellste Stern am Himmel. Der Morgen- und Abendstern. Wer mit Lamat geboren wurde, trägt die Venus-Qualität: Schönheit als Prinzip, nicht als Äußerlichkeit. Lamat ist Venus in ihrer vollen Doppelnatur: Morgenstar des Krieges und Abendstern des Friedens.
+Lamat ist im Dreamspell symbolisch Venus zugeordnet. Venus ist ein Planet und wird als Morgen- oder Abendstern bezeichnet. Wer mit Lamat geboren wurde, trägt die Venus-Qualität: Schönheit als Prinzip, nicht als Äußerlichkeit. Lamat ist Venus in ihrer vollen Doppelnatur: Morgenstern des Krieges und Abendstern des Friedens.
 
 Kosmische Aufgabe: Lamat-Menschen sind Harmonie-Bringer. Lamat trägt das Prinzip des natürlichen Überflusses – natürliche Manifestatoren durch Schwingung, nicht durch Willenskraft.
 
@@ -171,7 +185,8 @@ Schlüsselfragen: Wo suche ich Harmonie aus Angst statt aus Kraft? Was ist in me
 ---
 
 SIEGEL 9: MULUC – DER ROTE MOND
-Farbe: Rot | Element: Wasser | Richtung: Osten | Planet: Merkur | Körperteil: Linker Fuß
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Rot | Redaktionelles Elementbild: Wasser | Richtung: Osten | Planet: Merkur | Redaktionelles Körperbild (keine medizinische Zuordnung): Linker Fuß
 
 Das Wesen von Muluc:
 Muluc ist Wasser in seiner universalsten Form. Wer mit Muluc geboren wurde, lebt in Strömungen. Der Mond als Namensgeber: Muluc lebt nach Mondzyklen. Diese Menschen sind sensitiver für die Vollmond-Energie, für Jahreszeiten, für kosmische Rhythmen.
@@ -191,10 +206,11 @@ Schlüsselfragen: Was trage ich gerade mit mir, das nicht meins ist? Wann habe i
 ---
 
 SIEGEL 10: OC – DER WEISSE HUND
-Farbe: Weiß | Element: Luft | Richtung: Norden | Planet: Merkur | Körperteil: Linke Pfote/Fuß
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Weiß | Redaktionelles Elementbild: Luft | Richtung: Norden | Planet: Merkur | Redaktionelles Körperbild (keine medizinische Zuordnung): Linke Pfote/Fuß
 
 Das Wesen von Oc:
-Der Hund ist in allen Kulturen das Tier der Treue, der Liebe, der Verbindung. Wer mit Oc geboren wurde, ist ein Wesen des Herzens. Oc ist nicht das Siegel der romantischen Liebe, es ist das Siegel der bedingungslosen Liebe als kosmisches Prinzip – Agape, die göttliche Liebe.
+Der Hund steht in dieser App symbolisch für Treue, Liebe und Verbindung. Wer mit Oc geboren wurde, ist ein Wesen des Herzens. Oc ist nicht das Siegel der romantischen Liebe, es ist das Siegel der bedingungslosen Liebe als kosmisches Prinzip – Agape, die göttliche Liebe.
 
 Kosmische Aufgabe: Oc-Menschen sind Hüter des Herzens der Menschheit. Das Herz offen halten, auch wenn es wehtut. Und besonders dann.
 
@@ -211,7 +227,8 @@ Schlüsselfragen: Liebe ich wirklich bedingungslos? Wo liegt meine Grenze zwisch
 ---
 
 SIEGEL 11: CHUEN – DER BLAUE AFFE
-Farbe: Blau | Element: Wasser | Richtung: Westen | Planet: Venus | Körperteil: Linker Knöchel
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Blau | Redaktionelles Elementbild: Wasser | Richtung: Westen | Planet: Venus | Redaktionelles Körperbild (keine medizinische Zuordnung): Linker Knöchel
 
 Das Wesen von Chuen:
 Der Affe ist der Trickster der Maya-Mythologie, der Heilige Narr, der Schamane im Clownkostüm. Wer mit Chuen geboren wurde, ist ein Kind der Magie. Chuen-Menschen biegen die Realität. Sie sehen Möglichkeiten, wo andere Grenzen sehen. Venus gibt Chuen eine künstlerische Qualität – Erschaffen aus dem Geist des Spielens.
@@ -231,7 +248,8 @@ Schlüsselfragen: Wo benutze ich Humor, um etwas zu vermeiden? Welche Kunst verd
 ---
 
 SIEGEL 12: EB – DER GELBE MENSCH
-Farbe: Gelb | Element: Feuer | Richtung: Süden | Planet: Erde | Körperteil: Rechtes Ohr
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Gelb | Redaktionelles Elementbild: Feuer | Richtung: Süden | Planet: Erde | Redaktionelles Körperbild (keine medizinische Zuordnung): Rechtes Ohr
 
 Das Wesen von Eb:
 Eb ist das Siegel der Menschheit selbst – des gewöhnlichen, vollständigen, freien Menschen. Eb trägt das größte aller Geschenke: den freien Willen. Wer mit Eb geboren wurde, hat die Aufgabe, das Menschsein vollständig zu bewohnen. Das Leben gibt Eb direktes Feedback – sie säen und ernten in einem Tempo, das manchmal erschreckend klar ist.
@@ -251,7 +269,8 @@ Schlüsselfragen: Welche Entscheidung schiebe ich vor mir her? Was sagt mir das 
 ---
 
 SIEGEL 13: BEN – DER ROTE HIMMELSWANDERER
-Farbe: Rot | Element: Feuer | Richtung: Osten | Planet: Mars | Körperteil: Rechtes Schienbein
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Rot | Redaktionelles Elementbild: Feuer | Richtung: Osten | Planet: Mars | Redaktionelles Körperbild (keine medizinische Zuordnung): Rechtes Schienbein
 
 Das Wesen von Ben:
 Schilf ist hohl – damit der Wind hindurchkann, damit die Musik entsteht. Ben-Menschen sind Brücken zwischen Himmel und Erde. Sie halten aufrecht, auch wenn alle anderen sich beugen. Ben hat eine tiefe Verbindung zu den Ahnen – Ben-Menschen tragen die Linie ihrer Vorfahren bewusster als die meisten.
@@ -271,10 +290,11 @@ Schlüsselfragen: Wessen Themen trage ich, die nicht meine sind? Was ist das Mus
 ---
 
 SIEGEL 14: IX – DER WEISSE ZAUBERER
-Farbe: Weiß | Element: Luft | Richtung: Norden | Planet: Quetzalcoatl/Venus | Körperteil: Linke Brust
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Weiß | Redaktionelles Elementbild: Luft | Richtung: Norden | Planet: Maldek | Redaktionelles Körperbild (keine medizinische Zuordnung): Linke Brust
 
 Das Wesen von Ix:
-Ix ist der Jaguar. In der Maya-Tradition war der Jaguar das mächtigste Tier, das sowohl in der Dunkelheit als auch im Wasser sehen kann. Wer mit Ix geboren wurde, weiß Dinge, die er nicht wissen kann. Ix ist das Siegel des Herzens als Wissens-Organ.
+Ix ist der Jaguar. Das Jaguarbild wird hier als redaktionelle Metapher verwendet; das Dreamspell-Siegel heißt Weißer Zauberer. Wer mit Ix geboren wurde, weiß Dinge, die er nicht wissen kann. Ix ist das Siegel des Herzens als Wissens-Organ.
 
 Kosmische Aufgabe: Ix-Menschen sind Brücken zur unsichtbaren Welt. Sie arbeiten an der Vereinigung von Himmel und Erde, von Geist und Materie.
 
@@ -291,10 +311,11 @@ Schlüsselfragen: Was weiß mein Herz gerade, das mein Kopf noch nicht akzeptier
 ---
 
 SIEGEL 15: MEN – DER BLAUE ADLER
-Farbe: Blau | Element: Wasser | Richtung: Westen | Planet: Jupiter | Körperteil: Rechter Arm
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Blau | Redaktionelles Elementbild: Wasser | Richtung: Westen | Planet: Jupiter | Redaktionelles Körperbild (keine medizinische Zuordnung): Rechter Arm
 
 Das Wesen von Men:
-Der Adler fliegt höher als jedes andere Tier. Wer mit Men geboren wurde, hat den Adler-Blick: Sie sehen das Große Bild, Muster wo andere Einzelfälle sehen, Systeme wo andere Symptome sehen. Das macht sie wertvoll und isoliert zugleich.
+Der Adler dient hier als Bild für Überblick und Weite. Wer mit Men geboren wurde, hat den Adler-Blick: Sie sehen das Große Bild, Muster wo andere Einzelfälle sehen, Systeme wo andere Symptome sehen. Das macht sie wertvoll und isoliert zugleich.
 
 Kosmische Aufgabe: Men-Menschen sind Visionäre. Nicht nur sehen, sondern übersetzen. Der Adler muss landen können. Jupiter gibt Men einen expansiven, optimistischen Grundton.
 
@@ -311,14 +332,15 @@ Schlüsselfragen: Welche Vision trage ich, die noch nie wirklich landet? Was seh
 ---
 
 SIEGEL 16: CIB – DER GELBE KRIEGER
-Farbe: Gelb | Element: Feuer | Richtung: Süden | Planet: Saturn | Körperteil: Linker Fuß
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Gelb | Redaktionelles Elementbild: Feuer | Richtung: Süden | Planet: Saturn | Redaktionelles Körperbild (keine medizinische Zuordnung): Linker Fuß
 
 Das Wesen von Cib:
 Die Eule sieht in der Nacht. Wer mit Cib geboren wurde, trägt Weisheit in sich, die über dieses Leben hinausgeht. Zugang zu einem Wissen, das kollektiv ist – nicht Buchwissen, sondern das Wissen, das über Generationen angehäuft wurde. Saturn als Planet ist das Lehrerprinzip par excellence.
 
 Kosmische Aufgabe: Cib-Menschen sind Hüter des kollektiven Gedächtnisses. Cib trägt auch das Thema der Vergebung als kosmische Notwendigkeit – nicht als sentimentale Geste, sondern als fundamentale spirituelle Hygiene.
 
-Energie im Körper: Saturn gibt Ernsthaftigkeit und manchmal körperliche Schwere. Cib-Menschen neigen zu Spannungen in Gelenken, Rücken, Kiefer.
+Energie im Körper: Saturn gibt Ernsthaftigkeit und manchmal körperliche Schwere. Gelenk-, Rücken- oder Kieferbeschwerden lassen sich nicht aus Cib oder Saturn ableiten.
 
 Schattenseiten: 1. Die Last des Wissens. 2. Bitterkeit als Weisheitsparodie. 3. Isolation der Tiefe. 4. Verantwortung für das Kollektiv.
 
@@ -331,12 +353,13 @@ Schlüsselfragen: Wem oder was habe ich noch nicht vergeben? Wie unterscheide ic
 ---
 
 SIEGEL 17: CABAN – DIE ROTE ERDE
-Farbe: Rot | Element: Feuer | Richtung: Osten | Planet: Uranus | Körperteil: Rechte Hand/Faust
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Rot | Redaktionelles Elementbild: Feuer | Richtung: Osten | Planet: Uranus | Redaktionelles Körperbild (keine medizinische Zuordnung): Rechte Hand/Faust
 
 Das Wesen von Caban:
 Caban ist die lebendige Erde – die Erde der Erdbeben, nicht der trägen Ebene. Wer mit Caban geboren wurde, navigiert durch Synchronizitäten. Sie lesen die Zeichen als hochentwickelte Wahrnehmungsfähigkeit. Uranus gibt Caban eine revolutionäre, unkonventionelle Qualität.
 
-Kosmische Aufgabe: Caban-Menschen sind Navigator für evolutionären Wandel. Sie fühlen den Puls der Zeit. Caban trägt auch eine tiefe Erdverantwortung.
+Kosmische Aufgabe: Caban-Menschen sind im App-Bild Navigatoren für evolutionären Wandel. Sie fühlen den Puls der Zeit. Caban trägt auch eine tiefe Erdverantwortung.
 
 Energie im Körper: Die rechte Faust: Kraft, die sich nach außen ausdrückt. Tektonische Kraft – langsam aufbauend, dann in Bewegung setzend.
 
@@ -351,7 +374,8 @@ Schlüsselfragen: Welche Zeichen sehe ich gerade? In welche Richtung zieht mich 
 ---
 
 SIEGEL 18: ETZNAB – DER WEISSE SPIEGEL
-Farbe: Weiß | Element: Luft | Richtung: Norden | Planet: Neptun | Körperteil: Rechter Fuß
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Weiß | Redaktionelles Elementbild: Luft | Richtung: Norden | Planet: Neptun | Redaktionelles Körperbild (keine medizinische Zuordnung): Rechter Fuß
 
 Das Wesen von Etznab:
 Etznab ist Obsidian – zu Spiegeln und zu Messern geschliffen. Beides in einem: Etznab zeigt, was wirklich ist (Spiegel), und schneidet weg, was nicht wahr ist (Messer). Wer mit Etznab geboren wurde, ist ein Wahrheitswesen – Lüge ist für sie körperlich unangenehm.
@@ -371,7 +395,8 @@ Schlüsselfragen: Spreche ich gerade meine Wahrheit oder die Wahrheit? Wie bring
 ---
 
 SIEGEL 19: CAUAC – DER BLAUE STURM
-Farbe: Blau | Element: Wasser | Richtung: Westen | Planet: Pluto | Körperteil: Linkes Schienbein
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Blau | Redaktionelles Elementbild: Wasser | Richtung: Westen | Planet: Pluto | Redaktionelles Körperbild (keine medizinische Zuordnung): Linkes Schienbein
 
 Das Wesen von Cauac:
 Cauac ist der Sturm, der den Himmel reinigt. Nach dem Sturm ist die Luft klar, die Erde gewaschen. Wer mit Cauac geboren wurde, ist ein Katalysator – eine Substanz, die eine Reaktion beschleunigt, ohne selbst verbraucht zu werden. Pluto als Planet ist der Transformator par excellence.
@@ -391,7 +416,8 @@ Schlüsselfragen: Wo katalysiere ich Transformation, weil sie gebraucht wird, un
 ---
 
 SIEGEL 20: AHAU – DIE GELBE SONNE
-Farbe: Gelb | Element: Feuer | Richtung: Süden | Planet: Pluto/Sonne | Körperteil: Mittelpunkt des Körpers (Solarplexus)
+Lesestatus: Siegelname, Farbe und planetarer Systembezug sind Dreamspell-Zuordnungen. Ausführliche Beschreibungen und Körperbilder sind App-Metaphern.
+Farbe: Gelb | Redaktionelles Elementbild: Feuer | Richtung: Süden | Planet: Pluto | Redaktionelles Körperbild (keine medizinische Zuordnung): Mittelpunkt des Körpers (Solarplexus)
 
 Das Wesen von Ahau:
 Ahau ist das letzte Siegel des Tzolkin – die Vollendung. Wie der letzte Ton einer Symphonie, der alle vorigen enthält. Wer mit Ahau geboren wurde, ist Sonnenmensch. Die Sonne gibt Licht, ohne zu fragen, ob jemand es verdient. Ahau ist das Siegel der Erleuchtung als Prozess, als Qualität des Bewusstseins.
@@ -413,9 +439,10 @@ DIE 13 GALAKTISCHEN TÖNE – TIEFENDEUTUNG
 ════════════════════════════════
 
 TON 1 – DER MAGNETISCHE TON
+Lesestatus: Die Tonnummer und der Name sind Systemdaten. Die Personenbeschreibung ist eine redaktionelle Deutung.
 Schlüsselworte: Zweck, Anziehung, Einheit, Sein | Frage: Was ist mein Zweck?
 
-Das Wesen: Ton 1 ist das Erwachen zur Frage: Wozu? Ton 1-Menschen ziehen zu sich, was ihrem tiefsten Zweck entspricht, oft ohne aktiv zu suchen. Synchronizitäten häufen sich. Ton 1 ist die Einheit vor der Vielheit. Die magnetische Qualität ist konkret: Was sie stark glauben, manifestiert sich. Was sie tief fürchten, manifestiert sich ebenfalls.
+Das Wesen: Ton 1 ist das Erwachen zur Frage: Wozu? Ton 1-Menschen ziehen zu sich, was ihrem tiefsten Zweck entspricht, oft ohne aktiv zu suchen. Synchronizitäten häufen sich. Ton 1 ist die Einheit vor der Vielheit. Magnetismus ist hier eine Metapher für Ausrichtung und Aufmerksamkeit. Gedanken und Befürchtungen sind keine Belege oder Garantien für äußere Ereignisse.
 
 Herausforderung: Den eigenen Zweck so klar formulieren, dass die magnetische Kraft in eine Richtung wirkt.
 
@@ -424,9 +451,10 @@ Schlüsselfragen: Was zieht mich wirklich an? Kann ich meinen Lebenszweck in ein
 ---
 
 TON 2 – DER LUNARE TON
+Lesestatus: Die Tonnummer und der Name sind Systemdaten. Die Personenbeschreibung ist eine redaktionelle Deutung.
 Schlüsselworte: Herausforderung, Polarität, Stabilisierung | Frage: Welche Herausforderung muss ich stabilisieren?
 
-Das Wesen: Ton 2 ist die erste Erfahrung von Polarität. Ton 2-Menschen leben strukturell in Spannungsfeldern. Ihre größten Entscheidungen, tiefsten Beziehungen, schöpferischsten Momente entstehen immer aus einer Spannung heraus. Der Mond hat keinen eigenen Lichtquelle – Ton 2-Menschen sind Spiegel der Polaritäten.
+Das Wesen: Ton 2 ist die erste Erfahrung von Polarität. Ton 2-Menschen leben strukturell in Spannungsfeldern. Ihre größten Entscheidungen, tiefsten Beziehungen, schöpferischsten Momente entstehen immer aus einer Spannung heraus. Der Mond hat keine eigene Lichtquelle – Ton 2-Menschen sind Spiegel der Polaritäten.
 
 Herausforderung: Polaritäten stabilisieren, ohne sie aufzulösen. Den Raum halten, in dem beides gleichzeitig wahr sein darf.
 
@@ -435,6 +463,7 @@ Schlüsselfragen: Kann ich zwei gegensätzliche Wahrheiten gleichzeitig halten? 
 ---
 
 TON 3 – DER ELEKTRISCHE TON
+Lesestatus: Die Tonnummer und der Name sind Systemdaten. Die Personenbeschreibung ist eine redaktionelle Deutung.
 Schlüsselworte: Aktivierung, Service, Bindung, Handeln | Frage: Wie kann ich am besten dienen?
 
 Das Wesen: Ton 3 ist Blitz. Ton 3-Menschen handeln schnell, denken in Bewegung, aktivieren andere. Die Energie des Ton 3 ist darauf ausgerichtet, wirksam zu sein. Elektrizität bindet – Ton 3-Menschen verbinden durch ihre Energie. Gefahr: Kurzschluss durch zu viele Verbindungen.
@@ -446,6 +475,7 @@ Schlüsselfragen: Wem oder was diene ich wirklich? Wo gebe ich Energie aus Pflic
 ---
 
 TON 4 – DER SELBST-EXISTENTE TON
+Lesestatus: Die Tonnummer und der Name sind Systemdaten. Die Personenbeschreibung ist eine redaktionelle Deutung.
 Schlüsselworte: Form, Maß, Definition, Struktur | Frage: Welche Form soll ich annehmen?
 
 Das Wesen: Ton 4 ist die Form. Ton 4-Menschen sind Formgeber – sie bringen Klarheit in das Chaos. Selbst-existent: Die Form existiert durch sich selbst, braucht keine externe Bestätigung. Ton 4-Menschen haben einen natürlichen Sinn für Proportionen.
@@ -456,7 +486,8 @@ Schlüsselfragen: Welche Form dient dem, was ich erschaffen will? Wie flexibel b
 
 ---
 
-TON 5 – DER ÜBERTONENDE TON
+TON 5 – DER ÜBERTÖNENDE TON
+Lesestatus: Die Tonnummer und der Name sind Systemdaten. Die Personenbeschreibung ist eine redaktionelle Deutung.
 Schlüsselworte: Kern, Ermächtigung, Strahlungskraft, Zentrum | Frage: Wie ermächtige ich mich und andere?
 
 Das Wesen: Ton 5 ist die Mitte. Ton 5-Menschen haben eine natürliche Zentral-Qualität – Gruppen formen sich um sie. Ermächtigung: Wer in seiner Mitte ist, gibt anderen die Erlaubnis, in ihrer Mitte zu sein. Ton 5-Menschen klingen über das Gewöhnliche hinaus – nicht lauter, tiefer.
@@ -468,6 +499,7 @@ Schlüsselfragen: Bin ich in meiner Mitte, oder halte ich eine Rolle aufrecht? W
 ---
 
 TON 6 – DER RHYTHMISCHE TON
+Lesestatus: Die Tonnummer und der Name sind Systemdaten. Die Personenbeschreibung ist eine redaktionelle Deutung.
 Schlüsselworte: Balance, Rhythmus, Gleichgewicht | Frage: Wie schaffe ich Gleichgewicht?
 
 Das Wesen: Ton 6 ist die dynamische Balance des Tänzers – nie wirklich still, aber immer im Gleichgewicht. Ton 6-Menschen haben einen natürlichen Rhythmus. Sie wissen, wann es Zeit ist vorwärts zu gehen und wann zu ruhen. Balance ist nicht Kompromiss.
@@ -479,6 +511,7 @@ Schlüsselfragen: Wo halte ich Balance und wo halte ich mich zurück? Welchen Rh
 ---
 
 TON 7 – DER RESONANTE TON
+Lesestatus: Die Tonnummer und der Name sind Systemdaten. Die Personenbeschreibung ist eine redaktionelle Deutung.
 Schlüsselworte: Abstimmung, Kanal, Inspiration, Resonanz | Frage: Wie stimme ich mich ab?
 
 Das Wesen: Ton 7 ist die Mitte der 13 Töne – der mystische Mittelpunkt. Ton 7-Menschen sind ein Resonanzfeld. Resonanz: durch ihr Schwingen in der eigenen Frequenz bringen sie andere zum Mitschwingen. Sie müssen auf sich selbst gestimmt sein.
@@ -490,6 +523,7 @@ Schlüsselfragen: Auf welche Frequenz bin ich gerade gestimmt? Was ist meine eig
 ---
 
 TON 8 – DER GALAKTISCHE TON
+Lesestatus: Die Tonnummer und der Name sind Systemdaten. Die Personenbeschreibung ist eine redaktionelle Deutung.
 Schlüsselworte: Integrität, Harmonie, Modellieren, Ausrichten | Frage: Lebe ich das, was ich glaube?
 
 Das Wesen: Ton 8 ist Integrität im technischen Sinn – ganz sein, ungeteilt, in sich stimmig. Ton 8-Menschen können nicht dauerhaft gegen ihre eigenen Werte leben. Das Harmonisieren ist der Auftrag: Werte, Handlungen, Beziehungen und Arbeit in die gleiche Richtung bringen.
@@ -501,9 +535,10 @@ Schlüsselfragen: Wo klaffe ich zwischen dem, was ich sage, und dem, was ich tue
 ---
 
 TON 9 – DER SOLARE TON
+Lesestatus: Die Tonnummer und der Name sind Systemdaten. Die Personenbeschreibung ist eine redaktionelle Deutung.
 Schlüsselworte: Intention, Realisierung, Pulsieren, Manifestation | Frage: Wie vollende ich das, was ich beabsichtige?
 
-Das Wesen: Ton 9 ist der Wille als klare Intention. Ton 9-Menschen sind Manifestatoren – was sie klar beabsichtigen, materialisiert sich. Was sie unbewusst fürchten, materialisiert sich mit derselben Geschwindigkeit. Realisierung: Ton 9 macht real, was vorher nur Idee war.
+Das Wesen: Ton 9 ist der Wille als klare Intention. Ton 9 wird hier als Bild bewusster Intention verwendet. Weder klare Absichten noch unbewusste Ängste garantieren eine Materialisierung. Realisierung: Ton 9 macht real, was vorher nur Idee war.
 
 Herausforderung: Die unbewussten Intentionen aufdecken. Was manifestiert sich immer wieder, ohne bewusste Wahl?
 
@@ -512,6 +547,7 @@ Schlüsselfragen: Was beabsichtige ich wirklich? Was manifestiert sich, das ich 
 ---
 
 TON 10 – DER PLANETARE TON
+Lesestatus: Die Tonnummer und der Name sind Systemdaten. Die Personenbeschreibung ist eine redaktionelle Deutung.
 Schlüsselworte: Manifestation, Produktion, Vollendung, Verwirklichung | Frage: Wie vollende ich Manifestation?
 
 Das Wesen: Ton 10 bringt in die Welt – nicht als Vision, sondern als Realität. Ton 10-Menschen sind die Umsetzer, die Macher. Planetar: Ihre Wirkung ist messbar auf einer Ebene, die über das Persönliche hinausgeht. Ton 10-Menschen hinterlassen Spuren als Dinge in der Welt.
@@ -523,6 +559,7 @@ Schlüsselfragen: Was ist das Wichtigste, das ich in dieser Welt erschaffen soll
 ---
 
 TON 11 – DER SPEKTRALE TON
+Lesestatus: Die Tonnummer und der Name sind Systemdaten. Die Personenbeschreibung ist eine redaktionelle Deutung.
 Schlüsselworte: Auflösung, Befreiung, Loslassen | Frage: Wie löse ich auf, was nicht mehr dient?
 
 Das Wesen: Ton 11 löst auf. Was gelöst wird, befreit Energie für Neues. Ton 11-Menschen sind die Auflöser, die Befreier. Spektral: sie sehen das volle Spektrum einer Situation. In jedem Zyklus gibt es einen Punkt, an dem das Alte loslassen muss – Ton 11 ist dieser Punkt.
@@ -534,9 +571,10 @@ Schlüsselfragen: Was in meinem Leben ist bereits tot, aber ich halte es noch au
 ---
 
 TON 12 – DER KRISTALLINE TON
+Lesestatus: Die Tonnummer und der Name sind Systemdaten. Die Personenbeschreibung ist eine redaktionelle Deutung.
 Schlüsselworte: Kooperation, Universalisierung, Widmung, Gemeinschaft | Frage: Wie teile ich das, was ich errungen habe?
 
-Das Wesen: Ein Kristall ist ein Einzelmolekül in perfekter Ordnung, das etwas erschafft, das größer ist als seine Teile. Ton 12-Menschen denken kollektiv als natürliche Ausrichtung. Universalisierung: Was Ton 12 entwickelt, ist für alle.
+Das Wesen: Ein Kristall dient hier als Bild geordneter Zusammenarbeit. Ein Kristall ist kein einzelnes Molekül. Ton 12-Menschen denken kollektiv als natürliche Ausrichtung. Universalisierung: Was Ton 12 entwickelt, ist für alle.
 
 Herausforderung: Sich im Kollektiv auflösen. Das Beste, was du dem Ganzen geben kannst, ist ein vollständiges Selbst.
 
@@ -545,6 +583,7 @@ Schlüsselfragen: Was habe ich errungen, das ich mit der Welt teilen soll? Wie d
 ---
 
 TON 13 – DER KOSMISCHE TON
+Lesestatus: Die Tonnummer und der Name sind Systemdaten. Die Personenbeschreibung ist eine redaktionelle Deutung.
 Schlüsselworte: Transzendenz, Ausdauer, Präsenz, kosmische Vollendung | Frage: Wie überschreite ich alle Grenzen?
 
 Das Wesen: Ton 13 überschreitet alles. Wer mit Ton 13 geboren wurde, ist nicht für gewöhnliche Wege gemacht. Kosmisch: Ton 13-Menschen berühren etwas, das über ihre individuelle Existenz hinausgeht. Ausdauer ist ein überraschend wichtiges Schlüsselwort – um wirklich zu transzendieren, muss man aushalten.
@@ -601,14 +640,14 @@ Das Okkulte Siegel ist das Verborgene. Die Töne von Leitsiegel und Okkultem Sie
 - Die überraschende Kraft: Die Stärke, die auftaucht, wenn du wirklich authentisch bist
 - Der Spiegel deines Potenzials: Was in dir wartet
 
-Die häufigste Reaktion: "Das? Wirklich? Das ist doch nichts Besonderes." Genau das ist der Beweis.
+Die häufigste Reaktion: "Das? Wirklich? Das ist doch nichts Besonderes." Das ist ein möglicher Gesprächseinstieg, kein Beweis.
 
 ---
 
 POSITION 5: DAS FÜHRUNGSSIEGEL (Guide Kin)
 Funktion: Innerer Kompass, Führungsqualität, spirituelle Richtung
 
-Das Führungssiegel zeigt den Weg in dieser Phase, in diesem Moment. Es ist immer ein Siegel derselben Farbe wie das Leitsiegel. Es zeigt:
+Das Führungssiegel im Geburtsorakel bleibt für dasselbe Geburts-Kin konstant. Das Tagesorakel gehört jeweils zum Tages-Kin; es ist ein anderes Bezugssystem. Es ist immer ein Siegel derselben Farbe wie das Leitsiegel. Es zeigt:
 - Den inneren Kompass: Welche Qualität in dieser Phase führt
 - Die höhere Perspektive: Aus welcher Perspektive die Lösung sichtbar wird
 - Die spirituelle Richtung: Was nicht nur klug, sondern richtig ist
@@ -616,13 +655,14 @@ Das Führungssiegel zeigt den Weg in dieser Phase, in diesem Moment. Es ist imme
 Das Führungssiegel wird aktiviert durch: "Was wäre mein nächster Schritt, wenn ich [Führungssiegel-Energie] mehr lebte?"
 
 ════════════════════════════════
-DIE 8 LEBENSTHEMEN – TIEFENDEUTUNG
+DIE 8 REDAKTIONELLEN LEBENSTHEMEN – TIEFENDEUTUNG
+Diese acht Texte sind zusätzliche App-Reflexionsthemen, keine vollständige Dreamspell-Wellenliste und keine berechnete Zuordnung aller Menschen zu acht Gruppen. Es gibt 20 Wellen. Die folgenden Siegelbilder sind Themenbezüge; ihre Nummerierung ist keine Wellennummer.
 ════════════════════════════════
 
-LEBENSTHEMA 1: ERSCHAFFEN (Roter Drache-Wellenzug)
+LEBENSTHEMA 1: ERSCHAFFEN (Siegelbild Roter Drache)
 Kernfrage: Was bringe ich in die Welt, das vorher nicht existierte?
 
-Menschen im Erschaffen-Lebensthema sind geborene Schöpfer. Aus dem Nichts etwas machen, das dann ein eigenes Leben führt. Die Maya verstanden Schöpfung als heiligen Akt – Mitschöpfen am Gewebe der Wirklichkeit.
+Menschen im Erschaffen-Lebensthema sind geborene Schöpfer. Aus dem Nichts etwas machen, das dann ein eigenes Leben führt. Die App deutet Schöpfung als spirituelles Bild des Mitgestaltens.
 
 Im Licht: Sie bringen etwas in die Welt, das ohne sie nicht existieren würde.
 Im Schatten: Ewige Vorstufe, hundert Ideen, keine Vollendung.
@@ -630,10 +670,10 @@ Lektion: Erschaffen braucht Mut zur Unvollständigkeit. Das Beginnen ist wichtig
 
 ---
 
-LEBENSTHEMA 2: KOMMUNIZIEREN (Weißer Wind-Wellenzug)
+LEBENSTHEMA 2: KOMMUNIZIEREN (Siegelbild Weißer Wind)
 Kernfrage: Welche Botschaft bin ich in dieser Welt?
 
-Kommunizieren-Menschen sind Boten. Ein Bote bringt eine Botschaft, die nicht von ihm stammt. Die Maya sahen die Sprache als heilig – das Wort, das gesprochen wird, verändert die Wirklichkeit.
+Kommunizieren-Menschen sind Boten. Ein Bote bringt eine Botschaft, die nicht von ihm stammt. In dieser App wird Sprache als Bild bewusster Gestaltung verwendet.
 
 Im Licht: Sie geben dem Namenlosen einen Namen.
 Im Schatten: Sie reden viel und sagen wenig. Oder verschweigen das Wichtigste.
@@ -641,7 +681,7 @@ Lektion: Deine eigene Stimme ist die heiligste.
 
 ---
 
-LEBENSTHEMA 3: TRÄUMEN (Blauer Nacht-Wellenzug)
+LEBENSTHEMA 3: TRÄUMEN (Siegelbild Blaue Nacht)
 Kernfrage: Welche Vision trägt die Welt durch mich?
 
 Träumen bedeutet: in möglichen Welten leben. Träumen-Menschen sehen, was sein könnte. Träumen-Menschen arbeiten im Verborgenen, oft lange, bevor ihre Vision sichtbar wird. Überfluss ist das Prinzip, das Akbal trägt.
@@ -652,7 +692,7 @@ Lektion: Der Traum will landen.
 
 ---
 
-LEBENSTHEMA 4: MANIFESTIEREN (Gelber Saat-Wellenzug)
+LEBENSTHEMA 4: MANIFESTIEREN (Siegelbild Gelbe Saat)
 Kernfrage: Wie bringe ich das Unsichtbare in die Form?
 
 Manifestieren-Menschen erschaffen in der Materie. Sie denken in Schritten, in Prozessen, in Mitteln. Der Körper ist zentral für dieses Lebensthema – Manifestieren geschieht nicht im Kopf.
@@ -663,7 +703,7 @@ Lektion: Manifestieren aus der Fülle, nicht aus dem Mangel.
 
 ---
 
-LEBENSTHEMA 5: HEILEN (Rote Schlange-Wellenzug)
+LEBENSTHEMA 5: HEILEN (Siegelbild Rote Schlange)
 Kernfrage: Was heile ich, und wofür bin ich Kanal der Heilung?
 
 Heilen-Menschen heilen, ob sie es wollen oder nicht. Heilung bedeutet Wiederherstellung der Ganzheit. Heilen-Menschen tragen die kollektive Wunde von Maldek.
@@ -674,7 +714,7 @@ Lektion: Du kannst nicht geben, was du dir selbst verweigerst.
 
 ---
 
-LEBENSTHEMA 6: VERBINDEN (Weißer Weltenwandler-Wellenzug)
+LEBENSTHEMA 6: VERBINDEN (Siegelbild Weißer Weltenwandler)
 Kernfrage: Welche Verbindungen webe ich, und was entsteht dadurch?
 
 Verbinden-Menschen sind Brückenbauer zwischen Menschen, Ideen, Kulturen, Zeiten, Welten. Jede echte Verbindung erfordert das Sterben von dem, was vorher getrennt war.
@@ -685,7 +725,7 @@ Lektion: Du bist nicht nur die Brücke. Du bist auch das Land auf beiden Seiten.
 
 ---
 
-LEBENSTHEMA 7: VOLLENDEN (Gelbe Sonne-Wellenzug)
+LEBENSTHEMA 7: VOLLENDEN (Siegelbild Gelbe Sonne)
 Kernfrage: Was vollende ich, und was wird durch meine Vollendung frei?
 
 Vollenden-Menschen schließen Kreise. Sie bringen etwas zu seiner natürlichen Erfüllung. Ahau, die Gelbe Sonne, führt diesen Wellenzug. Vollenden-Menschen denken in Lebensbögen, nicht in Einzelmomenten.
@@ -696,7 +736,7 @@ Lektion: Vollendung ist ein Prozess, kein Moment.
 
 ---
 
-LEBENSTHEMA 8: TRANSZENDIEREN (Blauer Sturm-Wellenzug)
+LEBENSTHEMA 8: TRANSZENDIEREN (Siegelbild Blauer Sturm)
 Kernfrage: Welche Grenze bin ich berufen zu überschreiten?
 
 Transzendieren-Menschen gehen über das Bekannte hinaus. Immer. Transzendieren bedeutet nicht Fliehen – es bedeutet: Was war, aufheben in etwas Größerem. Cauac, der Blaue Sturm, führt diesen Wellenzug.
@@ -711,11 +751,11 @@ TZOLKIN-SYSTEM – GRUNDLAGEN
 
 Der Tzolkin ist ein 260-tägiger Bewusstseinskalender. Er entsteht aus der Kombination von 20 Sonnensiegeln × 13 galaktischen Tönen = 260 einzigartige Kins.
 
-Anker-Datum: 26. Juli 1993 = Kin 144 (Kristalliner Gelbe Saat) — daraus wird Kin 1 = Magnetischer Roter Drache am 26. Juli 1993
+Anker-Datum: 26. Juli 1993 = Kin 144, Gelbe Magnetische Saat, Ton 1. Kin 1 fällt beispielsweise auf den 14. Mai 2027. Anker-Kin und Kin 1 sind nicht dasselbe.
 
 Die 4 Farbfamilien der Siegel:
 - ROT (initiiert): Imix (Drache), Chicchan (Schlange), Muluc (Mond), Ben (Himmelswanderer), Caban (Erde)
-- WEIS (verfeinert): Ik (Wind), Cimi (Weltenwandler), Oc (Hund), Ix (Zauberer), Etznab (Spiegel)
+- WEISS (verfeinert): Ik (Wind), Cimi (Weltenwandler), Oc (Hund), Ix (Zauberer), Etznab (Spiegel)
 - BLAU (transformiert): Akbal (Nacht), Manik (Hand), Chuen (Affe), Men (Adler), Cauac (Sturm)
 - GELB (reift): Kan (Saat), Lamat (Stern), Eb (Mensch), Cib (Krieger), Ahau (Sonne)
 
@@ -726,15 +766,15 @@ Das persönliche Orakel besteht aus 5 Positionen:
 4. Okkultes Siegel (Hidden Power) – verborgene Gabe
 5. Führungssiegel (Guide Kin) – innerer Kompass
 
-Die Wellenzüge (Wavespells): Jedes Siegel führt einen 13-tägigen Wellenzug. Der Wellenzug bestimmt das Lebensthema. Es gibt 20 Wellenzüge × 13 Tage = 260 Tage im Tzolkin.
+Die Wellenzüge (Wavespells): Jede Welle beginnt mit Ton 1 und wird nach dessen Siegel benannt. Das Geburts-Kin liegt in genau einer Geburtswelle. Das in der App ausgegebene lifeTheme ist dagegen ein redaktionelles Thema des Geburtssiegels, nicht der Name oder die Nummer dieser Geburtswelle. Es gibt 20 Wellenzüge × 13 Tage = 260 Tage im Tzolkin.
 
-Berechnung: diffDays = (Geburtsdatum - Ankerdatum) / 86400000; kin = ((diffDays % 260) + 260) % 260; Siegel = kin % 20; Ton = kin % 13.
+Berechnung: Zähle die bürgerlichen Tage seit 26.07.1993 unter Auslassung aller 29. Februare. Mit dieser vorzeichenbehafteten Differenz gilt k0 = mod(143 + Differenz, 260); Kin = k0 + 1; Siegelindex = k0 % 20; Ton = k0 % 13 + 1; Welle = floor(k0 / 13) + 1. mod ist immer nichtnegativ. Keine Millisekunden lokaler Mitternachten verwenden. Der 29. Februar ist 0.0 Hunab Ku ohne reguläres Kin. Der 25. Juli wird für die Kin-Zählung mitgezählt.
 
 ════════════════════════════════
 TZOLKIN-WELLEN 2027 – JAHRESKALENDER
 ════════════════════════════════
 
-Das Jahr 2027 umfasst zwei Tzolkin-Zyklen: den laufenden Zyklus (beginnt vor 2027, endet 13.05.2027) und den neuen Zyklus (beginnt 14.05.2027).
+Das Jahr 2027 berührt Teile zweier Tzolkin-Zyklen: den laufenden Zyklus (beginnt vor 2027, endet 13.05.2027) und den neuen Zyklus (beginnt 14.05.2027).
 
 --- LAUFENDER ZYKLUS (Fortsetzung) ---
 
@@ -858,4 +898,25 @@ Thema: Reinigung, Fließen, universelles Wasser
 Welle 18 – Wellenführer: Weißer Wind (KIN 222, beginnt 21.12.2027)
 Zeitraum 2027: 21.12.2027–31.12.2027 (KIN 222–232); Welle endet 02.01.2028 mit KIN 234
 Thema: Kommunikation, Geist, Botschaft
+
+
+VERBINDLICHE ORAKELRECHNUNG
+Mit nullbasiertem Siegelindex s = (Kin - 1) % 20 und Ton t = (Kin - 1) % 13 + 1:
+Analoges Siegel: mod(17 - s, 20), gleicher Ton t.
+Antipodensiegel: mod(s + 10, 20), gleicher Ton t.
+Okkultes Kin: 261 - Kin. Okkultes Siegel: 19 - s. Okkulter Ton: 14 - t.
+Führungssiegel: mod(s + Offset, 20). Offsets nach Ton 1 bis 13: 0, 12, 4, 16, 8, 0, 12, 4, 16, 8, 0, 12, 4. Führungston bleibt t.
+Beispiel Kin 1: Analog Kin 118 Weißer Spiegel; Antipode Kin 131 Blauer Affe; Okkult Kin 260 Gelbe Sonne; Führung Kin 1 Roter Drache.
+Beispiel Kin 56: Analog Kin 43 Blaue Nacht; Antipode Kin 186 Weißer Weltenwandler; Okkult Kin 205 Rote Schlange; Führung Kin 212 Gelber Mensch. Geburtswelle 5 beginnt mit Kin 53 Roter Himmelswanderer.
+
+PRIMÄRQUELLEN UND GRENZEN
+Foundation for the Law of Time, Book of Kin: https://lawoftime.org/timeshipearth/bookofkin.html
+Foundation, Fifth Force Oracle: https://www.lawoftime.org/lawoftime/fifth-force-oracle.html
+Foundation, Töne und Siegel: https://lawoftime.org/infobooth/sealsandtones.html
+Foundation, planetare Zuordnungen: https://www.lawoftime.org/lawoftime/level2.html
+Foundation, Schalttag: https://lawoftime.org/decode/
+Foundation, Day Out of Time am 25. Juli: https://lawoftime.org/day-out-of-time/
+Foundation, Anker 1993: https://www.lawoftime.org/pdfs/Rinri-II-2.1.pdf
+Smithsonian, traditionelle Maya-Kalender: https://maya.nmai.si.edu/calendar/calendar-system
+Diese Quellen belegen die jeweiligen Systemregeln beziehungsweise die historische Einordnung. Sie sind keine Wirkungsnachweise für die redaktionellen Persönlichkeits-, Aktivitäts- oder Regenerationstexte.
 `

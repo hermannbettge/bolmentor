@@ -9,76 +9,9 @@ const anthropic = new Anthropic({
 })
 
 
-// Maya Calendar Engine — Dreamspell
-// Anchor: 26 July 1993 = Kin 144 (Yellow Crystal Seed)
-// Feb 29 (leap day) does NOT advance the Dreamspell Kin count
-const ANCHOR_DATE = new Date('1993-07-26T00:00:00Z')
-const ANCHOR_KIN_0 = 143
-
-function isLeapYear(y) {
-  return (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0
-}
-function countLeapDaysBetween(d1, d2) {
-  const [from, to] = d1 <= d2 ? [d1, d2] : [d2, d1]
-  let count = 0
-  for (let y = from.getUTCFullYear(); y <= to.getUTCFullYear(); y++) {
-    if (isLeapYear(y)) {
-      const feb29 = new Date(Date.UTC(y, 1, 29))
-      if (feb29 > from && feb29 <= to) count++
-    }
-  }
-  return count
-}
-
-const SEALS = [
-  'Roter Drache', 'Weißer Wind', 'Blaue Nacht', 'Gelbe Saat',
-  'Rote Schlange', 'Weißer Weltenwandler', 'Blaue Hand', 'Gelber Stern',
-  'Roter Mond', 'Weißer Hund', 'Blauer Affe', 'Gelber Mensch',
-  'Roter Himmelswanderer', 'Weißer Zauberer', 'Blauer Adler', 'Gelber Krieger',
-  'Rote Erde', 'Weißer Spiegel', 'Blauer Sturm', 'Gelbe Sonne',
-]
-
-const TONES = [
-  'Magnetisch', 'Lunar', 'Elektrisch', 'Selbst-Existent', 'Übertönend',
-  'Rhythmisch', 'Resonant', 'Galaktisch', 'Solar', 'Planetar',
-  'Spektral', 'Kristallin', 'Kosmisch',
-]
-
-const TONE_POWERS = [
-  'Vereint', 'Stabilisiert', 'Aktiviert', 'Definiert', 'Befähigt',
-  'Organisiert', 'Kanalisiert', 'Harmonisiert', 'Pulsiert', 'Manifestiert',
-  'Löst auf', 'Weiht', 'Überdauert',
-]
-
-const LIFE_THEMES = [
-  'Pflege und Geburt des Neuen', 'Kommunikation und Geist', 'Träumen und Intuition',
-  'Blühen und Zielen', 'Lebenskraft und Bewegung', 'Tod und Wandel',
-  'Heilen und Vollenden', 'Kunst und Schönheit', 'Reinigung und Fließen',
-  'Liebe und Loyalität', 'Magie und Spielen', 'Freier Wille und Weisheit',
-  'Weltdienst und Erkundung', 'Zauberei und Zeitlosigkeit', 'Vision und Kreativität',
-  'Intelligenz und Furchtlosigkeit', 'Navigation und Synchronizität', 'Reflektion und Ordnung',
-  'Transformation und Selbst-Generation', 'Erleuchtung und universelles Feuer',
-]
-
-function calculateKinFromDate(dateStr) {
-  const d = new Date(dateStr + 'T00:00:00Z')
-  const rawDiff = Math.floor((d - ANCHOR_DATE) / 86400000)
-  const leapDays = countLeapDaysBetween(d, ANCHOR_DATE)
-  const adjustedDiff = rawDiff + (rawDiff < 0 ? leapDays : -leapDays)
-  const kin = ((ANCHOR_KIN_0 + adjustedDiff) % 260 + 260) % 260
-  const sealIndex = kin % 20
-  const toneIndex = kin % 13
-  return {
-    kin: kin + 1,
-    seal: SEALS[sealIndex],
-    tone: TONES[toneIndex],
-    toneNumber: toneIndex + 1,
-    tonePower: TONE_POWERS[toneIndex],
-    antipode: SEALS[(sealIndex + 10) % 20],
-    lifeTheme: LIFE_THEMES[sealIndex],
-    wavespell: Math.floor(kin / 13) + 1,
-  }
-}
+import { calculateKin as calculateKinFromDate, civilDateISO, parseCivilDate } from '../../src/lib/mayanCalendar.js'
+import { KNOWLEDGE_BASE } from '../../src/lib/knowledgeBase.js'
+import { INTERPRETATION_RULES, calendarFacts, REGEN_CONTEXT } from '../lib/mayaContext.js'
 
 const GERMAN_MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
 
@@ -125,13 +58,14 @@ function checkPurchased(profile, type) {
 
 // Save analysis
 async function saveAnalysis(userId, type, content, analysisDate, monthYear = null) {
-  await supabase.from('analyses').insert({
+  const { error } = await supabase.from('analyses').insert({
     user_id: userId,
     type,
     content,
     analysis_date: analysisDate,
     month_year: monthYear,
   })
+  if (error) throw new Error('Die Analyse konnte nicht gespeichert werden. Bitte erneut versuchen.')
 }
 
 // Call Claude
@@ -139,6 +73,7 @@ async function callClaude(prompt, maxTokens = 8000) {
   const message = await anthropic.messages.create({
     model: 'claude-sonnet-4-6',
     max_tokens: maxTokens,
+    system: `${INTERPRETATION_RULES}\n\n${KNOWLEDGE_BASE}\n\n${REGEN_CONTEXT}`,
     messages: [{ role: 'user', content: prompt }],
   })
   return message.content[0].text
@@ -162,7 +97,8 @@ async function streamClaude(res, prompt, maxTokens, onComplete) {
     const stream = anthropic.messages.stream({
       model: 'claude-sonnet-4-6',
       max_tokens: maxTokens,
-      messages: [{ role: 'user', content: prompt }],
+      system: `${INTERPRETATION_RULES}\n\n${KNOWLEDGE_BASE}\n\n${REGEN_CONTEXT}`,
+    messages: [{ role: 'user', content: prompt }],
     })
     for await (const chunk of stream) {
       if (chunk.type === 'content_block_delta' && chunk.delta?.type === 'text_delta') {
@@ -170,6 +106,8 @@ async function streamClaude(res, prompt, maxTokens, onComplete) {
         res.write(`data: ${JSON.stringify({ text: chunk.delta.text })}\n\n`)
       }
     }
+    const finalMessage = await stream.finalMessage()
+    if (finalMessage.stop_reason === 'max_tokens') throw new Error('Die Analyse wurde wegen der Ausgabelänge abgebrochen und nicht gespeichert. Bitte erneut versuchen.')
     await onComplete(fullContent)
     res.write(`data: ${JSON.stringify({ done: true, content: fullContent })}\n\n`)
   } catch (err) {
@@ -214,7 +152,10 @@ Länge: 280–350 Wörter gesamt.`
 
 function buildMonthlyPrompt(profile, kinData, monthName, year) {
   const today = new Date()
-  const startKin = calculateKinFromDate(new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0])
+  const month = GERMAN_MONTHS.indexOf(monthName) + 1
+  const startISO = `${year}-${String(month).padStart(2, '0')}-01`
+  const startKin = calculateKinFromDate(startISO)
+  const monthFacts = calendarFacts(year, month)
   return `Du bist ein Maya Kalender Experte. Erstelle eine tiefe Monatsanalyse auf Deutsch.
 
 NUTZERDATEN:
@@ -227,6 +168,7 @@ Antipode: ${kinData.antipode}
 MONATS-ENERGIE:
 Monat: ${monthName} ${year}
 Start-Kin: Kin ${startKin.kin} – ${startKin.tone} ${startKin.seal}
+${monthFacts}
 
 Erstelle eine umfassende Monatsanalyse:
 
@@ -263,7 +205,7 @@ STIL:
 - Sprich die Person immer direkt mit Vornamen an
 - Jeder Abschnitt 2–3 prägnante Absätze
 - Konkret, tiefgründig, persönlich - kein generisches Horoskop-Deutsch
-- Nutze das Maya-System als Tiefenpsychologie, nicht als Wahrsagerei
+- Nutze Dreamspell als symbolischen Reflexionsrahmen, nicht als wissenschaftlich validierte Tiefenpsychologie oder Wahrsagerei
 `
 
 function buildSpecialPrompt(type, profile, kinData, extraData) {
@@ -291,7 +233,7 @@ Geburtsdatum: ${profile.birth_date}
 ${base}
 ${SYSTEM_RULES}
 
-Erstelle eine prägnante Business-Analyse mit diesen Abschnitten. Jeder Abschnitt soll 2–3 Absätze haben und konkrete, handlungsorientierte Erkenntnisse liefern:
+Erstelle eine prägnante Business-Analyse mit diesen Abschnitten. Jeder Abschnitt soll 1–2 kompakte Absätze haben und konkrete, handlungsorientierte Erkenntnisse liefern:
 
 ## DEIN KOSMISCHER BUSINESS-AUFTRAG
 ## DEINE NATÜRLICHEN STÄRKEN & SUPERKRÄFTE IM BUSINESS
@@ -316,11 +258,11 @@ Gesamtlänge: ca. 1200–1500 Wörter. Sei konkret und tiefgründig, aber prägn
 ${base}
 ${SYSTEM_RULES}
 
-Erstelle eine prägnante Gesundheitsanalyse. Jeder Abschnitt 2–3 Absätze:
+Erstelle eine prägnante Gesundheitsanalyse. Jeder Abschnitt 1–2 kompakte Absätze:
 
 ## DEINE KÖRPERENERGIE-SIGNATUR
-## DEINE ENERGIESYSTEME & ORGANE IM FOKUS
-## SCHWACHSTELLEN & ANFÄLLIGKEITEN
+## DEINE KÖRPERWAHRNEHMUNG IM FOKUS
+## SELBSTBEOBACHTUNG & WOHLBEFINDEN
 ## WIE DU ENERGIE VERLIERST UND GEWINNST
 ## SCHLAF, REGENERATION & ERHOLUNG
 ## ERNÄHRUNG AUS DEINER MAYA-ENERGIE
@@ -329,7 +271,7 @@ Erstelle eine prägnante Gesundheitsanalyse. Jeder Abschnitt 2–3 Absätze:
 ## STRESSQUELLEN & WIE DU DAMIT UMGEHST
 ## EMOTIONEN & KÖRPER – DIE VERBINDUNG
 ## HEILUNGSWEG & TIEFE TRANSFORMATION
-## DEIN IMMUNSYSTEM & SCHUTZENERGIE
+## DEINE ALLTÄGLICHE SELBSTFÜRSORGE
 ## ZYKLUS, RHYTHMUS & NATURVERBINDUNG
 ## HEILSAME UMGEBUNGEN & ORTE
 ## TÄGLICHE GESUNDHEITSPRAXIS
@@ -341,7 +283,7 @@ Gesamtlänge: ca. 1200–1500 Wörter.`,
 ${base}
 ${SYSTEM_RULES}
 
-Tiefe Familienanalyse, jeder Abschnitt 4–6 Absätze:
+Tiefe Familienanalyse, jeder Abschnitt 1–2 kompakte Absätze:
 
 ## DEINE ENERGETISCHE ROLLE IN DER FAMILIE
 ## DEINE URSPRUNGSFAMILIE & TIEFE PRÄGUNGEN
@@ -353,7 +295,7 @@ Tiefe Familienanalyse, jeder Abschnitt 4–6 Absätze:
 ## GENERATIONENMUSTER & ERBSCHAFTEN
 ## KONFLIKTE IN DER FAMILIE – DEIN MUSTER
 ## DEINE SEELENFAMILIE & WAHLVERWANDTSCHAFT
-## HEILUNG DER FAMILIENSYSTEM
+## HEILUNG DES FAMILIENSYSTEMS
 ## WIE DU EINE NEUE FAMILIENKULTUR ERSCHAFFST
 ## DEIN ZUHAUSE ALS ENERGETISCHER RAUM
 ## FAMILIENRITUALE & VERBINDUNG
@@ -366,7 +308,7 @@ Gesamtlänge: ca. 1200–1500 Wörter.`,
 ${base}
 ${SYSTEM_RULES}
 
-Umfassende Selbstausdruck-Analyse, jeder Abschnitt 4–6 Absätze:
+Umfassende Selbstausdruck-Analyse, jeder Abschnitt 1–2 kompakte Absätze:
 
 ## DEINE KREATIVE ESSENZ & EINZIGARTIGKEIT
 ## DEINE STIMME IN DER WELT
@@ -375,7 +317,7 @@ Umfassende Selbstausdruck-Analyse, jeder Abschnitt 4–6 Absätze:
 ## DEIN KREATIVPROZESS – WIE DU ARBEITEST
 ## BLOCKADEN & INNERE ZENSUR
 ## ANGST VOR SICHTBARKEIT & URTEILEN
-## DEIN PUBLIKUM & DEINE NATURLICHE WIRKUNG
+## DEIN PUBLIKUM & DEINE NATÜRLICHE WIRKUNG
 ## BÜHNE, SCHREIBEN, SPRECHEN – WAS PASST
 ## DEINE PERSÖNLICHE MARKE & AUFTRITT
 ## KREATIVE FÜLLE & INSPIRATION
@@ -391,7 +333,7 @@ Gesamtlänge: ca. 1200–1500 Wörter.`,
 ${base}
 ${SYSTEM_RULES}
 
-Tiefe Finanzanalyse, jeder Abschnitt 4–6 Absätze:
+Tiefe Finanzanalyse, jeder Abschnitt 1–2 kompakte Absätze:
 
 ## DEINE GELD-ENERGIE-SIGNATUR
 ## DEINE TIEFSTEN GLAUBENSSÄTZE ÜBER GELD
@@ -416,7 +358,7 @@ Gesamtlänge: ca. 1200–1500 Wörter.`,
 ${base}
 ${SYSTEM_RULES}
 
-Umfassende Karriereanalyse, jeder Abschnitt 4–6 Absätze:
+Umfassende Karriereanalyse, jeder Abschnitt 1–2 kompakte Absätze:
 
 ## DEINE BERUFLICHE BERUFUNG & SEELENMISSION
 ## DEINE NATÜRLICHEN TALENTE & SUPERKRÄFTE
@@ -441,7 +383,7 @@ Gesamtlänge: ca. 1200–1500 Wörter.`,
 ${base}
 ${SYSTEM_RULES}
 
-Tiefe Lebensphasen-Analyse, jeder Abschnitt 4–6 Absätze:
+Tiefe Lebensphasen-Analyse, jeder Abschnitt 1–2 kompakte Absätze:
 
 ## DEIN KOSMISCHER LEBENSRHYTHMUS
 ## DIE ERSTE LEBENSPHASE (KINDHEIT & JUGEND)
@@ -450,7 +392,7 @@ Tiefe Lebensphasen-Analyse, jeder Abschnitt 4–6 Absätze:
 ## DIE REIFEPHASE (40ER JAHRE)
 ## DIE ERNTE- UND WEISHEITSPHASE (50ER+)
 ## DEINE AKTUELLE LEBENSPHASE – TIEFANALYSE
-## SCHLÜSSELEREIGNISSE AUS DEINER VERGANGENHEIT
+## VON DIR GENANNTE SCHLÜSSELEREIGNISSE AUS DEINER VERGANGENHEIT
 ## WAS DIESE EREIGNISSE DIR SAGEN
 ## KOMMENDE ZYKLEN & ENERGIEFELDER
 ## DIE NÄCHSTEN 3 JAHRE IM DETAIL
@@ -466,7 +408,7 @@ Gesamtlänge: ca. 1200–1500 Wörter.`,
 ${base}
 ${SYSTEM_RULES}
 
-Tiefe Partnerschaftsanalyse, jeder Abschnitt 4–6 Absätze:
+Tiefe Partnerschaftsanalyse, jeder Abschnitt 1–2 kompakte Absätze:
 
 ## DEINE LIEBES-SIGNATUR & BEZIEHUNGSENERGIE
 ## WAS DU IN BEZIEHUNGEN WIRKLICH SUCHST
@@ -491,7 +433,7 @@ Gesamtlänge: ca. 1200–1500 Wörter.`,
 ${base}
 ${SYSTEM_RULES}
 
-Tiefe Beziehungsanalyse der eigenen Muster, jeder Abschnitt 4–6 Absätze:
+Tiefe Beziehungsanalyse der eigenen Muster, jeder Abschnitt 1–2 kompakte Absätze:
 
 ## DEINE BEZIEHUNGSENERGIE-SIGNATUR
 ## DEIN BINDUNGSSTIL & ATTACHMENT-MUSTER
@@ -534,6 +476,7 @@ Name: ${name}
 Kin: ${kin}
 Lebensthema: ${theme}
 Jahr: ${year}
+${calendarFacts(year)}
 
 ${SYSTEM_RULES}
 
@@ -569,9 +512,9 @@ Für jeden der 12 Monate verwende EXAKT diese Struktur:
 
 **Fazit ${label}:** Konkrete Handlungsempfehlung für den Monat im Bereich ${label}
 
-Jeder Monatsabschnitt mindestens 300 Wörter.
-Das Jahresresümee am Ende mindestens 400 Wörter.
-Gesamtlänge: mindestens 6000 Wörter.`
+Jeder Monatsabschnitt etwa 180–240 Wörter.
+Das Jahresresümee am Ende etwa 250–350 Wörter.
+Gesamtlänge: etwa 2800–3500 Wörter. Alle zwölf Monate und das Resümee vollständig ausgeben.`
 }
 
 // Energy classification by tone
@@ -590,7 +533,7 @@ router.get('/calendar/:year/:month', requireAuth, async (req, res) => {
 
     const year = parseInt(req.params.year)
     const month = parseInt(req.params.month) // 1-12
-    if (isNaN(year) || isNaN(month) || month < 1 || month > 12) {
+    if (!/^\d{4}$/.test(req.params.year) || !/^\d{1,2}$/.test(req.params.month) || year < 1900 || year > 2100 || month < 1 || month > 12) {
       return res.status(400).json({ error: 'Ungültiges Datum' })
     }
 
@@ -601,11 +544,11 @@ router.get('/calendar/:year/:month', requireAuth, async (req, res) => {
     for (let d = 1; d <= daysInMonth; d++) {
       const dateStr = `${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`
       const kin = calculateKinFromDate(dateStr)
-      const energyType = getEnergyType(kin.toneNumber)
+      const energyType = kin.specialDay ? 'balance' : getEnergyType(kin.toneNumber)
 
       // Personal resonance: same seal, same tone, same wavespell as birth kin
       let resonance = 'none'
-      if (userKin) {
+      if (userKin && !userKin.specialDay && !kin.specialDay) {
         if (kin.kin === userKin.kin) resonance = 'birthday'          // exact kin = power day
         else if (kin.seal === userKin.seal) resonance = 'seal'       // same seal = identity day
         else if (kin.toneNumber === userKin.toneNumber) resonance = 'tone'  // same tone = rhythm day
@@ -625,7 +568,7 @@ router.get('/calendar/:year/:month', requireAuth, async (req, res) => {
 
 router.get('/daily', requireAuth, async (req, res) => {
   try {
-    const dateStr = req.query.date || new Date().toISOString().split('T')[0]
+    const dateStr = req.query.date || civilDateISO()
     const { data } = await supabase
       .from('analyses')
       .select('content, created_at')
@@ -645,7 +588,7 @@ router.post('/daily', requireAuth, async (req, res) => {
   try {
     profile = await getProfile(req.user.id)
     checkMembership(profile)
-    dateStr = req.body.date || new Date().toISOString().split('T')[0]
+    dateStr = req.body.date || civilDateISO()
     const dateObj = new Date(dateStr + 'T00:00:00')
     const monthName = GERMAN_MONTHS[dateObj.getMonth()]
     const dateLabel = `${dateObj.getDate()}. ${monthName} ${dateObj.getFullYear()}`
@@ -666,10 +609,11 @@ router.post('/monthly', requireAuth, async (req, res) => {
     profile = await getProfile(req.user.id)
     checkMembership(profile)
     const today = new Date()
-    const monthName = GERMAN_MONTHS[today.getMonth()]
-    const year = today.getFullYear()
-    todayStr = today.toISOString().split('T')[0]
-    monthYear = `${year}-${String(today.getMonth() + 1).padStart(2, '0')}`
+    const civil = parseCivilDate(civilDateISO(today))
+    const monthName = GERMAN_MONTHS[civil.month - 1]
+    const year = civil.year
+    todayStr = civilDateISO(today)
+    monthYear = `${year}-${String(civil.month).padStart(2, '0')}`
     const kinData = calculateKinFromDate(profile.birth_date)
     prompt = buildMonthlyPrompt(profile, kinData, monthName, year)
   } catch (err) {
@@ -700,7 +644,7 @@ SPECIAL_TYPES.forEach(type => {
 
     const userId = req.user.id
     await streamClaude(res, prompt, 6000, async (content) => {
-      const today = new Date().toISOString().split('T')[0]
+      const today = civilDateISO()
       await saveAnalysis(userId, type, content, today)
     })
   })
@@ -764,7 +708,7 @@ DAILY_DOMAIN_TYPES.forEach(type => {
   // GET: check if a domain daily exists for a given date (default: today)
   router.get(`/${type}/daily`, requireAuth, async (req, res) => {
     try {
-      const dateStr = req.query.date || new Date().toISOString().split('T')[0]
+      const dateStr = req.query.date || civilDateISO()
       const { data } = await supabase
         .from('analyses')
         .select('content, created_at')
@@ -786,7 +730,7 @@ DAILY_DOMAIN_TYPES.forEach(type => {
       profile = await getProfile(req.user.id)
       checkMembership(profile)
       checkPurchased(profile, type)
-      dateStr = req.body.date || new Date().toISOString().split('T')[0]
+      dateStr = req.body.date || civilDateISO()
       const dateObj = new Date(dateStr + 'T00:00:00')
       const monthName = GERMAN_MONTHS[dateObj.getMonth()]
       const dateLabel = `${dateObj.getDate()}. ${monthName} ${dateObj.getFullYear()}`
@@ -822,7 +766,7 @@ YEARLY_TYPES.forEach(type => {
       return res.status(400).json({ error: err.message })
     }
     await streamClaude(res, prompt, 16000, async (content) => {
-      const today = new Date().toISOString().split('T')[0]
+      const today = civilDateISO()
       await saveAnalysis(userId, `${type}_yearly_${year}`, content, today)
     })
   })
@@ -891,7 +835,7 @@ Gesamtlänge: ca. 1500–1800 Wörter. Sei konkret und nenne beide Partner bei i
     return res.status(400).json({ error: err.message })
   }
   await streamClaude(res, prompt, 10000, async (content) => {
-    const today = new Date().toISOString().split('T')[0]
+    const today = civilDateISO()
     await saveAnalysis(userId, 'partnership_compatibility', content, today)
   })
 })
@@ -982,7 +926,7 @@ Gesamtlänge: ca. 1200–1500 Wörter. Sei konkret. Sprich ${profile.name} direk
     return res.status(400).json({ error: err.message })
   }
   await streamClaude(res, prompt, 8000, async (content) => {
-    const today = new Date().toISOString().split('T')[0]
+    const today = civilDateISO()
     await saveAnalysis(userId, `event_${eventId}`, content, today)
   })
 })
@@ -1045,6 +989,7 @@ Geburts-Kin: Kin ${userKin.kin} – ${userKin.tone} ${userKin.seal} | Lebensthem
 
 EREIGNIS: "${event.name}"
 Kin des Ereignisses: Kin ${eventKin.kin} – ${eventKin.tone} ${eventKin.seal} | Lebensthema: ${eventKin.lifeTheme}
+${calendarFacts(year, GERMAN_MONTHS.indexOf(monthName) + 1)}
 
 ## MONATSENERGIE FÜR "${event.name.toUpperCase()}" – ${monthName.toUpperCase()} ${year}
 Was prägt diesen Monat energetisch für dieses Ereignis?
@@ -1077,6 +1022,8 @@ Geburts-Kin: Kin ${userKin.kin} – ${userKin.tone} ${userKin.seal} | Lebensthem
 EREIGNIS: "${event.name}"
 Kin des Ereignisses: Kin ${eventKin.kin} – ${eventKin.tone} ${eventKin.seal} | Lebensthema: ${eventKin.lifeTheme}
 
+${calendarFacts(year)}
+
 ## JAHRESÜBERBLICK ${year} FÜR "${event.name.toUpperCase()}"
 Die übergreifende Energie des Jahres für dieses Ereignis.
 
@@ -1102,7 +1049,7 @@ Jeder Monatsabschnitt 3–4 Sätze. Gesamtlänge: 900–1100 Wörter. Sprich ${p
 
 function checkEventDateAccess(profile, dateStr) {
   if (profile.is_admin) return
-  const today = new Date().toISOString().split('T')[0]
+  const today = civilDateISO()
   if (profile.subscription_plan === 'annual') return
   if (dateStr !== today) throw new Error('Mit dem Monatstarif ist nur der heutige Tag verfügbar.')
 }
@@ -1138,7 +1085,7 @@ async function getEventForUser(eventId, userId) {
 // Event daily
 router.get('/event/:eventId/daily', requireAuth, async (req, res) => {
   try {
-    const dateStr = req.query.date || new Date().toISOString().split('T')[0]
+    const dateStr = req.query.date || civilDateISO()
     const { data } = await supabase.from('analyses')
       .select('content, created_at')
       .eq('user_id', req.user.id)
@@ -1154,7 +1101,7 @@ router.post('/event/:eventId/daily', requireAuth, async (req, res) => {
     const profile = await getProfile(req.user.id)
     checkMembership(profile)
     eventId = req.params.eventId
-    dateStr = req.body.date || new Date().toISOString().split('T')[0]
+    dateStr = req.body.date || civilDateISO()
     checkEventDateAccess(profile, dateStr)
     const event = await getEventForUser(eventId, req.user.id)
     const dateObj = new Date(dateStr + 'T00:00:00')
@@ -1175,7 +1122,7 @@ router.post('/event/:eventId/daily', requireAuth, async (req, res) => {
 // Event monthly
 router.get('/event/:eventId/monthly', requireAuth, async (req, res) => {
   try {
-    const monthYear = req.query.monthYear || new Date().toISOString().slice(0, 7)
+    const monthYear = req.query.monthYear || civilDateISO().slice(0, 7)
     const { data } = await supabase.from('analyses')
       .select('content, created_at')
       .eq('user_id', req.user.id)
@@ -1205,7 +1152,7 @@ router.post('/event/:eventId/monthly', requireAuth, async (req, res) => {
     return res.status(400).json({ error: err.message })
   }
   await streamClaude(res, prompt, 5000, async (content) => {
-    const today = new Date().toISOString().split('T')[0]
+    const today = civilDateISO()
     await saveAnalysis(userId, `event_${eventId}_monthly_${monthYear}`, content, today)
   })
 })
@@ -1240,7 +1187,7 @@ router.post('/event/:eventId/yearly', requireAuth, async (req, res) => {
     return res.status(400).json({ error: err.message })
   }
   await streamClaude(res, prompt, 10000, async (content) => {
-    const today = new Date().toISOString().split('T')[0]
+    const today = civilDateISO()
     await saveAnalysis(userId, `event_${eventId}_yearly_${year}`, content, today)
   })
 })

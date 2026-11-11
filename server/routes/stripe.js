@@ -322,7 +322,7 @@ router.post('/upgrade-annual', requireAuth, async (req, res) => {
 // Diagnostic endpoint — lists which price env vars are missing (admin only via secret header)
 router.get('/config-check', (req, res) => {
   const secret = req.headers['x-admin-secret']
-  if (secret !== process.env.ADMIN_SECRET && secret !== 'dev-check') {
+  if (!process.env.ADMIN_SECRET || typeof secret !== 'string' || secret !== process.env.ADMIN_SECRET) {
     return res.status(403).json({ error: 'Forbidden' })
   }
   const status = {}

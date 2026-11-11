@@ -1,3 +1,4 @@
+import { INTERPRETATION_RULES } from './dreamspellReference.js'
 import { KNOWLEDGE_BASE } from './knowledgeBase.js'
 
 export { KNOWLEDGE_BASE }
@@ -16,6 +17,8 @@ HEUTIGE ENERGIE:
 Datum: ${todayData.date}
 Heutiges Kin: ${todayData.kin} – ${todayData.tone} ${todayData.seal}
 Ton-Energie: ${todayData.tonePower} – ${todayData.toneAction}
+
+${INTERPRETATION_RULES}
 
 ${KNOWLEDGE_BASE ? `MAYA KALENDER WISSENSBASIS:\n${KNOWLEDGE_BASE}\n` : ''}
 
@@ -56,7 +59,9 @@ Führungssiegel: ${userData.kinData?.guide}
 MONATS-ENERGIE:
 Monat: ${monthData.monthName} ${monthData.year}
 Start-Kin des Monats: ${monthData.startKin}
-Monatlicher Wavespell: ${monthData.wavespell}
+Welle am Monatsanfang (ein Monat umfasst mehrere Wellen): ${monthData.wavespell}
+
+${INTERPRETATION_RULES}
 
 ${KNOWLEDGE_BASE ? `MAYA KALENDER WISSENSBASIS:\n${KNOWLEDGE_BASE}\n` : ''}
 
@@ -100,6 +105,8 @@ Geburts-Kin: ${userData.kinData?.kin} – ${userData.kinData?.tone} ${userData.k
 Lebensthema: ${userData.kinData?.lifeTheme}
 Ton-Kraft: ${userData.kinData?.tonePower}
 
+${INTERPRETATION_RULES}
+
 ${KNOWLEDGE_BASE ? `MAYA KALENDER WISSENSBASIS:\n${KNOWLEDGE_BASE}\n` : ''}
 
 ## DEIN KOSMISCHER BUSINESS-AUFTRAG
@@ -134,19 +141,21 @@ Name: ${userData.name}
 Geburts-Kin: ${userData.kinData?.kin} – ${userData.kinData?.tone} ${userData.kinData?.seal}
 Lebensthema: ${userData.kinData?.lifeTheme}
 
+${INTERPRETATION_RULES}
+
 ${KNOWLEDGE_BASE ? `MAYA KALENDER WISSENSBASIS:\n${KNOWLEDGE_BASE}\n` : ''}
 
 ## DEINE KÖRPERENERGIE-SIGNATUR
-Wie das Kin die körperliche Konstitution und Vitalität prägt.
+Symbolische Reflexion zur Körperwahrnehmung, keine Aussage zur körperlichen Konstitution.
 
 ## ENERGIESYSTEME & SCHWACHSTELLEN
-Welche Organe und Energiesysteme besondere Aufmerksamkeit brauchen.
+Keine Organrisiken aus dem Kin ableiten. Fragen zur subjektiven Körperwahrnehmung anbieten.
 
 ## REGENERATION & ERHOLUNG
 Wie ${userData.name} sich am besten regeneriert – auf Körper-, Geist- und Seelenebene.
 
 ## ERNÄHRUNG & KÖRPERPFLEGE
-Welche Ernährungsweise und Pflegegewohnheiten zur Energie passen.
+Freiwillige Reflexion über selbst berichtete Alltagsgewohnheiten. Keine Ernährungsvorgaben aus dem Kin ableiten.
 
 ## BEWEGUNG & SPORT
 Welche Bewegungsformen die natürliche Energie unterstützen.
@@ -166,6 +175,8 @@ Du bist ein Maya Kalender Experte. Erstelle eine Familienanalyse auf Deutsch.
 NUTZERDATEN:
 Name: ${userData.name}
 Geburts-Kin: ${userData.kinData?.kin} – ${userData.kinData?.tone} ${userData.kinData?.seal}
+
+${INTERPRETATION_RULES}
 
 ${KNOWLEDGE_BASE ? `MAYA KALENDER WISSENSBASIS:\n${KNOWLEDGE_BASE}\n` : ''}
 
@@ -200,6 +211,8 @@ Name: ${userData.name}
 Geburts-Kin: ${userData.kinData?.kin} – ${userData.kinData?.tone} ${userData.kinData?.seal}
 Lebensthema: ${userData.kinData?.lifeTheme}
 
+${INTERPRETATION_RULES}
+
 ${KNOWLEDGE_BASE ? `MAYA KALENDER WISSENSBASIS:\n${KNOWLEDGE_BASE}\n` : ''}
 
 ## DEINE KREATIVE ESSENZ
@@ -232,6 +245,8 @@ NUTZERDATEN:
 Name: ${userData.name}
 Geburts-Kin: ${userData.kinData?.kin} – ${userData.kinData?.tone} ${userData.kinData?.seal}
 
+${INTERPRETATION_RULES}
+
 ${KNOWLEDGE_BASE ? `MAYA KALENDER WISSENSBASIS:\n${KNOWLEDGE_BASE}\n` : ''}
 
 ## DEINE GELD-ENERGIE-SIGNATUR
@@ -244,7 +259,7 @@ Natürliche Wege, wie Überfluss zu ${userData.name} fließt.
 Typische limitierende Muster und ihre Ursachen im Kin.
 
 ## INVESTITIONEN & WACHSTUM
-Welche Arten von Investitionen und Wachstumsstrategien passen.
+Reflexion über eigene Ziele und Risikowahrnehmung. Keine konkreten Anlagen aus dem Kin empfehlen.
 
 ## GEBEN & EMPFANGEN
 Das Gleichgewicht zwischen Großzügigkeit und Empfangen.
@@ -264,6 +279,8 @@ NUTZERDATEN:
 Name: ${userData.name}
 Geburts-Kin: ${userData.kinData?.kin} – ${userData.kinData?.tone} ${userData.kinData?.seal}
 Lebensthema: ${userData.kinData?.lifeTheme}
+
+${INTERPRETATION_RULES}
 
 ${KNOWLEDGE_BASE ? `MAYA KALENDER WISSENSBASIS:\n${KNOWLEDGE_BASE}\n` : ''}
 
@@ -301,6 +318,8 @@ Geburtsdatum: ${userData.birth_date}
 SPEZIFISCHE JAHRE ZUR ANALYSE:
 ${extraData?.years?.join(', ') || 'Gesamtes Leben'}
 
+${INTERPRETATION_RULES}
+
 ${KNOWLEDGE_BASE ? `MAYA KALENDER WISSENSBASIS:\n${KNOWLEDGE_BASE}\n` : ''}
 
 ## DEIN LEBENSRHYTHMUS
@@ -329,6 +348,8 @@ Du bist ein Maya Kalender Experte. Erstelle eine Partnerschaftsanalyse auf Deuts
 NUTZERDATEN:
 Name: ${userData.name}
 Geburts-Kin: ${userData.kinData?.kin} – ${userData.kinData?.tone} ${userData.kinData?.seal}
+
+${INTERPRETATION_RULES}
 
 ${KNOWLEDGE_BASE ? `MAYA KALENDER WISSENSBASIS:\n${KNOWLEDGE_BASE}\n` : ''}
 
@@ -365,6 +386,8 @@ Geburts-Kin: ${userData.kinData?.kin} – ${userData.kinData?.tone} ${userData.k
 PERSON 2 (Partner):
 Geburtsdatum: ${partnerData?.birthDate}
 Geburts-Kin: ${partnerData?.kin} – ${partnerData?.tone} ${partnerData?.seal}
+
+${INTERPRETATION_RULES}
 
 ${KNOWLEDGE_BASE ? `MAYA KALENDER WISSENSBASIS:\n${KNOWLEDGE_BASE}\n` : ''}
 

@@ -1,3 +1,4 @@
+import { civilDateISO } from '../lib/mayanCalendar.js'
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
@@ -19,7 +20,7 @@ const COPPER = 'var(--accent)'
 const TEXT = 'var(--text-1)'
 const TEXT_MID = 'var(--text-2)'
 
-function todayStr() { return new Date().toISOString().split('T')[0] }
+function todayStr() { return civilDateISO() }
 function currentMonthYear() { const n = new Date(); return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, '0')}` }
 function currentYear() { return new Date().getFullYear() }
 
@@ -157,7 +158,7 @@ export default function AnalyseEvent() {
       })
       await readSSEStream(res, {
         onChunk: (text) => setContent(text),
-        onDone: (c) => { setContent(c); setAnalysisDate(new Date().toISOString().split('T')[0]) },
+        onDone: (c) => { setContent(c); setAnalysisDate(civilDateISO()) },
       })
     } catch (e) { setError(e.message) }
     finally { setCreating(false) }

@@ -1,3 +1,4 @@
+import { civilDateISO } from '../lib/mayanCalendar.js'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
@@ -7,7 +8,7 @@ const WEEKDAYS = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag
 
 function formatDate(dateStr) {
   const d = new Date(dateStr + 'T00:00:00')
-  const today = new Date().toISOString().split('T')[0]
+  const today = civilDateISO()
   const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
   if (dateStr === today) return 'Heute'
   if (dateStr === yesterday) return 'Gestern'

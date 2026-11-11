@@ -1,3 +1,4 @@
+import { civilDateISO } from '../lib/mayanCalendar.js'
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
@@ -13,7 +14,7 @@ const SUGGESTIONS = [
   'Was blockiert mich gerade energetisch?',
 ]
 
-function todayDate() { return new Date().toISOString().split('T')[0] }
+function todayDate() { return civilDateISO() }
 
 async function loadSessionFromDB(userId) {
   try {
