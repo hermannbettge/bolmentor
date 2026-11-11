@@ -31,11 +31,11 @@ function countLeapDaysBetween(d1, d2) {
 }
 
 const SEALS = [
-  'Roter Drachen', 'Weißer Wind', 'Blaue Nacht', 'Gelbe Saat',
+  'Roter Drache', 'Weißer Wind', 'Blaue Nacht', 'Gelbe Saat',
   'Rote Schlange', 'Weißer Weltenwandler', 'Blaue Hand', 'Gelber Stern',
   'Roter Mond', 'Weißer Hund', 'Blauer Affe', 'Gelber Mensch',
-  'Rotes Schilf', 'Weißer Zauberer', 'Blauer Adler', 'Gelber Krieger',
-  'Rote Erde', 'Weißes Spiegelmesser', 'Blauer Sturm', 'Gelbe Sonne',
+  'Roter Himmelswanderer', 'Weißer Zauberer', 'Blauer Adler', 'Gelber Krieger',
+  'Rote Erde', 'Weißer Spiegel', 'Blauer Sturm', 'Gelbe Sonne',
 ]
 
 const TONES = [

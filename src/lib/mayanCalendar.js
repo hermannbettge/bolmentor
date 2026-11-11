@@ -22,7 +22,7 @@ function countLeapDaysBetween(d1, d2) {
 }
 
 const SEALS = [
-  { name: 'Roter Drachen', color: 'rot', english: 'Red Dragon' },
+  { name: 'Roter Drache', color: 'rot', english: 'Red Dragon' },
   { name: 'Weißer Wind', color: 'weiß', english: 'White Wind' },
   { name: 'Blaue Nacht', color: 'blau', english: 'Blue Night' },
   { name: 'Gelbe Saat', color: 'gelb', english: 'Yellow Seed' },
@@ -34,12 +34,12 @@ const SEALS = [
   { name: 'Weißer Hund', color: 'weiß', english: 'White Dog' },
   { name: 'Blauer Affe', color: 'blau', english: 'Blue Monkey' },
   { name: 'Gelber Mensch', color: 'gelb', english: 'Yellow Human' },
-  { name: 'Rotes Schilf', color: 'rot', english: 'Red Skywalker' },
+  { name: 'Roter Himmelswanderer', color: 'rot', english: 'Red Skywalker' },
   { name: 'Weißer Zauberer', color: 'weiß', english: 'White Wizard' },
   { name: 'Blauer Adler', color: 'blau', english: 'Blue Eagle' },
   { name: 'Gelber Krieger', color: 'gelb', english: 'Yellow Warrior' },
   { name: 'Rote Erde', color: 'rot', english: 'Red Earth' },
-  { name: 'Weißes Spiegelmesser', color: 'weiß', english: 'White Mirror' },
+  { name: 'Weißer Spiegel', color: 'weiß', english: 'White Mirror' },
   { name: 'Blauer Sturm', color: 'blau', english: 'Blue Storm' },
   { name: 'Gelbe Sonne', color: 'gelb', english: 'Yellow Sun' },
 ]

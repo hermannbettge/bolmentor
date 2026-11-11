@@ -6,11 +6,11 @@ const router = Router()
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
 const SEALS = [
-  'Roter Drachen', 'Weißer Wind', 'Blaue Nacht', 'Gelbe Saat',
+  'Roter Drache', 'Weißer Wind', 'Blaue Nacht', 'Gelbe Saat',
   'Rote Schlange', 'Weißer Weltenwandler', 'Blaue Hand', 'Gelber Stern',
   'Roter Mond', 'Weißer Hund', 'Blauer Affe', 'Gelber Mensch',
-  'Rotes Schilf', 'Weißer Zauberer', 'Blauer Adler', 'Gelber Krieger',
-  'Rote Erde', 'Weißes Spiegelmesser', 'Blauer Sturm', 'Gelbe Sonne',
+  'Roter Himmelswanderer', 'Weißer Zauberer', 'Blauer Adler', 'Gelber Krieger',
+  'Rote Erde', 'Weißer Spiegel', 'Blauer Sturm', 'Gelbe Sonne',
 ]
 const TONES = [
   'Magnetisch', 'Lunar', 'Elektrisch', 'Selbst-Existent', 'Übertönend',
@@ -37,7 +37,7 @@ const LIFE_THEMES = [
 // Structured Dreamspell knowledge base with machine-readable activity tags
 // Tags are the single source of truth — MAYA never decides this itself
 const SEAL_KNOWLEDGE = [
-  { seal: 'Roter Drachen',        qualities: 'Geburt, Fürsorge, Empfang, Nähren',              tags: ['launch', 'angebot'],      avoidTags: ['abschluss', 'konfrontation'] },
+  { seal: 'Roter Drache',         qualities: 'Geburt, Fürsorge, Empfang, Nähren',              tags: ['launch', 'angebot'],      avoidTags: ['abschluss', 'konfrontation'] },
   { seal: 'Weißer Wind',          qualities: 'Kommunikation, Geist, Botschaft, Klarheit',       tags: ['akquise', 'praesentation', 'netzwerk'],  avoidTags: ['einzelarbeit'] },
   { seal: 'Blaue Nacht',          qualities: 'Träume, Intuition, Fülle, Innenschau',             tags: ['strategie', 'kreativitaet', 'reflexion'], avoidTags: ['akquise', 'konfrontation'] },
   { seal: 'Gelbe Saat',           qualities: 'Zielsetzung, Blüte, Bewusstsein, Fokus',           tags: ['strategie', 'angebot', 'planung'],       avoidTags: [] },
@@ -49,12 +49,12 @@ const SEAL_KNOWLEDGE = [
   { seal: 'Weißer Hund',          qualities: 'Liebe, Loyalität, Treue, Verbindung',              tags: ['netzwerk', 'kooperation', 'teamarbeit'], avoidTags: [] },
   { seal: 'Blauer Affe',          qualities: 'Magie, Spiel, Humor, Leichtigkeit',                tags: ['kreativitaet', 'marketing', 'events'],   avoidTags: ['abschluss'] },
   { seal: 'Gelber Mensch',        qualities: 'Freier Wille, Einfluss, Weisheit, Führung',        tags: ['akquise', 'fuehrung', 'positionierung'], avoidTags: [] },
-  { seal: 'Rotes Schilf',         qualities: 'Weltdienst, Raum, Ausdehnung, Prophetie',          tags: ['netzwerk', 'oeffentlich', 'praesentation'], avoidTags: [] },
+  { seal: 'Roter Himmelswanderer', qualities: 'Weltdienst, Raum, Ausdehnung, Prophetie',         tags: ['netzwerk', 'oeffentlich', 'praesentation'], avoidTags: [] },
   { seal: 'Weißer Zauberer',      qualities: 'Zeitlosigkeit, Empfang, Magie, Hingabe',           tags: ['strategie', 'vertrauen', 'netzwerk'],    avoidTags: ['zeitdruck'] },
   { seal: 'Blauer Adler',         qualities: 'Vision, Kreativität, Geist, Überblick',            tags: ['strategie', 'praesentation', 'planung'], avoidTags: ['detailarbeit'] },
   { seal: 'Gelber Krieger',       qualities: 'Intelligenz, Mut, Befragung, Furchtlosigkeit',     tags: ['akquise', 'verhandlung', 'konfrontation'], avoidTags: [] },
   { seal: 'Rote Erde',            qualities: 'Navigation, Synchronizität, Evolution, Erdung',    tags: ['planung', 'struktur', 'langfristig'],    avoidTags: [] },
-  { seal: 'Weißes Spiegelmesser', qualities: 'Ordnung, Reflexion, Wahrheit, Klarheit',           tags: ['analyse', 'verhandlung', 'struktur'],    avoidTags: [] },
+  { seal: 'Weißer Spiegel',       qualities: 'Ordnung, Reflexion, Wahrheit, Klarheit',           tags: ['analyse', 'verhandlung', 'struktur'],    avoidTags: [] },
   { seal: 'Blauer Sturm',         qualities: 'Transformation, Energie, Selbst-Generation',       tags: ['veraenderung', 'sprint', 'restrukturierung', 'sport'], avoidTags: ['stabilitaet'] },
   { seal: 'Gelbe Sonne',          qualities: 'Erleuchtung, Feuer, Sichtbarkeit, Universalität',  tags: ['launch', 'sichtbarkeit', 'oeffentlich'], avoidTags: [] },
 ]

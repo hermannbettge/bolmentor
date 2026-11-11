@@ -619,7 +619,7 @@ Das Führungssiegel wird aktiviert durch: "Was wäre mein nächster Schritt, wen
 DIE 8 LEBENSTHEMEN – TIEFENDEUTUNG
 ════════════════════════════════
 
-LEBENSTHEMA 1: ERSCHAFFEN (Roter Drachen-Wellenzug)
+LEBENSTHEMA 1: ERSCHAFFEN (Roter Drache-Wellenzug)
 Kernfrage: Was bringe ich in die Welt, das vorher nicht existierte?
 
 Menschen im Erschaffen-Lebensthema sind geborene Schöpfer. Aus dem Nichts etwas machen, das dann ein eigenes Leben führt. Die Maya verstanden Schöpfung als heiligen Akt – Mitschöpfen am Gewebe der Wirklichkeit.
@@ -711,11 +711,11 @@ TZOLKIN-SYSTEM – GRUNDLAGEN
 
 Der Tzolkin ist ein 260-tägiger Bewusstseinskalender. Er entsteht aus der Kombination von 20 Sonnensiegeln × 13 galaktischen Tönen = 260 einzigartige Kins.
 
-Anker-Datum: 26. Juli 1993 = Kin 1 (Magnetischer Roter Drachen)
+Anker-Datum: 26. Juli 1993 = Kin 144 (Kristalliner Gelbe Saat) — daraus wird Kin 1 = Magnetischer Roter Drache am 26. Juli 1993
 
 Die 4 Farbfamilien der Siegel:
 - ROT (initiiert): Imix (Drache), Chicchan (Schlange), Muluc (Mond), Eb (Mensch), Caban (Erde)
-- WEIISS (verfeinert): Ik (Wind), Cimi (Weltenwandler), Oc (Hund), Ix (Zauberer), Etznab (Spiegelmesser)
+- WEIS (verfeinert): Ik (Wind), Cimi (Weltenwandler), Oc (Hund), Ix (Zauberer), Etznab (Spiegel)
 - BLAU (transformiert): Akbal (Nacht), Manik (Hand), Chuen (Affe), Men (Adler), Cauac (Sturm)
 - GELB (reift): Kan (Saat), Lamat (Stern), Eb (Mensch), Cib (Eule), Ahau (Sonne)
 
@@ -729,4 +729,133 @@ Das persönliche Orakel besteht aus 5 Positionen:
 Die Wellenzüge (Wavespells): Jedes Siegel führt einen 13-tägigen Wellenzug. Der Wellenzug bestimmt das Lebensthema. Es gibt 20 Wellenzüge × 13 Tage = 260 Tage im Tzolkin.
 
 Berechnung: diffDays = (Geburtsdatum - Ankerdatum) / 86400000; kin = ((diffDays % 260) + 260) % 260; Siegel = kin % 20; Ton = kin % 13.
+
+════════════════════════════════
+TZOLKIN-WELLEN 2027 – JAHRESKALENDER
+════════════════════════════════
+
+Das Jahr 2027 umfasst zwei Tzolkin-Zyklen: den laufenden Zyklus (beginnt vor 2027, endet 13.05.2027) und den neuen Zyklus (beginnt 14.05.2027).
+
+--- LAUFENDER ZYKLUS (Fortsetzung) ---
+
+Welle 10 des laufenden Zyklus – Wellenführer: Weißer Spiegel (KIN 118)
+Zeitraum 2027: 01.01.2027–03.01.2027 (KIN 128–130)
+Thema: Reflexion, Ordnung, Wahrheit, Klarheit
+
+Welle 11 des laufenden Zyklus – Wellenführer: Blauer Affe (KIN 131)
+Zeitraum: 04.01.2027–16.01.2027 (KIN 131–143)
+Thema: Magie, Spielen, Illusion, Leichtigkeit
+
+Welle 12 des laufenden Zyklus – Wellenführer: Gelbe Saat (KIN 144)
+Zeitraum: 17.01.2027–29.01.2027 (KIN 144–156)
+Thema: Blühen, Zielen, Aussäen, Wachstum
+
+Welle 13 des laufenden Zyklus – Wellenführer: Rote Erde (KIN 157)
+Zeitraum: 30.01.2027–11.02.2027 (KIN 157–169)
+Thema: Navigation, Synchronizität, Evolution
+
+Welle 14 des laufenden Zyklus – Wellenführer: Weißer Hund (KIN 170)
+Zeitraum: 12.02.2027–24.02.2027 (KIN 170–182)
+Thema: Liebe, Loyalität, Treue, Hingabe
+
+Welle 15 des laufenden Zyklus – Wellenführer: Blaue Nacht (KIN 183)
+Zeitraum: 25.02.2027–09.03.2027 (KIN 183–195)
+Thema: Träumen, Intuition, Tiefe, Fülle
+
+Welle 16 des laufenden Zyklus – Wellenführer: Gelber Krieger (KIN 196)
+Zeitraum: 10.03.2027–22.03.2027 (KIN 196–208)
+Thema: Intelligenz, Furchtlosigkeit, Fragen
+
+Welle 17 des laufenden Zyklus – Wellenführer: Roter Mond (KIN 209)
+Zeitraum: 23.03.2027–04.04.2027 (KIN 209–221)
+Thema: Reinigung, Fließen, universelles Wasser
+
+Welle 18 des laufenden Zyklus – Wellenführer: Weißer Wind (KIN 222)
+Zeitraum: 05.04.2027–17.04.2027 (KIN 222–234)
+Thema: Kommunikation, Geist, Botschaft
+
+Welle 19 des laufenden Zyklus – Wellenführer: Blauer Adler (KIN 235)
+Zeitraum: 18.04.2027–30.04.2027 (KIN 235–247)
+Thema: Vision, Kreativität, Weitblick
+
+Welle 20 des laufenden Zyklus – Wellenführer: Gelber Stern (KIN 248)
+Zeitraum: 01.05.2027–13.05.2027 (KIN 248–260)
+Thema: Kunst, Schönheit, Eleganz, Harmonie
+
+ZÄSUR: 13.05.2027 = KIN 260 (Kosmisch Gelbe Sonne) – Ende des laufenden Tzolkin-Zyklus.
+Der Kosmische Ton 13 vollendet den gesamten 260-tägigen Zyklus.
+
+--- NEUER ZYKLUS (ab 14.05.2027) ---
+
+Welle 1 – Wellenführer: Roter Drache (KIN 1)
+Zeitraum: 14.05.2027–26.05.2027 (KIN 1–13)
+Thema: Erschaffen, Pflege, Geburt des Neuen, Urvertrauen
+
+Welle 2 – Wellenführer: Weißer Zauberer (KIN 14)
+Zeitraum: 27.05.2027–08.06.2027 (KIN 14–26)
+Thema: Zauberei, Zeitlosigkeit, Empfangen, Innere Stille
+
+Welle 3 – Wellenführer: Blaue Hand (KIN 27)
+Zeitraum: 09.06.2027–21.06.2027 (KIN 27–39)
+Thema: Heilen, Vollenden, Leistung, Wissen
+
+Welle 4 – Wellenführer: Gelbe Sonne (KIN 40)
+Zeitraum: 22.06.2027–04.07.2027 (KIN 40–52)
+Thema: Erleuchtung, universelles Feuer, Vollendung
+
+Welle 5 – Wellenführer: Roter Himmelswanderer (KIN 53)
+Zeitraum: 05.07.2027–17.07.2027 (KIN 53–65)
+Thema: Weltdienst, Raum, Ausdehnung, Prophetie, Erkundung
+
+Welle 6 – Wellenführer: Weißer Weltenwandler (KIN 66)
+Zeitraum: 18.07.2027–30.07.2027 (KIN 66–78)
+Thema: Tod und Wandel, Verbindung, Brücken bauen
+
+Welle 7 – Wellenführer: Blauer Sturm (KIN 79)
+Zeitraum: 31.07.2027–12.08.2027 (KIN 79–91)
+Thema: Transformation, Selbst-Generation, Katalysator
+
+Welle 8 – Wellenführer: Gelber Mensch (KIN 92)
+Zeitraum: 13.08.2027–25.08.2027 (KIN 92–104)
+Thema: Freier Wille, Weisheit, Einfluss, Ernte
+
+Welle 9 – Wellenführer: Rote Schlange (KIN 105)
+Zeitraum: 26.08.2027–07.09.2027 (KIN 105–117)
+Thema: Lebenskraft, Bewegung, Instinkt, Kraft
+
+Welle 10 – Wellenführer: Weißer Spiegel (KIN 118)
+Zeitraum: 08.09.2027–20.09.2027 (KIN 118–130)
+Thema: Reflexion, Ordnung, Wahrheit, Klarheit
+
+Welle 11 – Wellenführer: Blauer Affe (KIN 131)
+Zeitraum: 21.09.2027–03.10.2027 (KIN 131–143)
+Thema: Magie, Spielen, Illusion, Leichtigkeit
+
+Welle 12 – Wellenführer: Gelbe Saat (KIN 144)
+Zeitraum: 04.10.2027–16.10.2027 (KIN 144–156)
+Thema: Blühen, Zielen, Aussäen, Wachstum
+
+Welle 13 – Wellenführer: Rote Erde (KIN 157)
+Zeitraum: 17.10.2027–29.10.2027 (KIN 157–169)
+Thema: Navigation, Synchronizität, Evolution
+
+Welle 14 – Wellenführer: Weißer Hund (KIN 170)
+Zeitraum: 30.10.2027–11.11.2027 (KIN 170–182)
+Thema: Liebe, Loyalität, Treue, Hingabe
+
+Welle 15 – Wellenführer: Blaue Nacht (KIN 183)
+Zeitraum: 12.11.2027–24.11.2027 (KIN 183–195)
+Thema: Träumen, Intuition, Tiefe, Fülle
+
+Welle 16 – Wellenführer: Gelber Krieger (KIN 196)
+Zeitraum: 25.11.2027–07.12.2027 (KIN 196–208)
+Thema: Intelligenz, Furchtlosigkeit, Fragen
+
+Welle 17 – Wellenführer: Roter Mond (KIN 209)
+Zeitraum: 08.12.2027–20.12.2027 (KIN 209–221)
+Thema: Reinigung, Fließen, universelles Wasser
+
+Welle 18 – Wellenführer: Weißer Wind (KIN 222, beginnt 21.12.2027)
+Zeitraum 2027: 21.12.2027–31.12.2027 (KIN 222–232); Welle endet 02.01.2028 mit KIN 234
+Thema: Kommunikation, Geist, Botschaft
 `
