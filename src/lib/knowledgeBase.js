@@ -250,7 +250,7 @@ Schlüsselfragen: Welche Entscheidung schiebe ich vor mir her? Was sagt mir das 
 
 ---
 
-SIEGEL 13: BEN – DAS ROTE SCHILF
+SIEGEL 13: BEN – DER ROTE HIMMELSWANDERER
 Farbe: Rot | Element: Feuer | Richtung: Osten | Planet: Mars | Körperteil: Rechtes Schienbein
 
 Das Wesen von Ben:
@@ -310,7 +310,7 @@ Schlüsselfragen: Welche Vision trage ich, die noch nie wirklich landet? Was seh
 
 ---
 
-SIEGEL 16: CIB – DIE GELBE EULE
+SIEGEL 16: CIB – DER GELBE KRIEGER
 Farbe: Gelb | Element: Feuer | Richtung: Süden | Planet: Saturn | Körperteil: Linker Fuß
 
 Das Wesen von Cib:
@@ -350,7 +350,7 @@ Schlüsselfragen: Welche Zeichen sehe ich gerade? In welche Richtung zieht mich 
 
 ---
 
-SIEGEL 18: ETZNAB – DAS WEISSE SPIEGELMESSER
+SIEGEL 18: ETZNAB – DER WEISSE SPIEGEL
 Farbe: Weiß | Element: Luft | Richtung: Norden | Planet: Neptun | Körperteil: Rechter Fuß
 
 Das Wesen von Etznab:
@@ -714,10 +714,10 @@ Der Tzolkin ist ein 260-tägiger Bewusstseinskalender. Er entsteht aus der Kombi
 Anker-Datum: 26. Juli 1993 = Kin 144 (Kristalliner Gelbe Saat) — daraus wird Kin 1 = Magnetischer Roter Drache am 26. Juli 1993
 
 Die 4 Farbfamilien der Siegel:
-- ROT (initiiert): Imix (Drache), Chicchan (Schlange), Muluc (Mond), Eb (Mensch), Caban (Erde)
+- ROT (initiiert): Imix (Drache), Chicchan (Schlange), Muluc (Mond), Ben (Himmelswanderer), Caban (Erde)
 - WEIS (verfeinert): Ik (Wind), Cimi (Weltenwandler), Oc (Hund), Ix (Zauberer), Etznab (Spiegel)
 - BLAU (transformiert): Akbal (Nacht), Manik (Hand), Chuen (Affe), Men (Adler), Cauac (Sturm)
-- GELB (reift): Kan (Saat), Lamat (Stern), Eb (Mensch), Cib (Eule), Ahau (Sonne)
+- GELB (reift): Kan (Saat), Lamat (Stern), Eb (Mensch), Cib (Krieger), Ahau (Sonne)
 
 Das persönliche Orakel besteht aus 5 Positionen:
 1. Leitsiegel (Destiny Kin) – Kernidentität
