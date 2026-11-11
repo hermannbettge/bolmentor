@@ -90,13 +90,16 @@ function getToneKnowledge(toneNumber) {
   return TONE_KNOWLEDGE.find(t => t.toneNumber === toneNumber) || null
 }
 
-// Detect which activity the user is asking about
+// Detect which activities the user is asking about (returns array, first = primary)
 function detectActivity(messages) {
   const text = [...messages].reverse().find(m => m.role === 'user')?.content?.toLowerCase() || ''
+  const found = []
   for (const [key, keywords] of Object.entries(ACTIVITY_KEYWORDS)) {
-    if (keywords.some(kw => new RegExp(`(^|[^\\p{L}])${kw}([^\\p{L}]|$)`, 'u').test(text))) return key
+    if (keywords.some(kw => new RegExp(`(^|[^\\p{L}])${kw}([^\\p{L}]|$)`, 'u').test(text))) {
+      found.push(key)
+    }
   }
-  return null
+  return found.length > 0 ? found[0] : null
 }
 
 // Deterministically compute which days are good for a given activity
@@ -138,9 +141,20 @@ function resolveActivityRange(messages, today, tableEnd) {
   }).filter(Boolean)
   if (dates.length !== rawDates.length) return null
   if (dates.some(d => d.getUTCFullYear() < 1900 || d.getUTCFullYear() > 2100)) return null
-  if (dates.length >= 2 && dates[1] - dates[0] > 366 * 86400000) return null
-  if (dates.length >= 2) return dates[0] <= dates[1] ? { start: dates[0], end: dates[1] } : null
-  if (dates.length === 1) return { start: dates[0], end: dates[0] }
+  if (dates.length >= 2) {
+    // Use first and last date in the list as range boundaries (F03: support > 2 dates)
+    const sorted = [...dates].sort((a, b) => a - b)
+    const start = sorted[0]
+    const end = sorted[sorted.length - 1]
+    if (end - start > 366 * 86400000) return null
+    return start <= end ? { start, end } : null
+  }
+  if (dates.length === 1) {
+    // "bis zum 15.12." or similar: single end date → range from today to that date (F02)
+    const isBisPattern = /\bbis\b/.test(text)
+    if (isBisPattern && dates[0] >= today) return { start: today, end: dates[0] }
+    return { start: dates[0], end: dates[0] }
+  }
   const months = ['januar','februar','märz','april','mai','juni','juli','august','september','oktober','november','dezember']
   const y = text.match(/\b(19\d{2}|20\d{2}|2100)\b/)
   const year = y ? Number(y[1]) : today.getUTCFullYear()
@@ -152,9 +166,23 @@ function resolveActivityRange(messages, today, tableEnd) {
   else if (/diesen monat|diesem monat/.test(text)) month = today.getUTCMonth()
   if (month >= 0) return { start: new Date(Date.UTC(selectedYear,month,1)), end: new Date(Date.UTC(selectedYear,month+1,0)) }
   if (y) return { start: new Date(Date.UTC(year,0,1)), end: new Date(Date.UTC(year,11,31)) }
-  if (/jahresende|rest des jahres/.test(text)) return { start: today, end: tableEnd }
-  if (/heute/.test(text)) return { start: today, end: today }
-  if (/morgen/.test(text)) { const next = new Date(today); next.setUTCDate(next.getUTCDate()+1); return { start: next, end: next } }
+  // F01: "jahresende" / "rest des jahres" → end of CURRENT year, not tableEnd
+  if (/jahresende|rest des jahres/.test(text)) {
+    const yearEnd = new Date(Date.UTC(today.getUTCFullYear(), 11, 31))
+    return { start: today, end: yearEnd }
+  }
+  // F04: "heute und morgen" or "heute" alone
+  if (/heute und morgen/.test(text)) {
+    const tomorrow = new Date(today); tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
+    return { start: today, end: tomorrow }
+  }
+  // F04: "übermorgen"
+  if (/übermorgen/.test(text)) {
+    const dayAfter = new Date(today); dayAfter.setUTCDate(dayAfter.getUTCDate() + 2)
+    return { start: dayAfter, end: dayAfter }
+  }
+  if (/\bmorgen\b/.test(text)) { const next = new Date(today); next.setUTCDate(next.getUTCDate()+1); return { start: next, end: next } }
+  if (/\bheute\b/.test(text)) return { start: today, end: today }
   // No unrequested default list for an unspecified week, relative span or arbitrary period.
   return null
 }

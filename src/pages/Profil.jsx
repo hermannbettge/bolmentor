@@ -160,7 +160,11 @@ export default function Profil() {
     try {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) throw new Error('Nicht angemeldet')
-      await supabase.from('analyses').delete().eq('user_id', session.user.id).in('analysis_type', ['tagesenergie', 'monatsanalyse'])
+      const { error: delErr } = await supabase.from('analyses').delete().eq('user_id', session.user.id).in('type', ['daily', 'monthly'])
+      if (delErr) throw delErr
+      // Also delete any date-keyed daily analyses (type starts with "daily_")
+      const { error: delErr2 } = await supabase.from('analyses').delete().eq('user_id', session.user.id).like('type', 'daily_%')
+      if (delErr2) throw delErr2
       setRecalcMsg('Maya-Profil aktualisiert. Deine Analysen werden beim nächsten Aufruf neu erstellt.')
     } catch (err) {
       setRecalcMsg('Fehler: ' + err.message)

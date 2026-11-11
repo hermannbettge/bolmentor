@@ -49,6 +49,15 @@ function checkAnnualPlan(profile) {
   throw new Error('Die Jahresanalyse ist nur im Jahrestarif verfügbar')
 }
 
+// Monthly plan may only request today's date; annual and admin may request any date
+function checkDateAccess(profile, dateStr) {
+  if (profile.is_admin || profile.subscription_plan === 'annual') return
+  const today = civilDateISO()
+  if (dateStr !== today) {
+    throw new Error('Vergangene und zukünftige Tage sind nur im Jahrestarif verfügbar.')
+  }
+}
+
 // Check purchased analysis
 function checkPurchased(profile, type) {
   if (!profile.purchased_analyses?.includes(type)) {
@@ -219,12 +228,18 @@ function buildSpecialPrompt(type, profile, kinData, extraData) {
   const toneNumber = kinData.toneNumber
   const tonePower = kinData.tonePower
 
+  const analog = kinData.analog || ''
+  const occult = kinData.occult || ''
+
   const base = `PROFIL VON ${name.toUpperCase()}:
 Kin: ${kin}
 Galaktischer Ton ${toneNumber}: ${tone} – Kraft: ${tonePower}
 Siegel: ${seal}
 Lebensthema: ${theme}
 Antipode (Herausforderung): ${antipode}
+Analog (Unterstützer): ${analog}
+Okkult (Verborgene Kraft): ${occult}
+Guide (Wegweiser): ${guide}
 Geburtsdatum: ${profile.birth_date}
 `
 
@@ -589,6 +604,7 @@ router.post('/daily', requireAuth, async (req, res) => {
     profile = await getProfile(req.user.id)
     checkMembership(profile)
     dateStr = req.body.date || civilDateISO()
+    checkDateAccess(profile, dateStr)
     const dateObj = new Date(dateStr + 'T00:00:00')
     const monthName = GERMAN_MONTHS[dateObj.getMonth()]
     const dateLabel = `${dateObj.getDate()}. ${monthName} ${dateObj.getFullYear()}`
@@ -731,6 +747,7 @@ DAILY_DOMAIN_TYPES.forEach(type => {
       checkMembership(profile)
       checkPurchased(profile, type)
       dateStr = req.body.date || civilDateISO()
+      checkDateAccess(profile, dateStr)
       const dateObj = new Date(dateStr + 'T00:00:00')
       const monthName = GERMAN_MONTHS[dateObj.getMonth()]
       const dateLabel = `${dateObj.getDate()}. ${monthName} ${dateObj.getFullYear()}`

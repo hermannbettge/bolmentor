@@ -9,7 +9,9 @@ const WEEKDAYS = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag
 function formatDate(dateStr) {
   const d = new Date(dateStr + 'T00:00:00')
   const today = civilDateISO()
-  const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
+  // Compute yesterday in Europe/Berlin to match how today is computed
+  const yesterdayDate = new Date(Date.now() - 86400000)
+  const yesterday = yesterdayDate.toLocaleDateString('sv-SE', { timeZone: 'Europe/Berlin' })
   if (dateStr === today) return 'Heute'
   if (dateStr === yesterday) return 'Gestern'
   return `${WEEKDAYS[d.getDay()]}, ${d.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}`

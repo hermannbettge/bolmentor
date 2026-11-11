@@ -185,6 +185,9 @@ Galaktischer Ton ${kinData.toneNumber}: ${kinData.tone}
 Kraft des Tons: ${kinData.tonePower}
 Lebensthema: ${kinData.lifeTheme}
 Antipode (Herausforderung): ${kinData.antipode}
+Analog (Unterstützer): ${kinData.analog || ''}
+Okkult (Verborgene Kraft): ${kinData.occult || ''}
+Guide (Wegweiser): ${kinData.guide || ''}
 Wellenform: Welle ${kinData.wavespell}
 Geburtsdatum: ${profile.birth_date}
 ` : 'Kein Geburtsdatum hinterlegt.'}
@@ -234,16 +237,16 @@ GESPRÄCHSREGELN:
       messages: messages.map(m => ({ role: m.role, content: m.content })),
     })
 
-    // Increment daily usage (upsert)
-    await supabase.from('maya_chat_usage').upsert({
-      user_id: req.user.id,
-      usage_date: todayStr,
-      count: usedToday + 1,
-    }, { onConflict: 'user_id,usage_date' })
+    if (response.stop_reason === 'max_tokens') {
+      return res.status(500).json({ error: 'Die Antwort wurde wegen der Ausgabelänge abgebrochen. Bitte erneut versuchen.' })
+    }
+
+    // Atomically increment daily usage counter to avoid race conditions
+    await supabase.rpc('increment_chat_usage', { p_user_id: req.user.id, p_date: todayStr })
 
     res.json({
       reply: response.content[0].text,
-      remaining: Math.max(0, limit - usedToday - 1),
+      remaining: isAdmin ? null : Math.max(0, limit - usedToday - 1),
       limit,
     })
   } catch (err) {

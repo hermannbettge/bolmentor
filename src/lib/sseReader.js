@@ -51,8 +51,8 @@ export async function readSSEStream(res, { onChunk, onDone }) {
     } catch {}
   }
 
-  // Fallback: if done event never arrived but we have streaming content, use it
-  if (!doneCalled && streamingContent) {
-    onDone(streamingContent)
+  // Stream ended without an explicit done event — treat as incomplete/aborted
+  if (!doneCalled) {
+    throw new Error('Die Analyse wurde unterbrochen. Bitte erneut versuchen.')
   }
 }
