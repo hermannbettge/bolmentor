@@ -117,6 +117,7 @@ async function streamClaude(res, prompt, maxTokens, onComplete) {
     }
     const finalMessage = await stream.finalMessage()
     if (finalMessage.stop_reason === 'max_tokens') throw new Error('Die Analyse wurde wegen der Ausgabelänge abgebrochen und nicht gespeichert. Bitte erneut versuchen.')
+    fullContent = sanitizeAnalysis(fullContent)
     await onComplete(fullContent)
     res.write(`data: ${JSON.stringify({ done: true, content: fullContent })}\n\n`)
   } catch (err) {
@@ -129,6 +130,16 @@ async function streamClaude(res, prompt, maxTokens, onComplete) {
     clearInterval(keepalive)
     res.end()
   }
+}
+
+// Post-process: mechanisch verbotene Wörter ersetzen
+function sanitizeAnalysis(text) {
+  return text
+    .replace(/\bträgt\b/g, 'hat')
+    .replace(/\btragen\b/g, 'haben')
+    .replace(/\bgetragen\b/g, 'gehabt')
+    .replace(/\bgetragen wird\b/g, 'vorhanden ist')
+    .replace(/\bwird getragen\b/g, 'ist vorhanden')
 }
 
 // Build prompts inline (server-side, no import from src/)
