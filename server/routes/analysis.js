@@ -1016,63 +1016,82 @@ router.get('/event/:eventId', requireAuth, async (req, res) => {
 // ── Event sub-analyses (daily / monthly / yearly) ──────────────────────────
 
 function buildEventDailyPrompt(profile, event, userKin, dayKin, eventKin, dateLabel) {
-  return `Du bist ein weltklasse Maya-Kalender-Experte. Analysiere die Energie des ${dateLabel} für "${event.name}". Das Ereignis selbst steht im Mittelpunkt. Schreibe auf Deutsch.
+  return `Du bist ein weltklasse Maya-Kalender-Experte. Analysiere den ${dateLabel} konkret und spezifisch für "${event.name}". Schreibe auf Deutsch.
 ${SYSTEM_RULES}
 
-EREIGNIS: "${event.name}"
-Kin des Ereignisses: Kin ${eventKin.kin} – ${eventKin.tone} ${eventKin.seal} | Ton ${eventKin.toneNumber} | Lebensthema: ${eventKin.lifeTheme}
+WICHTIG – PFLICHTREGELN FÜR DIESE ANALYSE:
+- Setze voraus, dass der Leser die allgemeine Bedeutung von ${dayKin.tone} ${dayKin.seal} und ${eventKin.tone} ${eventKin.seal} bereits kennt. Erkläre NICHT nochmals was diese Siegel "bedeuten".
+- Schreibe KEINE Kin-Definitionen ("Der Blaue Sturm steht für Transformation…"). Das ist bekannt.
+- Jeder Satz muss sich auf "${event.name}" beziehen, nicht auf abstrakte Energieprinzipien.
+- Nenne konkrete Bereiche, Handlungen, Entscheidungen oder Muster, die für "${event.name}" an diesem Tag relevant sind.
+- Wiederhole keine Aussagen in anderen Worten. Jeder Abschnitt muss neue Information liefern.
 
-ENERGIE DES TAGES (${dateLabel}):
-Tages-Kin: Kin ${dayKin.kin} – ${dayKin.tone} ${dayKin.seal} | Ton ${dayKin.toneNumber} | Lebensthema: ${dayKin.lifeTheme}
+EREIGNIS: "${event.name}"
+Kategorie: ${event.category || 'Ereignis'}
+Kin: Kin ${eventKin.kin} – ${eventKin.tone} ${eventKin.seal} | Ton ${eventKin.toneNumber} | Lebensthema: ${eventKin.lifeTheme}
+${event.description ? `Kontext: ${event.description}` : ''}
+
+TAGES-KIN (${dateLabel}):
+Kin ${dayKin.kin} – ${dayKin.tone} ${dayKin.seal} | Ton ${dayKin.toneNumber} | Lebensthema: ${dayKin.lifeTheme}
+Verhältnis Tages-Kin zu Ereignis-Kin: Kin-Differenz ${Math.abs(dayKin.kin - eventKin.kin)} | Ton-Differenz ${Math.abs(dayKin.toneNumber - eventKin.toneNumber)}
 
 BEOBACHTER: ${profile.name}
-Geburts-Kin: Kin ${userKin.kin} – ${userKin.tone} ${userKin.seal} | Ton ${userKin.toneNumber} | Lebensthema: ${userKin.lifeTheme}
+Kin ${userKin.kin} – ${userKin.tone} ${userKin.seal} | Ton ${userKin.toneNumber}
 
 ## ENERGIE DES TAGES FÜR "${event.name.toUpperCase()}"
-Was prägt "${event.name}" energetisch an diesem Tag? Was ist für "${event.name}" heute besonders relevant, was zieht es an, was stößt es ab?
+Was passiert konkret für "${event.name}" an diesem Tag? Welche spezifischen Bereiche, Dynamiken oder Themen werden durch die Kombination aus Tages-Kin und Ereignis-Kin besonders aktiviert? Sei präzise — kein allgemeines "Wandel und Transformation", sondern: welcher Wandel, in welchem Bereich, mit welcher Richtung?
 
 ## WAS JETZT STIMMT – WAS JETZT NICHT STIMMT
-Was sollte "${event.name}" heute tun oder nutzen? Was sollte es heute besser lassen oder meiden?
+Was sollte "${event.name}" heute konkret tun, anstoßen oder kommunizieren? Was würde heute gegen den Strom laufen und Kraft kosten? Nenne spezifische Handlungsfelder, keine abstrakten Ratschläge.
 
 ## BLICK VON ${profile.name.toUpperCase()}
-Wie sieht ${profile.name} diesen Tag für "${event.name}" durch die eigene Kin-Brille? Welchen besonderen Einblick ermöglicht die eigene Energie?
+Was sieht ${profile.name} durch seine Kin-Energie an diesem Tag, das andere über "${event.name}" übersehen? Welche konkrete Frage oder Beobachtung ergibt sich aus seiner Perspektive?
 
-## AFFIRMATION FÜR DIESEN TAG
-Eine kraftvolle Affirmation, die "${event.name}" für diesen Tag beschreibt.
+## AFFIRMATION
+Eine präzise Affirmation aus der Sicht von "${event.name}" für diesen Tag. Kein allgemeines "Licht und Wandel" — konkret und auf das Ereignis bezogen.
 
-Länge: 280–340 Wörter. Ton: präzise, klar, auf das Ereignis fokussiert.`
+Länge: 300–360 Wörter. Kein einziger Satz darf bei einer weiteren Analyse desselben Tages identisch oder sinngleich sein.`
 }
 
 function buildEventMonthlyPrompt(profile, event, userKin, eventKin, monthName, year) {
-  return `Du bist ein weltklasse Maya-Kalender-Experte. Analysiere die Monatsenergie des ${monthName} ${year} für "${event.name}". Das Ereignis selbst steht im Mittelpunkt. Schreibe auf Deutsch.
+  return `Du bist ein weltklasse Maya-Kalender-Experte. Analysiere den ${monthName} ${year} konkret und spezifisch für "${event.name}". Schreibe auf Deutsch.
 ${SYSTEM_RULES}
 
+WICHTIG – PFLICHTREGELN FÜR DIESE ANALYSE:
+- Setze voraus, dass der Leser die allgemeine Bedeutung von ${eventKin.tone} ${eventKin.seal} bereits kennt. Erkläre NICHT nochmals was dieses Siegel "bedeutet".
+- Schreibe KEINE Kin-Definitionen oder Siegel-Erklärungen. Das ist bekannt.
+- Jeder Satz muss sich auf "${event.name}" beziehen, nicht auf abstrakte Energieprinzipien.
+- Nenne konkrete Bereiche, Entwicklungen und Muster, die für "${event.name}" in diesem Monat real relevant sind.
+- Die vier Wochen-Schwerpunkte müssen sich voneinander unterscheiden — kein Wiederholen derselben Aussage in anderen Worten.
+
 EREIGNIS: "${event.name}"
-Kin des Ereignisses: Kin ${eventKin.kin} – ${eventKin.tone} ${eventKin.seal} | Lebensthema: ${eventKin.lifeTheme}
+Kategorie: ${event.category || 'Ereignis'}
+Kin: Kin ${eventKin.kin} – ${eventKin.tone} ${eventKin.seal} | Ton ${eventKin.toneNumber} | Lebensthema: ${eventKin.lifeTheme}
+${event.description ? `Kontext: ${event.description}` : ''}
 ${calendarFacts(year, GERMAN_MONTHS.indexOf(monthName) + 1)}
 
 BEOBACHTER: ${profile.name}
-Geburts-Kin: Kin ${userKin.kin} – ${userKin.tone} ${userKin.seal} | Lebensthema: ${userKin.lifeTheme}
+Kin ${userKin.kin} – ${userKin.tone} ${userKin.seal} | Ton ${userKin.toneNumber}
 
 ## MONATSENERGIE FÜR "${event.name.toUpperCase()}" – ${monthName.toUpperCase()} ${year}
-Was prägt "${event.name}" in diesem Monat energetisch? Welche Themen, Strömungen und Dynamiken sind für "${event.name}" im ${monthName} ${year} bestimmend?
+Was passiert konkret für "${event.name}" in diesem Monat? Welche spezifischen Themen, Dynamiken und Spannungsfelder werden durch die Kin-Energie aktiviert? Sei präzise — kein allgemeines "Wandel und Wachstum", sondern: welche Art von Wandel, in welchem konkreten Bereich, mit welcher Richtung?
 
 ## WAS JETZT STIMMT FÜR "${event.name.toUpperCase()}"
-Welche Chancen und Potenziale öffnen sich für "${event.name}" in diesem Monat? Was sollte "${event.name}" jetzt nutzen, anstoßen oder stärken?
+Welche konkreten Chancen öffnen sich für "${event.name}" in diesem Monat? Nenne spezifische Handlungsfelder, Themen oder Entscheidungsmomente — keine allgemeinen Ratschläge wie "jetzt handeln" oder "Chancen nutzen".
 
 ## WAS JETZT NICHT STIMMT FÜR "${event.name.toUpperCase()}"
-Welche Risiken, Spannungen oder blinden Flecken trägt dieser Monat für "${event.name}"? Was sollte "${event.name}" in dieser Zeit meiden oder aufschieben?
+Welche konkreten Risiken oder Fehlentscheidungen drohen für "${event.name}" in diesem Monat? Was würde gegen den Strom laufen und Kraft kosten? Spezifisch, nicht abstrakt.
 
 ## WOCHE FÜR WOCHE
-4 kurze wöchentliche Schwerpunkte speziell für "${event.name}" im ${monthName}: Was ist in jeder Woche besonders prägend?
+Vier wöchentliche Schwerpunkte für "${event.name}" im ${monthName}. Jede Woche muss einen neuen, eigenständigen Fokus beschreiben — keine Wiederholungen. Jeder Schwerpunkt nennt einen konkreten Aspekt oder eine konkrete Frage, die für "${event.name}" in dieser Woche dominiert.
 
 ## BLICK VON ${profile.name.toUpperCase()}
-Welchen besonderen Blickwinkel bringt ${profile.name} durch die eigene Kin-Energie auf diesen Monat für "${event.name}"?
+Was sieht ${profile.name} durch seine Kin-Energie in diesem Monat, das andere über "${event.name}" übersehen? Welche konkrete Frage oder Beobachtung ergibt sich aus seiner Perspektive?
 
 ## AFFIRMATION FÜR DEN ${monthName.toUpperCase()}
-Eine kraftvolle Affirmation, die die Energie des Monats für "${event.name}" auf den Punkt bringt.
+Eine präzise Affirmation aus der Sicht von "${event.name}" für diesen Monat. Kein allgemeines "Licht und Wandel" — konkret und auf das Ereignis bezogen.
 
-Länge: 450–530 Wörter. Das Ereignis ist das Subjekt der Analyse, nicht die Person.`
+Länge: 500–580 Wörter. Kein einziger Satz darf bei einer weiteren Analyse desselben Monats identisch oder sinngleich sein.`
 }
 
 function buildEventYearlyPrompt(profile, event, userKin, eventKin, year) {
