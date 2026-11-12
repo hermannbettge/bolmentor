@@ -69,7 +69,7 @@ function P({ children, dark = false, small = false }) {
       fontSize: small ? '0.88rem' : '1rem',
       fontWeight: 300,
       lineHeight: 1.85,
-      color: dark ? 'rgba(244,239,230,0.72)' : TEXT_MID,
+      color: dark ? 'rgba(244,239,230,0.9)' : TEXT_MID,
       margin: '0 0 18px',
     }}>
       {children}
@@ -148,7 +148,7 @@ function FeatureRow({ num, title, text, dark = false }) {
             fontSize: '1rem',
             fontWeight: 300,
             lineHeight: 1.8,
-            color: dark ? 'rgba(244,239,230,0.75)' : TEXT_MID,
+            color: dark ? 'rgba(244,239,230,0.9)' : TEXT_MID,
             margin: 0,
           }}>
             {text}
@@ -406,7 +406,7 @@ export default function Salespage() {
               <div key={i} style={{ backgroundColor: DEEP, padding: '32px 28px', borderRadius: '2px' }}>
                 <div style={{ fontSize: '1.6rem', color: COPPER_LIGHT, marginBottom: '16px' }}>{card.icon}</div>
                 <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: CREAM, marginBottom: '12px', lineHeight: 1.4 }}>{card.title}</div>
-                <p style={{ color: 'rgba(244,239,230,0.88)', fontSize: '0.88rem', lineHeight: 1.75, margin: '0 0 16px', fontWeight: 300 }}>{card.desc}</p>
+                <p style={{ color: '#e8e2d8', fontSize: '0.88rem', lineHeight: 1.75, margin: '0 0 16px', fontWeight: 400 }}>{card.desc}</p>
                 <div style={{ fontSize: '0.72rem', color: COPPER_LIGHT, borderTop: '1px solid rgba(244,239,230,0.08)', paddingTop: '14px', lineHeight: 1.6 }}>{card.detail}</div>
               </div>
             ))}
