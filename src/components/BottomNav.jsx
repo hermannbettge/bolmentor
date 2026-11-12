@@ -1,14 +1,17 @@
 import { NavLink } from 'react-router-dom'
-
-const NAV_ITEMS = [
-  { to: '/tagesenergie', icon: '🌅', label: 'Heute' },
-  { to: '/kalender', icon: '◈', label: 'Kalender' },
-  { to: '/maya-ki', icon: '☽', label: 'Maya KI' },
-  { to: '/analysen', icon: '◎', label: 'Analysen' },
-  { to: '/profil', icon: '👤', label: 'Profil' },
-]
+import { useAuth } from '../hooks/useAuth.jsx'
 
 export default function BottomNav() {
+  const { profile } = useAuth()
+
+  const navItems = [
+    { to: '/tagesenergie', icon: '🌅', label: 'Heute' },
+    { to: '/kalender', icon: '◈', label: 'Kalender' },
+    ...(profile?.is_admin ? [{ to: '/maya-ki', icon: '☽', label: 'Maya KI' }] : []),
+    { to: '/analysen', icon: '◎', label: 'Analysen' },
+    { to: '/profil', icon: '👤', label: 'Profil' },
+  ]
+
   return (
     <nav style={{
       position: 'fixed',
@@ -24,7 +27,7 @@ export default function BottomNav() {
       justifyContent: 'space-around',
       zIndex: 50,
     }}>
-      {NAV_ITEMS.map(item => (
+      {navItems.map(item => (
         <NavLink
           key={item.to}
           to={item.to}

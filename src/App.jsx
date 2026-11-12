@@ -22,6 +22,24 @@ import ZusatzanalysenPage from './pages/ZusatzanalysenPage.jsx'
 import MayaKI from './pages/MayaKI.jsx'
 import ChatHistory from './pages/ChatHistory.jsx'
 
+function AdminRoute({ children }) {
+  const { user, profile, loading } = useAuth()
+
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg-deep)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ color: 'var(--color-gold)', fontSize: '0.85rem', letterSpacing: '0.1em' }} className="pulse-gold">
+          BEWUSSTSEIN.OHNE.LIMIT
+        </div>
+      </div>
+    )
+  }
+
+  if (!user || !profile?.is_admin) return <Navigate to="/dashboard" replace />
+
+  return children
+}
+
 function ProtectedRoute({ children, requireMembership = false }) {
   const { user, profile, loading } = useAuth()
 
@@ -67,8 +85,8 @@ function AppRoutes() {
         <Route path="/analyse/:type" element={<ProtectedRoute requireMembership><AnalysePage /></ProtectedRoute>} />
         <Route path="/maya-kalender" element={<ProtectedRoute requireMembership><MayaInfo /></ProtectedRoute>} />
         <Route path="/checkout" element={<Checkout />} />
-        <Route path="/maya-ki" element={<ProtectedRoute requireMembership><MayaKI /></ProtectedRoute>} />
-        <Route path="/chat-verlauf" element={<ProtectedRoute requireMembership><ChatHistory /></ProtectedRoute>} />
+        <Route path="/maya-ki" element={<AdminRoute><MayaKI /></AdminRoute>} />
+        <Route path="/chat-verlauf" element={<AdminRoute><ChatHistory /></AdminRoute>} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

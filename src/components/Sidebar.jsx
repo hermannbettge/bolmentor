@@ -117,6 +117,7 @@ export default function Sidebar() {
         <NavItem to="/analysen" label="Alle Analysen" />
         <NavItem to="/maya-kalender" label="Was ist der Maya Kalender?" />
         <NavItem to="/profil" label="Profil & Konto" />
+        {profile?.is_admin && <NavItem to="/maya-ki" label="Maya KI (Admin)" />}
         {profile?.is_admin && <NavItem to="/admin" label="Admin" />}
       </nav>
 
