@@ -9,6 +9,7 @@ import { useAuth } from '../hooks/useAuth.jsx'
 import { useState, useEffect, useCallback } from 'react'
 
 const PROTECTED_ROUTES = ['/dashboard', '/tagesenergie', '/kalender', '/monatsanalyse', '/analysen', '/profil', '/analyse/', '/admin', '/maya-ki', '/maya-kalender', '/checkout']
+const FULLSCREEN_ROUTES = ['/jahrestarif']
 
 export default function Layout({ children }) {
   const { user } = useAuth()
@@ -21,7 +22,10 @@ export default function Layout({ children }) {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  const isFullscreen = FULLSCREEN_ROUTES.some(r => location.pathname.startsWith(r))
   const isProtected = PROTECTED_ROUTES.some(r => location.pathname.startsWith(r))
+
+  if (isFullscreen) return <>{children}</>
   const showSidebar = user && isProtected && !isMobile
 
   if (showSidebar) {

@@ -21,6 +21,7 @@ import Checkout from './pages/Checkout.jsx'
 import ZusatzanalysenPage from './pages/ZusatzanalysenPage.jsx'
 import MayaKI from './pages/MayaKI.jsx'
 import ChatHistory from './pages/ChatHistory.jsx'
+import Jahrestarif from './pages/Jahrestarif.jsx'
 
 function AdminRoute({ children }) {
   const { user, profile, loading } = useAuth()
@@ -72,6 +73,7 @@ function AppRoutes() {
         <Route path="/impressum" element={<Impressum />} />
         <Route path="/datenschutz" element={<Datenschutz />} />
         <Route path="/zusatzanalysen" element={<ZusatzanalysenPage />} />
+        <Route path="/jahrestarif" element={<Jahrestarif />} />
 
         <Route path="/dashboard" element={<ProtectedRoute requireMembership><Dashboard /></ProtectedRoute>} />
         <Route path="/tagesenergie" element={<ProtectedRoute requireMembership><Tagesenergie /></ProtectedRoute>} />
