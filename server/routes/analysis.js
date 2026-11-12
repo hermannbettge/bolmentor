@@ -117,7 +117,6 @@ async function streamClaude(res, prompt, maxTokens, onComplete) {
     }
     const finalMessage = await stream.finalMessage()
     if (finalMessage.stop_reason === 'max_tokens') throw new Error('Die Analyse wurde wegen der Ausgabelänge abgebrochen und nicht gespeichert. Bitte erneut versuchen.')
-    fullContent = sanitizeAnalysis(fullContent)
     await onComplete(fullContent)
     res.write(`data: ${JSON.stringify({ done: true, content: fullContent })}\n\n`)
   } catch (err) {
@@ -133,15 +132,6 @@ async function streamClaude(res, prompt, maxTokens, onComplete) {
 }
 
 // Post-process: mechanisch verbotene Wörter ersetzen
-function sanitizeAnalysis(text) {
-  return text
-    .replace(/\bträgt\b/g, 'hat')
-    .replace(/\btragen\b/g, 'haben')
-    .replace(/\bgetragen\b/g, 'gehabt')
-    .replace(/\bgetragen wird\b/g, 'vorhanden ist')
-    .replace(/\bwird getragen\b/g, 'ist vorhanden')
-}
-
 // Build prompts inline (server-side, no import from src/)
 function buildDailyPrompt(profile, kinData, todayKin, todayStr) {
   return `Du bist ein Maya Kalender Experte mit tiefem Verständnis des Tzolkin-Systems. Erstelle eine persönliche Tagesenergie-Analyse auf Deutsch.
@@ -215,7 +205,7 @@ ABSOLUT VERBOTENE STILMITTEL (streng einhalten):
 - SIEGELNAMEN EXAKT VERWENDEN: Nutze den Siegelnamen immer genau so wie angegeben (z.B. "Weißer Spiegel", "Blauer Sturm"). Erfinde KEINE Komposita oder Abwandlungen wie "Spiegelmesser", "Sturmkraft" o.ä.
 - KEINE Doppelpunkte am Ende eines Satzes oder Absatzes
 - Kein Satzanfang mit "Und"
-- Die Wörter "trägt", "tragen", "getragen" sind ABSOLUT VERBOTEN. Niemals verwenden. Ersetze sie immer: "hat", "besitzt", "enthält", "birgt", "wirkt", "stärkt", "zeigt", "bringt", "gibt" — je nach Kontext.
+- Die Wörter "trägt", "tragen", "getragen" sind ABSOLUT VERBOTEN. Niemals verwenden. Ersetze grammatikalisch korrekt je nach Kontext: "X hat Potenzial" statt "X trägt Potenzial", "was noch gilt" statt "was noch trägt", "was noch Bestand hat" statt "was noch trägt", "X birgt Risiken" statt "X trägt Risiken", "X bringt Früchte" statt "X trägt Früchte", "X leistet einen Beitrag" statt "X trägt bei", "X enthält" / "X besitzt" / "X zeigt" je nach Sinn. Wähle IMMER die grammatikalisch korrekte Alternative für den jeweiligen Satzbau.
 - Schreibe fehlerfreies, korrektes Deutsch mit korrekter Groß- und Kleinschreibung
 - Alle Substantive MÜSSEN großgeschrieben sein (z.B. Partnerschaftsanalyse, Energie, Analyse, Krieger, Ton)
 - Eigennamen, Titel und Analysebezeichnungen immer mit Großbuchstaben beginnen
