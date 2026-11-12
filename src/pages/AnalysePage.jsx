@@ -143,13 +143,33 @@ export default function AnalysePage() {
       setUpgradeLoading(false)
     }
   }
-  // Use next year in Q4 (Oct–Dec) so analysis is forward-looking
-  const now = new Date()
-  const currentYear = now.getMonth() >= 9 ? now.getFullYear() + 1 : now.getFullYear()
   const hasYearly = true
   const canSelectYear = profile?.is_admin || profile?.subscription_plan === 'annual' || (profile?.purchased_analyses || []).includes('yearly_select')
-  const yearOptions = [currentYear - 1, currentYear, currentYear + 1]
-  const [selectedYear, setSelectedYear] = useState(currentYear)
+
+  // Available months: from join month to join month + 12 (13 months total)
+  const monthOptions = (() => {
+    const start = new Date(profile?.created_at || Date.now())
+    start.setDate(1); start.setHours(0, 0, 0, 0)
+    const opts = []
+    for (let i = 0; i <= 12; i++) {
+      const d = new Date(start.getFullYear(), start.getMonth() + i, 1)
+      opts.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`)
+    }
+    return opts
+  })()
+
+  const defaultMonth = (() => {
+    const now = new Date()
+    const cur = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+    return monthOptions.includes(cur) ? cur : (monthOptions[0] || cur)
+  })()
+
+  const [selectedMonth, setSelectedMonth] = useState(defaultMonth)
+
+  function formatMonth(yyyyMM) {
+    const [y, m] = yyyyMM.split('-')
+    return new Date(Number(y), Number(m) - 1, 1).toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })
+  }
 
   const label = LABELS[type] || type
   const hasPurchased = profile?.is_admin || profile?.purchased_analyses?.includes(type)
@@ -169,14 +189,14 @@ export default function AnalysePage() {
     setChecking(true)
     setYearlyChecking(true)
     setDailyChecking(true)
-    setSelectedYear(currentYear)
+    setSelectedMonth(defaultMonth)
   }, [type])
 
-  // Reset yearly analysis when year changes
+  // Reset yearly analysis when month changes
   useEffect(() => {
     setYearlyAnalysis(null)
     setYearlyChecking(true)
-  }, [selectedYear])
+  }, [selectedMonth])
 
   useEffect(() => {
     if (checking) checkExisting()
@@ -263,7 +283,7 @@ export default function AnalysePage() {
         .from('analyses')
         .select('content, created_at')
         .eq('user_id', user.id)
-        .eq('type', `${type}_yearly_${selectedYear}`)
+        .eq('type', `${type}_yearly_${selectedMonth}`)
         .order('created_at', { ascending: false })
         .limit(1)
         .single()
@@ -280,7 +300,7 @@ export default function AnalysePage() {
       const res = await fetch(`/api/analysis/${type}/yearly`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
-        body: JSON.stringify({ year: selectedYear }),
+        body: JSON.stringify({ month: selectedMonth }),
       })
       await readSSEStream(res, {
         onChunk: (text) => setYearlyAnalysis(text),
@@ -443,14 +463,14 @@ export default function AnalysePage() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
               <h2 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: '1.6rem', color: TEXT, margin: 0 }}>
-                {label} · Monat für Monat
+                {label} · Monatsanalyse
               </h2>
               <select
-                value={selectedYear}
-                onChange={e => setSelectedYear(Number(e.target.value))}
+                value={selectedMonth}
+                onChange={e => setSelectedMonth(e.target.value)}
                 style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '8px 14px', color: 'var(--text-1)', fontSize: '0.88rem', fontFamily: 'Inter, sans-serif', cursor: 'pointer' }}
               >
-                {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
+                {monthOptions.map(m => <option key={m} value={m}>{formatMonth(m)}</option>)}
               </select>
             </div>
 
@@ -472,14 +492,14 @@ export default function AnalysePage() {
             ) : (
               <div>
                 <p style={{ color: TEXT_LIGHT, fontSize: '0.9rem', marginBottom: '20px', lineHeight: 1.7 }}>
-                  Erhalte eine detaillierte Monat-für-Monat-Analyse deiner {label.toLowerCase()} für {selectedYear}. Erfahre, welche Monate besonders kraftvoll sind, wo du innehalten solltest und welche Themen dich das ganze Jahr begleiten.
+                  Erhalte eine tiefe Analyse deiner {label.toLowerCase()} für {formatMonth(selectedMonth)}. Erfahre, welche Energien dich in diesem Monat begleiten und welche Themen besonders relevant sind.
                 </p>
                 <button
                   onClick={createYearly}
                   disabled={yearlyLoading}
                   style={{ backgroundColor: 'transparent', border: '1px solid var(--accent)', color: COPPER, borderRadius: '40px', padding: '13px 32px', fontWeight: 500, fontSize: '0.85rem', cursor: yearlyLoading ? 'not-allowed' : 'pointer', opacity: yearlyLoading ? 0.7 : 1 }}
                 >
-                  {yearlyLoading ? `Jahresanalyse ${selectedYear} wird erstellt…` : `Jahresanalyse ${selectedYear} erstellen`}
+                  {yearlyLoading ? `Monatsanalyse ${formatMonth(selectedMonth)} wird erstellt…` : `Monatsanalyse ${formatMonth(selectedMonth)} erstellen`}
                 </button>
               </div>
             )}
