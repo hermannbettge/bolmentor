@@ -201,6 +201,7 @@ ABSOLUT VERBOTENE STILMITTEL (streng einhalten):
 - Keine horizontalen Trennlinien (---)
 - Keine einzelne # Überschrift am Anfang
 - KEINE Gedankenstriche oder Bindestriche als Satzzeichen (– oder —). Nur normale Satzzeichen.
+- SIEGELNAMEN EXAKT VERWENDEN: Nutze den Siegelnamen immer genau so wie angegeben (z.B. "Weißer Spiegel", "Blauer Sturm"). Erfinde KEINE Komposita oder Abwandlungen wie "Spiegelmesser", "Sturmkraft" o.ä.
 - KEINE Doppelpunkte am Ende eines Satzes oder Absatzes
 - Kein Satzanfang mit "Und"
 - Schreibe fehlerfreies, korrektes Deutsch mit korrekter Groß- und Kleinschreibung
