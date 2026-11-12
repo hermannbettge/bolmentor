@@ -319,7 +319,7 @@ export default function Salespage() {
           <H2>Was sich verändert, wenn du deine kosmische Signatur kennst.</H2>
           <div style={{ display: 'grid', gridTemplateColumns: m ? '1fr' : '1fr 1fr', gap: m ? '32px' : '48px', marginTop: '8px' }}>
             <div style={{ backgroundColor: DEEP, padding: '36px 32px' }}>
-              <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'rgba(196,120,74,0.5)', marginBottom: '24px' }}>Ohne MAYA</div>
+              <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER_LIGHT, marginBottom: '24px' }}>Ohne MAYA</div>
               {[
                 'Du stehst auf und weißt nicht, wo du heute anfangen sollst.',
                 'Du läufst gegen die Energie an und fragst dich, warum es so schwer ist.',
@@ -328,8 +328,8 @@ export default function Salespage() {
                 'Ein weiteres Jahr ohne das Gefühl, wirklich im Fluss zu sein.',
               ].map((text, i) => (
                 <div key={i} style={{ display: 'flex', gap: '14px', marginBottom: '14px', alignItems: 'flex-start' }}>
-                  <span style={{ color: 'rgba(196,120,74,0.35)', flexShrink: 0, marginTop: '3px' }}>–</span>
-                  <span style={{ color: 'rgba(244,239,230,0.55)', fontSize: '0.9rem', lineHeight: 1.65, fontWeight: 300 }}>{text}</span>
+                  <span style={{ color: COPPER_LIGHT, flexShrink: 0, marginTop: '3px' }}>–</span>
+                  <span style={{ color: 'rgba(244,239,230,0.88)', fontSize: '0.9rem', lineHeight: 1.65, fontWeight: 300 }}>{text}</span>
                 </div>
               ))}
             </div>
