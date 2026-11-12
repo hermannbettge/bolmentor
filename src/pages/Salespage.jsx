@@ -434,21 +434,6 @@ export default function Salespage() {
         </div>
       </section>
 
-      {/* 5. PROOF — Testimonials */}
-      <section style={{ backgroundColor: WARM }}>
-        <div style={sectionPad}>
-          <Tag dark>Stimmen</Tag>
-          <div style={grid3}>
-            {[1, 2, 3].map((_, i) => (
-              <div key={i} style={{ backgroundColor: 'rgba(244,239,230,0.05)', padding: m ? '28px 20px' : '36px 28px', borderLeft: (!m && i > 0) ? '1px solid rgba(244,239,230,0.08)' : 'none', borderTop: (m && i > 0) ? '1px solid rgba(244,239,230,0.08)' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '140px' }}>
-                <p style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontSize: '1rem', color: 'rgba(244,239,230,0.3)', lineHeight: 1.75, margin: 0, textAlign: 'center' }}>
-                  Hier könnte deine Stimme stehen.
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* MAYA KI */}
       <section style={{ backgroundColor: CREAM }}>
