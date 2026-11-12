@@ -351,52 +351,6 @@ export default function AnalyseEvent() {
           )}
         </div>
 
-        {/* ── Jahresanalyse ── */}
-        <div style={sectionDivider}>
-          <div style={sectionLabel}>Jahresanalyse</div>
-          {!canYearly ? (
-            <div style={{ padding: '20px', backgroundColor: 'rgba(184,151,90,0.06)', border: '1px solid rgba(184,151,90,0.2)', borderRadius: '8px', fontSize: '0.88rem', color: TEXT_MID, lineHeight: 1.7 }}>
-              Die Jahresanalyse ist exklusiv im <strong style={{ color: COPPER }}>Jahrestarif</strong> verfügbar.
-            </div>
-          ) : (
-            <>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px', flexWrap: 'wrap' }}>
-                <h2 style={{ ...sectionHeading, margin: 0 }}>{event?.name} · Monat für Monat</h2>
-                <select
-                  value={yearlyYear}
-                  onChange={e => { setYearlyYear(Number(e.target.value)); setYearlyContent(null); setYearlyChecking(false) }}
-                  style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '8px 12px', color: TEXT, fontSize: '0.85rem', fontFamily: 'Inter, sans-serif', cursor: 'pointer' }}
-                >
-                  {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
-                </select>
-              </div>
-
-              {yearlyChecking ? (
-                <div style={{ color: TEXT_MID, fontSize: '0.88rem' }}>Wird geprüft…</div>
-              ) : yearlyContent ? (
-                <>
-                  <AnalysisDisplay content={yearlyContent} />
-                  <div style={{ display: 'flex', gap: '12px', marginTop: '16px', flexWrap: 'wrap' }}>
-                    <button onClick={() => { generateAnalysisPDF({ content: yearlyContent, analysisType: 'event_yearly', userName: event?.name || '', date: String(yearlyYear) }) }}
-                      style={btnSecondary}>Als PDF speichern</button>
-                    <button onClick={() => setYearlyContent(null)} style={btnSecondary}>Neu erstellen</button>
-                  </div>
-                </>
-              ) : (
-                <div>
-                  {yearlyError && <p style={{ color: '#c0392b', fontSize: '0.85rem', marginBottom: '12px' }}>{yearlyError}</p>}
-                  <p style={{ color: TEXT_MID, fontSize: '0.88rem', marginBottom: '16px', lineHeight: 1.7 }}>
-                    Erhalte eine detaillierte Monat-für-Monat-Analyse für {event?.name} im Jahr {yearlyYear}.
-                  </p>
-                  <button onClick={createYearly} disabled={yearlyLoading} style={btnPrimary(yearlyLoading)}>
-                    {yearlyLoading ? `Jahresanalyse ${yearlyYear} wird erstellt…` : `Jahresanalyse ${yearlyYear} erstellen`}
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-
         {/* ── Grundanalyse ── */}
         <div style={sectionDivider}>
           <div style={sectionLabel}>Grundenergie-Analyse</div>

@@ -440,9 +440,9 @@ export default function AnalysePage() {
         {/* Yearly Analysis Section */}
         {hasYearly && !checking && !canSelectYear && (
           <div style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid var(--border)' }}>
-            <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '8px' }}>Jahresanalyse</div>
+            <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '8px' }}>Monatsanalyse</div>
             <p style={{ color: TEXT_LIGHT, fontSize: '0.9rem', lineHeight: 1.7, marginBottom: '16px' }}>
-              Die Jahresanalyse ist exklusiv im Jahrestarif verfügbar. Erhalte eine detaillierte Monat-für-Monat-Analyse für {currentYear}.
+              Die Monatsanalyse ist exklusiv im Jahrestarif verfügbar.
             </p>
             {upgradeError && (
               <p style={{ color: '#ff6b6b', fontSize: '0.85rem', marginBottom: '12px' }}>{upgradeError}</p>
@@ -459,7 +459,7 @@ export default function AnalysePage() {
         {hasYearly && !checking && canSelectYear && (
           <div style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid var(--border)' }}>
             <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER, marginBottom: '8px' }}>
-              Jahresanalyse
+              Monatsanalyse
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
               <h2 style={{ fontFamily: '"Playfair Display", serif', fontWeight: 400, fontSize: '1.6rem', color: TEXT, margin: 0 }}>
