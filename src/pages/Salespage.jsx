@@ -461,7 +461,7 @@ export default function Salespage() {
                   'Persönliches Maya-Profil',
                   'Jederzeit kündbar',
                 ].map((item, i) => (
-                  <div key={i} style={{ color: 'rgba(244,239,230,0.9)', fontWeight: 300, fontSize: '0.88rem', marginBottom: '11px', display: 'flex', gap: '12px' }}>
+                  <div key={i} style={{ color: 'rgba(244,239,230,0.92)', fontWeight: 400, fontSize: '0.88rem', marginBottom: '11px', display: 'flex', gap: '12px' }}>
                     <span style={{ color: COPPER_LIGHT, flexShrink: 0 }}>·</span> {item}
                   </div>
                 ))}
@@ -498,9 +498,8 @@ export default function Salespage() {
                   'Beziehungsmuster inklusive',
                   'Partnerschaftsanalyse inklusive',
                   '2 Monate kostenlos',
-                  '✦ MAYA KI — nur bei Sonderaktionen',
                 ].map((item, i) => (
-                  <div key={i} style={{ color: item.startsWith('✦') ? COPPER_LIGHT : 'rgba(244,239,230,0.8)', fontWeight: item.startsWith('✦') ? 500 : 300, fontSize: '0.88rem', marginBottom: '11px', display: 'flex', gap: '12px' }}>
+                  <div key={i} style={{ color: 'rgba(244,239,230,0.92)', fontWeight: 400, fontSize: '0.88rem', marginBottom: '11px', display: 'flex', gap: '12px' }}>
                     <span style={{ color: COPPER_LIGHT, flexShrink: 0 }}>·</span> {item}
                   </div>
                 ))}
