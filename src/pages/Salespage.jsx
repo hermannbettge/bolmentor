@@ -312,6 +312,46 @@ export default function Salespage() {
         </div>
       </section>
 
+      {/* TRANSFORMATION — Vorher / Nachher */}
+      <section style={{ backgroundColor: SAND }}>
+        <div style={sectionPad}>
+          <Tag>Die Transformation</Tag>
+          <H2>Was sich verändert, wenn du deine kosmische Signatur kennst.</H2>
+          <div style={{ display: 'grid', gridTemplateColumns: m ? '1fr' : '1fr 1fr', gap: m ? '32px' : '48px', marginTop: '8px' }}>
+            <div style={{ backgroundColor: DEEP, padding: '36px 32px' }}>
+              <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'rgba(196,120,74,0.5)', marginBottom: '24px' }}>Ohne MAYA</div>
+              {[
+                'Du stehst auf und weißt nicht, wo du heute anfangen sollst.',
+                'Du läufst gegen die Energie an und fragst dich, warum es so schwer ist.',
+                'Du triffst Entscheidungen ohne kosmischen Kontext.',
+                'Du suchst in Büchern, Podcasts und Coaches nach Antworten für eine allgemeine Frage.',
+                'Ein weiteres Jahr ohne das Gefühl, wirklich im Fluss zu sein.',
+              ].map((text, i) => (
+                <div key={i} style={{ display: 'flex', gap: '14px', marginBottom: '14px', alignItems: 'flex-start' }}>
+                  <span style={{ color: 'rgba(196,120,74,0.35)', flexShrink: 0, marginTop: '3px' }}>–</span>
+                  <span style={{ color: 'rgba(244,239,230,0.55)', fontSize: '0.9rem', lineHeight: 1.65, fontWeight: 300 }}>{text}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ backgroundColor: WARM, padding: '36px 32px', border: `1px solid ${COPPER}` }}>
+              <div style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: COPPER_LIGHT, marginBottom: '24px' }}>Mit MAYA</div>
+              {[
+                'Du öffnest die App und weißt sofort, was dieser Tag von dir will.',
+                'Du erkennst, wenn ein Tag Rückzug fordert statt Vorwärts, und nimmst dir die Erlaubnis.',
+                'Du entscheidest mit dem Strom deiner kosmischen Energie statt gegen ihn.',
+                'Du hast eine Antwort, die auf dein Geburtsdatum berechnet ist. Für dich. Nicht für alle.',
+                '365 Tage, in denen du dich selbst tiefer verstehst als je zuvor.',
+              ].map((text, i) => (
+                <div key={i} style={{ display: 'flex', gap: '14px', marginBottom: '14px', alignItems: 'flex-start' }}>
+                  <span style={{ color: COPPER_LIGHT, flexShrink: 0, fontSize: '0.6rem', marginTop: '6px' }}>◆</span>
+                  <span style={{ color: 'rgba(244,239,230,0.9)', fontSize: '0.9rem', lineHeight: 1.65, fontWeight: 300 }}>{text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 4. LÖSUNG — Das System */}
       <section style={{ backgroundColor: WARM }}>
         <div style={sectionPad}>
