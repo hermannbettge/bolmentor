@@ -473,6 +473,54 @@ Gesamtlänge: ca. 1200–1500 Wörter.`,
   return prompts[type]
 }
 
+const MONTHS_DE = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']
+
+function buildMonthlyDeepPrompt(type, profile, kinData, month) {
+  const name = profile.name
+  const kin = `Kin ${kinData.kin} – ${kinData.tone} ${kinData.seal}`
+  const theme = kinData.lifeTheme
+
+  const typeLabels = {
+    business: 'Business', health: 'Gesundheit', family: 'Familie',
+    selfexpression: 'Selbstausdruck', finance: 'Finanzen', career: 'Karriere',
+    lifephases: 'Lebensphasen', partnership: 'Partnerschaft', relationship: 'Beziehungsmuster',
+  }
+  const label = typeLabels[type] || type
+
+  const [yearStr, monthStr] = month.split('-')
+  const year = Number(yearStr)
+  const monthIdx = Number(monthStr) - 1
+  const monthName = MONTHS_DE[monthIdx] || monthStr
+
+  return `Du bist ein weltklasse Maya-Kalender-Experte. Erstelle eine tiefe Monatsanalyse für ${monthName} ${year} im Bereich ${label} auf Deutsch für ${name}.
+
+PROFIL:
+Name: ${name}
+Kin: ${kin}
+Lebensthema: ${theme}
+Monat: ${monthName} ${year}
+${calendarFacts(year)}
+
+${SYSTEM_RULES}
+
+## ${monthName.toUpperCase()} ${year} – ${label.toUpperCase()}
+
+Schreibe zunächst eine Monatsübersicht (3–4 Sätze zur übergeordneten Energie und dem Kernthema des Monats im Bereich ${label} für ${name}).
+
+Dann analysiere jede Woche einzeln:
+
+**Woche 1** (1.–7. ${monthName}): Detaillierte Energiebeschreibung, konkrete Chancen, worauf achten, was jetzt ideal ist
+**Woche 2** (8.–14. ${monthName}): Detaillierte Energiebeschreibung, konkrete Chancen, worauf achten, was jetzt ideal ist
+**Woche 3** (15.–21. ${monthName}): Detaillierte Energiebeschreibung, konkrete Chancen, worauf achten, was jetzt ideal ist
+**Woche 4** (22.–Monatsende): Detaillierte Energiebeschreibung, konkrete Chancen, worauf achten, was jetzt ideal ist
+
+## FAZIT & EMPFEHLUNGEN – ${label.toUpperCase()}
+Die 3 wichtigsten Chancen dieses Monats, die 2 größten Herausforderungen, und 3 konkrete Handlungsempfehlungen für ${name} im Bereich ${label} für ${monthName} ${year}.
+
+Jede Woche etwa 120–160 Wörter. Fazit etwa 200–250 Wörter. Gesamtlänge: etwa 800–1100 Wörter.`
+}
+
+// Legacy: kept for backward compatibility if ever needed
 function buildYearlyPrompt(type, profile, kinData, year) {
   const name = profile.name
   const kin = `Kin ${kinData.kin} – ${kinData.tone} ${kinData.seal}`
@@ -496,41 +544,8 @@ ${calendarFacts(year)}
 
 ${SYSTEM_RULES}
 
-Erstelle zunächst eine Jahresübersicht, dann für JEDEN der 12 Monate einen eigenen Abschnitt:
-
-## JAHRESÜBERSICHT ${year} – ${label.toUpperCase()}
-(Gesamtthema des Jahres, wichtige Energien, was ${name} erwartet)
-
-## JANUAR ${year}
-## FEBRUAR ${year}
-## MÄRZ ${year}
-## APRIL ${year}
-## MAI ${year}
-## JUNI ${year}
-## JULI ${year}
-## AUGUST ${year}
-## SEPTEMBER ${year}
-## OKTOBER ${year}
-## NOVEMBER ${year}
-## DEZEMBER ${year}
-
-## JAHRESRESÜMEE ${year} – GESAMTBEWERTUNG & EMPFEHLUNGEN
-(Gesamtfazit des Jahres: die 3 wichtigsten Chancen, die 3 größten Herausforderungen, die kraftvollsten Monate, die ruhigsten Monate, konkrete Empfehlungen für ${name} für den Bereich ${label})
-
-Für jeden der 12 Monate verwende EXAKT diese Struktur:
-
-**Gesamtenergie des Monats:** (2–3 Sätze zur übergeordneten Energiequalität)
-
-**Woche 1** (1.–7.): Energiebeschreibung, was jetzt ideal ist, was du besser lassen solltest
-**Woche 2** (8.–14.): Energiebeschreibung, was jetzt ideal ist, was du besser lassen solltest
-**Woche 3** (15.–21.): Energiebeschreibung, was jetzt ideal ist, was du besser lassen solltest
-**Woche 4** (22.–Monatsende): Energiebeschreibung, was jetzt ideal ist, was du besser lassen solltest
-
-**Fazit ${label}:** Konkrete Handlungsempfehlung für den Monat im Bereich ${label}
-
-Jeder Monatsabschnitt etwa 180–240 Wörter.
-Das Jahresresümee am Ende etwa 250–350 Wörter.
-Gesamtlänge: etwa 2800–3500 Wörter. Alle zwölf Monate und das Resümee vollständig ausgeben.`
+Erstelle zunächst eine Jahresübersicht, dann für JEDEN der 12 Monate einen eigenen Abschnitt.
+Jeder Monatsabschnitt etwa 180–240 Wörter. Gesamtlänge: etwa 2800–3500 Wörter.`
 }
 
 // Energy classification by tone
@@ -770,22 +785,32 @@ const YEARLY_TYPES = ['business', 'health', 'family', 'selfexpression', 'finance
 
 YEARLY_TYPES.forEach(type => {
   router.post(`/${type}/yearly`, requireAuth, async (req, res) => {
-    let prompt, year, userId
+    let prompt, month, userId
     try {
       const profile = await getProfile(req.user.id)
       checkMembership(profile)
       checkAnnualPlan(profile)
       checkPurchased(profile, type)
-      year = req.body.year || new Date().getFullYear()
+      // Accept month (YYYY-MM) for per-month analyses
+      if (req.body.month && /^\d{4}-\d{2}$/.test(req.body.month)) {
+        month = req.body.month
+      } else if (req.body.year) {
+        // legacy fallback: year → current month of that year
+        const now = new Date()
+        month = `${req.body.year}-${String(now.getMonth() + 1).padStart(2, '0')}`
+      } else {
+        const now = new Date()
+        month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+      }
       const kinData = calculateKinFromDate(profile.birth_date)
-      prompt = buildYearlyPrompt(type, profile, kinData, year)
+      prompt = buildMonthlyDeepPrompt(type, profile, kinData, month)
       userId = req.user.id
     } catch (err) {
       return res.status(400).json({ error: err.message })
     }
-    await streamClaude(res, prompt, 16000, async (content) => {
+    await streamClaude(res, prompt, 6000, async (content) => {
       const today = civilDateISO()
-      await saveAnalysis(userId, `${type}_yearly_${year}`, content, today)
+      await saveAnalysis(userId, `${type}_yearly_${month}`, content, today)
     })
   })
 })
