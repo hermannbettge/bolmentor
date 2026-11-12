@@ -332,5 +332,30 @@ router.get('/config-check', (req, res) => {
   res.json({ status, stripe_key: process.env.STRIPE_SECRET_KEY ? 'ok' : 'MISSING' })
 })
 
+// Diagnostic endpoint — checks actual Stripe price active status
+router.get('/price-check', async (req, res) => {
+  const secret = req.headers['x-admin-secret']
+  if (!process.env.ADMIN_SECRET || typeof secret !== 'string' || secret !== process.env.ADMIN_SECRET) {
+    return res.status(403).json({ error: 'Forbidden' })
+  }
+  try {
+    const stripe = getStripe()
+    const results = {}
+    for (const [key, priceFn] of Object.entries(PRODUCT_KEY_MAP)) {
+      const priceId = priceFn()
+      if (!priceId) { results[key] = { error: 'NO_ID' }; continue }
+      try {
+        const p = await stripe.prices.retrieve(priceId)
+        results[key] = { id: priceId, active: p.active, type: p.type, amount: p.unit_amount, currency: p.currency }
+      } catch (e) {
+        results[key] = { id: priceId, error: e.message }
+      }
+    }
+    res.json(results)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
 export { PRICE_MAP, PRODUCT_KEY_MAP }
 export default router
