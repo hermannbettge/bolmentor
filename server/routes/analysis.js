@@ -930,39 +930,47 @@ router.post('/event/:eventId', requireAuth, async (req, res) => {
     }
     const catLabel = categoryLabels[event.category] || 'Ereignis'
 
-    prompt = `Du bist ein weltklasse Maya-Kalender-Experte. Erstelle eine vollständige Energie-Analyse für ein ${catLabel} auf Deutsch.
+    prompt = `Du bist ein weltklasse Maya-Kalender-Experte. Erstelle eine vollständige Energie-Analyse für "${event.name}" (${catLabel}) auf Deutsch. Das Ereignis selbst steht im Mittelpunkt der Analyse.
 ${SYSTEM_RULES}
-
-PERSON: ${profile.name}
-Kin: Kin ${userKin.kin} – ${userKin.tone} ${userKin.seal}
-Galaktischer Ton ${userKin.toneNumber}: ${userKin.tone} – Kraft: ${userKin.tonePower}
-Lebensthema: ${userKin.lifeTheme}
-Antipode: ${userKin.antipode}
-Geburtsdatum: ${profile.birth_date}
 
 EREIGNIS: "${event.name}"
 Kategorie: ${catLabel}
 Gründungs-/Startdatum: ${event.event_date}
 Ereignis-Kin: Kin ${eventKin.kin} – ${eventKin.tone} ${eventKin.seal}
-Galaktischer Ton des Ereignisses: ${eventKin.toneNumber} – ${eventKin.tone} (Kraft: ${eventKin.tonePower})
+Galaktischer Ton: ${eventKin.toneNumber} – ${eventKin.tone} (Kraft: ${eventKin.tonePower})
 Lebensthema des Ereignisses: ${eventKin.lifeTheme}
 ${event.description ? `Kontext: ${event.description}` : ''}
 
-Erstelle eine tiefe Analyse der Energie dieses Ereignisses und wie es mit ${profile.name} resoniert. Jeder Abschnitt 4–6 ausführliche Absätze:
+BEOBACHTER: ${profile.name}
+Kin: Kin ${userKin.kin} – ${userKin.tone} ${userKin.seal} | Lebensthema: ${userKin.lifeTheme}
+
+Analysiere die Energie von "${event.name}" als eigenständige Kraft. Jeder Abschnitt 4–6 ausführliche Absätze:
 
 ## DIE GRUNDENERGIE VON "${event.name.toUpperCase()}"
-## WAS DIESES KIN ÜBER ${catLabel === 'Ereignis' ? 'DAS EREIGNIS' : catLabel.toUpperCase()} AUSSAGT
-## DIE KRAFT UND DAS POTENZIAL
-## HERAUSFORDERUNGEN UND WACHSTUMSBEREICHE
-## RESONANZ ZWISCHEN ${profile.name.toUpperCase()} UND "${event.name.toUpperCase()}"
-## HARMONIEN UND SYNERGIEPUNKTE
-## SPANNUNGSFELDER UND LERNBEREICHE
-## TIMING UND ZYKLEN
-## PRAKTISCHE EMPFEHLUNGEN FÜR ${profile.name.toUpperCase()}
-## DAS LANGZEITPOTENZIAL
-## AFFIRMATION
+Welche Wesensenergie trägt dieses Ereignis durch sein Kin? Was ist der Kern seiner Ausstrahlung und seines Charakters?
 
-Gesamtlänge: ca. 1200–1500 Wörter. Sei konkret. Sprich ${profile.name} direkt an.`
+## STÄRKEN UND POTENZIALE
+Was kann "${event.name}" von Natur aus gut? Welche Kräfte, Talente und Möglichkeiten trägt es in sich?
+
+## HERAUSFORDERUNGEN UND WACHSTUMSBEREICHE
+Wo liegen die energetischen Spannungsfelder für "${event.name}"? Was sind seine blinden Flecken oder Entwicklungsthemen?
+
+## WAS STIMMT – WAS NICHT STIMMT
+Was läuft für "${event.name}" im Einklang mit seiner Energie? Was kostet es Kraft, wenn es dagegen arbeitet?
+
+## ZYKLEN UND TIMING
+Welche Phasen und Rhythmen sind für "${event.name}" prägend? Wann ist seine Energie besonders stark?
+
+## RESONANZ MIT ${profile.name.toUpperCase()}
+Wie verbindet sich ${profile.name}s eigene Kin-Energie mit der von "${event.name}"? Wo gibt es Harmonie, wo Reibung, was kann ${profile.name} durch diese Verbindung besonders gut sehen oder nutzen?
+
+## LANGZEITPOTENZIAL
+Wohin entwickelt sich "${event.name}" auf dem langen Weg seiner Energie?
+
+## AFFIRMATION FÜR "${event.name.toUpperCase()}"
+Eine kraftvolle Affirmation, die das Wesen dieses Ereignisses beschreibt.
+
+Gesamtlänge: ca. 1200–1500 Wörter. Das Ereignis ist das Subjekt jedes Abschnitts.`
 
     userId = req.user.id
   } catch (err) {
@@ -996,11 +1004,8 @@ router.get('/event/:eventId', requireAuth, async (req, res) => {
 // ── Event sub-analyses (daily / monthly / yearly) ──────────────────────────
 
 function buildEventDailyPrompt(profile, event, userKin, dayKin, eventKin, dateLabel) {
-  return `Du bist ein weltklasse Maya-Kalender-Experte. Analysiere wie die Energie des ${dateLabel} auf das Ereignis "${event.name}" wirkt. Schreibe auf Deutsch.
+  return `Du bist ein weltklasse Maya-Kalender-Experte. Analysiere die Energie des ${dateLabel} für "${event.name}". Das Ereignis selbst steht im Mittelpunkt. Schreibe auf Deutsch.
 ${SYSTEM_RULES}
-
-PERSON: ${profile.name}
-Geburts-Kin: Kin ${userKin.kin} – ${userKin.tone} ${userKin.seal} | Ton ${userKin.toneNumber} | Lebensthema: ${userKin.lifeTheme}
 
 EREIGNIS: "${event.name}"
 Kin des Ereignisses: Kin ${eventKin.kin} – ${eventKin.tone} ${eventKin.seal} | Ton ${eventKin.toneNumber} | Lebensthema: ${eventKin.lifeTheme}
@@ -1008,51 +1013,54 @@ Kin des Ereignisses: Kin ${eventKin.kin} – ${eventKin.tone} ${eventKin.seal} |
 ENERGIE DES TAGES (${dateLabel}):
 Tages-Kin: Kin ${dayKin.kin} – ${dayKin.tone} ${dayKin.seal} | Ton ${dayKin.toneNumber} | Lebensthema: ${dayKin.lifeTheme}
 
+BEOBACHTER: ${profile.name}
+Geburts-Kin: Kin ${userKin.kin} – ${userKin.tone} ${userKin.seal} | Ton ${userKin.toneNumber} | Lebensthema: ${userKin.lifeTheme}
+
 ## ENERGIE DES TAGES FÜR "${event.name.toUpperCase()}"
-Wie wirkt die heutige Kin-Energie auf dieses Ereignis?
+Was prägt "${event.name}" energetisch an diesem Tag? Was ist für "${event.name}" heute besonders relevant, was zieht es an, was stößt es ab?
 
-## RESONANZ MIT ${profile.name.toUpperCase()}
-Wie spiegelt sich deine Geburtsenergie in der Kombination aus Tages- und Ereignis-Energie?
+## WAS JETZT STIMMT – WAS JETZT NICHT STIMMT
+Was sollte "${event.name}" heute tun oder nutzen? Was sollte es heute besser lassen oder meiden?
 
-## KONKRETER IMPULS FÜR HEUTE
-2–3 präzise Handlungsempfehlungen für heute in Bezug auf "${event.name}".
+## BLICK VON ${profile.name.toUpperCase()}
+Wie sieht ${profile.name} diesen Tag für "${event.name}" durch die eigene Kin-Brille? Welchen besonderen Einblick ermöglicht die eigene Energie?
 
-## AFFIRMATION
-Eine kraftvolle Affirmation für diesen Tag.
+## AFFIRMATION FÜR DIESEN TAG
+Eine kraftvolle Affirmation, die "${event.name}" für diesen Tag beschreibt.
 
-Länge: 280–340 Wörter. Ton: direkt, konkret, persönlich.`
+Länge: 280–340 Wörter. Ton: präzise, klar, auf das Ereignis fokussiert.`
 }
 
 function buildEventMonthlyPrompt(profile, event, userKin, eventKin, monthName, year) {
-  return `Du bist ein weltklasse Maya-Kalender-Experte. Analysiere wie der ${monthName} ${year} auf das Ereignis "${event.name}" wirkt. Schreibe auf Deutsch.
+  return `Du bist ein weltklasse Maya-Kalender-Experte. Analysiere die Monatsenergie des ${monthName} ${year} für "${event.name}". Das Ereignis selbst steht im Mittelpunkt. Schreibe auf Deutsch.
 ${SYSTEM_RULES}
-
-PERSON: ${profile.name}
-Geburts-Kin: Kin ${userKin.kin} – ${userKin.tone} ${userKin.seal} | Lebensthema: ${userKin.lifeTheme}
 
 EREIGNIS: "${event.name}"
 Kin des Ereignisses: Kin ${eventKin.kin} – ${eventKin.tone} ${eventKin.seal} | Lebensthema: ${eventKin.lifeTheme}
 ${calendarFacts(year, GERMAN_MONTHS.indexOf(monthName) + 1)}
 
+BEOBACHTER: ${profile.name}
+Geburts-Kin: Kin ${userKin.kin} – ${userKin.tone} ${userKin.seal} | Lebensthema: ${userKin.lifeTheme}
+
 ## MONATSENERGIE FÜR "${event.name.toUpperCase()}" – ${monthName.toUpperCase()} ${year}
-Was prägt diesen Monat energetisch für dieses Ereignis?
+Was prägt "${event.name}" in diesem Monat energetisch? Welche Themen, Strömungen und Dynamiken sind für "${event.name}" im ${monthName} ${year} bestimmend?
+
+## WAS JETZT STIMMT FÜR "${event.name.toUpperCase()}"
+Welche Chancen und Potenziale öffnen sich für "${event.name}" in diesem Monat? Was sollte "${event.name}" jetzt nutzen, anstoßen oder stärken?
+
+## WAS JETZT NICHT STIMMT FÜR "${event.name.toUpperCase()}"
+Welche Risiken, Spannungen oder blinden Flecken trägt dieser Monat für "${event.name}"? Was sollte "${event.name}" in dieser Zeit meiden oder aufschieben?
 
 ## WOCHE FÜR WOCHE
-4 kurze wöchentliche Schwerpunkte für "${event.name}" im ${monthName}.
+4 kurze wöchentliche Schwerpunkte speziell für "${event.name}" im ${monthName}: Was ist in jeder Woche besonders prägend?
 
-## CHANCEN DIESES MONATS
-Welche Potenziale trägt der ${monthName} ${year} für dieses Ereignis?
+## BLICK VON ${profile.name.toUpperCase()}
+Welchen besonderen Blickwinkel bringt ${profile.name} durch die eigene Kin-Energie auf diesen Monat für "${event.name}"?
 
-## HERAUSFORDERUNGEN UND HINWEISE
-Was zu beachten ist.
+## AFFIRMATION FÜR DEN ${monthName.toUpperCase()}
+Eine kraftvolle Affirmation, die die Energie des Monats für "${event.name}" auf den Punkt bringt.
 
-## EMPFEHLUNG FÜR ${profile.name.toUpperCase()}
-Konkrete Handlungsempfehlung für diesen Monat.
-
-## AFFIRMATION
-Eine kraftvolle Affirmation für den ${monthName}.
-
-Länge: 420–500 Wörter. Sprich ${profile.name} direkt an.`
+Länge: 450–530 Wörter. Das Ereignis ist das Subjekt der Analyse, nicht die Person.`
 }
 
 function buildEventYearlyPrompt(profile, event, userKin, eventKin, year) {
