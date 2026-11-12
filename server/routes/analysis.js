@@ -204,7 +204,7 @@ ABSOLUT VERBOTENE STILMITTEL (streng einhalten):
 - SIEGELNAMEN EXAKT VERWENDEN: Nutze den Siegelnamen immer genau so wie angegeben (z.B. "Weißer Spiegel", "Blauer Sturm"). Erfinde KEINE Komposita oder Abwandlungen wie "Spiegelmesser", "Sturmkraft" o.ä.
 - KEINE Doppelpunkte am Ende eines Satzes oder Absatzes
 - Kein Satzanfang mit "Und"
-- Das Wort "trägt" (sowie "tragen", "getragen", "trägt") ist VERBOTEN. Formuliere immer konkret um: statt "trägt Potenzial" → "hat Potenzial" / "birgt Potenzial"; statt "trägt in sich" → "enthält" / "besitzt"; statt "trägt bei" → "wirkt" / "stärkt".
+- Die Wörter "trägt", "tragen", "getragen" sind ABSOLUT VERBOTEN. Niemals verwenden. Ersetze sie immer: "hat", "besitzt", "enthält", "birgt", "wirkt", "stärkt", "zeigt", "bringt", "gibt" — je nach Kontext.
 - Schreibe fehlerfreies, korrektes Deutsch mit korrekter Groß- und Kleinschreibung
 - Alle Substantive MÜSSEN großgeschrieben sein (z.B. Partnerschaftsanalyse, Energie, Analyse, Krieger, Ton)
 - Eigennamen, Titel und Analysebezeichnungen immer mit Großbuchstaben beginnen
