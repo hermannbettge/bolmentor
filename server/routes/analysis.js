@@ -205,7 +205,7 @@ ABSOLUT VERBOTENE STILMITTEL (streng einhalten):
 - SIEGELNAMEN EXAKT VERWENDEN: Nutze den Siegelnamen immer genau so wie angegeben (z.B. "Weißer Spiegel", "Blauer Sturm"). Erfinde KEINE Komposita oder Abwandlungen wie "Spiegelmesser", "Sturmkraft" o.ä.
 - KEINE Doppelpunkte am Ende eines Satzes oder Absatzes
 - Kein Satzanfang mit "Und"
-- Die Wörter "trägt", "tragen", "getragen" sind ABSOLUT VERBOTEN. Niemals verwenden. Ersetze grammatikalisch korrekt je nach Kontext: "X hat Potenzial" statt "X trägt Potenzial", "was noch gilt" statt "was noch trägt", "was noch Bestand hat" statt "was noch trägt", "X birgt Risiken" statt "X trägt Risiken", "X bringt Früchte" statt "X trägt Früchte", "X leistet einen Beitrag" statt "X trägt bei", "X enthält" / "X besitzt" / "X zeigt" je nach Sinn. Wähle IMMER die grammatikalisch korrekte Alternative für den jeweiligen Satzbau.
+- Die Wörter "trägt", "tragen", "getragen" sind ABSOLUT VERBOTEN und dürfen im Output NIEMALS erscheinen — auch nicht als Zitat, auch nicht in Ausnahmen, auch nicht im übertragenen Sinne. Wenn du merkst, dass du "trägt" schreiben würdest: STOPP — wähle sofort eine grammatikalisch korrekte Alternative: "hat" / "besitzt" / "enthält" / "bringt" / "birgt" / "zeigt" / "gilt" / "leistet" / "wirkt" je nach Kontext. Jede dieser Konstruktionen ist verboten: "X trägt Potenzial" → "X hat Potenzial"; "was noch trägt" → "was noch gilt" / "was noch Bestand hat"; "X trägt Risiken" → "X birgt Risiken"; "X trägt Früchte" → "X bringt Früchte"; "X trägt bei" → "X leistet einen Beitrag". Prüfe jeden Satz vor dem Schreiben.
 - Schreibe fehlerfreies, korrektes Deutsch mit korrekter Groß- und Kleinschreibung
 - Alle Substantive MÜSSEN großgeschrieben sein (z.B. Partnerschaftsanalyse, Energie, Analyse, Krieger, Ton)
 - Eigennamen, Titel und Analysebezeichnungen immer mit Großbuchstaben beginnen
@@ -962,10 +962,10 @@ Kin: Kin ${userKin.kin} – ${userKin.tone} ${userKin.seal} | Lebensthema: ${use
 Analysiere die Energie von "${event.name}" als eigenständige Kraft. Jeder Abschnitt 4–6 ausführliche Absätze:
 
 ## DIE GRUNDENERGIE VON "${event.name.toUpperCase()}"
-Welche Wesensenergie trägt dieses Ereignis durch sein Kin? Was ist der Kern seiner Ausstrahlung und seines Charakters?
+Welche Wesensenergie prägt dieses Ereignis durch sein Kin? Was ist der Kern seiner Ausstrahlung und seines Charakters?
 
 ## STÄRKEN UND POTENZIALE
-Was kann "${event.name}" von Natur aus gut? Welche Kräfte, Talente und Möglichkeiten trägt es in sich?
+Was kann "${event.name}" von Natur aus gut? Welche Kräfte, Talente und Möglichkeiten liegen in ihm?
 
 ## HERAUSFORDERUNGEN UND WACHSTUMSBEREICHE
 Wo liegen die energetischen Spannungsfelder für "${event.name}"? Was sind seine blinden Flecken oder Entwicklungsthemen?
