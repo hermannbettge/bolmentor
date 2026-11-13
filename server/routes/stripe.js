@@ -319,6 +319,77 @@ router.post('/upgrade-annual', requireAuth, async (req, res) => {
   }
 })
 
+// Skip trial — end trial immediately and charge the annual fee now
+router.post('/skip-trial', requireAuth, async (req, res) => {
+  try {
+    const stripe = getStripe()
+    const { confirm } = req.body
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('stripe_customer_id, subscription_plan, membership_start, membership_active')
+      .eq('id', req.user.id)
+      .single()
+
+    if (!profile?.membership_active || profile?.subscription_plan !== 'annual') {
+      return res.status(400).json({ error: 'Kein aktiver Jahrestarif gefunden' })
+    }
+
+    // Verify still in trial
+    if (profile.membership_start) {
+      const trialEnd = new Date(profile.membership_start).getTime() + TRIAL_DAYS * 24 * 60 * 60 * 1000
+      if (Date.now() >= trialEnd) {
+        return res.status(400).json({ error: 'Die Testphase ist bereits abgelaufen' })
+      }
+    }
+
+    if (!profile?.stripe_customer_id) {
+      return res.status(404).json({ error: 'Kein Stripe-Konto gefunden' })
+    }
+
+    // Find the active trialing subscription for this customer
+    const subscriptions = await stripe.subscriptions.list({
+      customer: profile.stripe_customer_id,
+      status: 'trialing',
+      limit: 1,
+    })
+    const subscription = subscriptions.data[0]
+    if (!subscription) {
+      return res.status(404).json({ error: 'Keine aktive Testphase gefunden' })
+    }
+
+    // Fetch the price amount to show the user
+    const priceId = subscription.items.data[0]?.price?.id
+    let amountCents = 0
+    let currency = 'eur'
+    if (priceId) {
+      const price = await stripe.prices.retrieve(priceId)
+      amountCents = price.unit_amount || 0
+      currency = price.currency || 'eur'
+    }
+
+    // If not confirming yet, return the price info for display
+    if (!confirm) {
+      const formatted = (amountCents / 100).toLocaleString('de-DE', { style: 'currency', currency: currency.toUpperCase() })
+      return res.json({ amount: formatted, subscription_id: subscription.id })
+    }
+
+    // Confirmed — end trial immediately
+    await stripe.subscriptions.update(subscription.id, { trial_end: 'now' })
+
+    // Update profile: grant all analyses immediately
+    await supabase.from('profiles').update({
+      purchased_analyses: ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership', 'relationship', 'events'],
+      updated_at: new Date().toISOString(),
+    }).eq('id', req.user.id)
+
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Skip-trial Fehler:', err)
+    res.status(500).json({ error: err.message })
+  }
+})
+
 // Diagnostic endpoint — lists which price env vars are missing (admin only via secret header)
 router.get('/config-check', (req, res) => {
   const secret = req.headers['x-admin-secret']
