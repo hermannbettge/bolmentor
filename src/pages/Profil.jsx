@@ -6,6 +6,7 @@ import { useIsMobile } from '../hooks/useIsMobile.js'
 import { calculateKin } from '../lib/mayanCalendar.js'
 import { supabase } from '../lib/supabase.js'
 import { redirectToCustomerPortal } from '../lib/stripe.js'
+import { useTrialCountdown, formatCountdown, TrialModal } from '../components/TrialGate.jsx'
 
 const ANALYSE_LABELS = {
   business: 'Business-Analyse', health: 'Gesundheitsanalyse', family: 'Familienanalyse',
@@ -102,6 +103,11 @@ export default function Profil() {
   const [eventDescription, setEventDescription] = useState('')
   const [eventSaving, setEventSaving] = useState(false)
   const [eventMsg, setEventMsg] = useState('')
+  const [showTrialModal, setShowTrialModal] = useState(false)
+
+  const isAnnual = profile?.subscription_plan === 'annual'
+  const trialMs = useTrialCountdown(isAnnual && !profile?.is_admin ? profile?.membership_start : null)
+  const trialCountdown = formatCountdown(trialMs)
 
   function isInTrial() {
     if (!profile?.membership_start || profile?.is_admin) return false
@@ -354,6 +360,23 @@ export default function Profil() {
               </button>
             </div>
           ))}
+
+          {profile?.subscription_plan === 'annual' && isInTrial() && trialCountdown && (
+            <button
+              onClick={() => setShowTrialModal(true)}
+              style={{ width: '100%', backgroundColor: 'transparent', border: '1px solid rgba(139,110,62,0.4)', borderRadius: '4px', padding: '11px 16px', color: 'var(--accent)', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif', marginBottom: '12px' }}
+            >
+              Verfügbar in {trialCountdown} · Sofort freischalten
+            </button>
+          )}
+
+          {showTrialModal && (
+            <TrialModal
+              countdown={trialCountdown}
+              onClose={() => setShowTrialModal(false)}
+              onSkipTrial={() => window.location.reload()}
+            />
+          )}
 
           {profile?.subscription_plan === 'annual' && isInTrial() ? null : (
             <>
