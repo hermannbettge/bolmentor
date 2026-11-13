@@ -87,7 +87,7 @@ export default function Dashboard() {
               Tagesenergie
             </h3>
             <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', margin: 0, lineHeight: 1.6 }}>
-              Was trägt dieser Tag? Deine persönliche Energie für heute.
+              Was bringt dieser Tag? Deine persönliche Energie für heute.
             </p>
           </div>
         </Link>
