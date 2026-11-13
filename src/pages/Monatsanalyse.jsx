@@ -16,6 +16,7 @@ export default function Monatsanalyse() {
   const today = getGermanDate()
   const firstOfMonth = isFirstOfMonth()
   const countdown = daysUntilFirstOfNextMonth()
+  const hasAnnualAccess = profile?.subscription_plan === 'annual' || profile?.is_admin
 
   useEffect(() => {
     checkExistingAnalysis()
@@ -85,29 +86,22 @@ export default function Monatsanalyse() {
         Monatsanalyse
       </div>
 
-      {firstOfMonth ? (
-        <>
-          <h1 style={{ color: 'var(--color-gold)', fontWeight: 300, fontSize: '2rem', marginBottom: '12px' }}>
-            Deine Analyse für {today.month} {today.year} ist bereit.
-          </h1>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '32px' }}>
-            Einmal im Monat öffnet sich dieses Fenster für dich.
-          </p>
-        </>
-      ) : (
-        <>
-          <h1 style={{ color: 'var(--color-gold)', fontWeight: 300, fontSize: '2rem', marginBottom: '12px' }}>
-            Deine nächste Monatsanalyse
-          </h1>
-          {!analysis && (
-            <div style={{ marginBottom: '32px', padding: '20px 24px', backgroundColor: 'var(--color-bg-card)', borderRadius: '4px', border: '1px solid rgba(139,110,62,0.2)', display: 'inline-block' }}>
-              <div style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', marginBottom: '4px' }}>Verfügbar in</div>
-              <div style={{ color: 'var(--color-gold)', fontSize: '1.4rem', fontWeight: 300 }}>
-                {countdown.days} Tagen, {countdown.hours} Stunden
-              </div>
-            </div>
-          )}
-        </>
+      <h1 style={{ color: 'var(--color-gold)', fontWeight: 300, fontSize: '2rem', marginBottom: '12px' }}>
+        {analysis
+          ? `Deine Analyse für ${today.month} ${today.year}`
+          : firstOfMonth || hasAnnualAccess
+            ? `Deine Analyse für ${today.month} ${today.year}`
+            : 'Deine nächste Monatsanalyse'
+        }
+      </h1>
+
+      {!analysis && !hasAnnualAccess && !firstOfMonth && (
+        <div style={{ marginBottom: '32px', padding: '20px 24px', backgroundColor: 'var(--color-bg-card)', borderRadius: '4px', border: '1px solid rgba(139,110,62,0.2)', display: 'inline-block' }}>
+          <div style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', marginBottom: '4px' }}>Verfügbar in</div>
+          <div style={{ color: 'var(--color-gold)', fontSize: '1.4rem', fontWeight: 300 }}>
+            {countdown.days} Tagen, {countdown.hours} Stunden
+          </div>
+        </div>
       )}
 
       {error && (
@@ -147,7 +141,7 @@ export default function Monatsanalyse() {
       )}
 
       {!analysis && !loading ? (
-        firstOfMonth ? (
+        firstOfMonth || hasAnnualAccess ? (
           <button
             onClick={createAnalysis}
             style={{
@@ -166,7 +160,7 @@ export default function Monatsanalyse() {
           </button>
         ) : (
           <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
-            Deine erste Monatsanalyse erscheint am 1. {(() => {
+            Deine Monatsanalyse erscheint am 1. {(() => {
               const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
               const next = new Date()
               next.setMonth(next.getMonth() + 1)
@@ -184,7 +178,7 @@ export default function Monatsanalyse() {
               userName={profile?.name || 'Analyse'}
               date={`${today.month} ${today.year}`}
             />
-            {firstOfMonth && (
+            {(firstOfMonth || hasAnnualAccess) && (
               <button
                 onClick={() => { setAnalysis(null); createAnalysis() }}
                 style={{
