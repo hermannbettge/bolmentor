@@ -352,7 +352,7 @@ export default function Profil() {
               onClick={() => setShowTrialModal(true)}
               style={{ width: '100%', backgroundColor: 'transparent', border: '1px solid rgba(139,110,62,0.4)', borderRadius: '4px', padding: '11px 16px', color: 'var(--accent)', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif', marginBottom: '16px' }}
             >
-              Verfügbar in {trialCountdown} · Sofort freischalten
+              Verfügbar in {trialCountdown}<br />Sofort freischalten
             </button>
           )}
 
