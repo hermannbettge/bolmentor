@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './hooks/useAuth.jsx'
 import Layout from './components/Layout.jsx'
+import ScrollToTop from './components/ScrollToTop.jsx'
 import Salespage from './pages/Salespage.jsx'
 import Login from './pages/Login.jsx'
 import Registrieren from './pages/Registrieren.jsx'
@@ -65,6 +66,7 @@ function ProtectedRoute({ children, requireMembership = false }) {
 function AppRoutes() {
   return (
     <Layout>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Salespage />} />
         <Route path="/login" element={<Login />} />
