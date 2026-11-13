@@ -87,7 +87,9 @@ export default function MeineAnalysen() {
           // Annual users in trial: not yet accessible
           // Annual users past trial OR admin: fully accessible
           // Others: check purchased_analyses
-          const fullyPurchased = profile?.is_admin || (!inTrial && isAnnual) || purchased.includes(item.key)
+          // inTrial=null means still loading; treat as not-in-trial while loading
+          const trialLoading = inTrial === null
+          const fullyPurchased = profile?.is_admin || (inTrial === false && isAnnual) || purchased.includes(item.key)
           const hasPartner = !!profile?.partner_birth_date
           const partnerMissing = item.requiresPartner && fullyPurchased && !hasPartner
 
@@ -113,15 +115,15 @@ export default function MeineAnalysen() {
                 {item.description}
               </p>
 
-              {inTrial && !isCancelled ? (
-                // Annual user in trial: show countdown button
+              {inTrial === true && isCancelled === false ? (
+                // Annual user in active trial: show countdown button
                 <button
                   onClick={() => setTrialModal(true)}
                   style={{ border: '1px solid rgba(139,110,62,0.3)', color: 'var(--color-text-muted)', background: 'transparent', borderRadius: '4px', padding: '8px 16px', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
                 >
                   Verfügbar in {trialCountdown}
                 </button>
-              ) : fullyPurchased ? (
+              ) : trialLoading ? null : fullyPurchased ? (
                 partnerMissing ? (
                   <button
                     onClick={() => navigate('/profil')}
@@ -170,14 +172,14 @@ export default function MeineAnalysen() {
               {new Date(ev.event_date).toLocaleDateString('de-DE')}
               {ev.description && ` · ${ev.description}`}
             </p>
-            {inTrial && !isCancelled ? (
+            {inTrial === true && isCancelled === false ? (
               <button
                 onClick={() => setTrialModal(true)}
                 style={{ border: '1px solid rgba(139,110,62,0.3)', color: 'var(--color-text-muted)', background: 'transparent', borderRadius: '4px', padding: '8px 16px', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
               >
                 Verfügbar in {trialCountdown}
               </button>
-            ) : (
+            ) : trialLoading ? null : (
               <button
                 onClick={() => navigate(`/analyse/event/${ev.id}`)}
                 style={{ backgroundColor: 'var(--color-gold)', color: '#000', border: 'none', borderRadius: '4px', padding: '8px 16px', fontSize: '0.82rem', fontWeight: 500, cursor: 'pointer' }}

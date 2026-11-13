@@ -348,7 +348,7 @@ export default function Profil() {
             }
           </p>
 
-          {profile?.subscription_plan === 'annual' && trialInfoInTrial && !isCancelled && trialCountdown && (
+          {profile?.subscription_plan === 'annual' && trialInfoInTrial === true && isCancelled === false && trialCountdown && (
             <button
               onClick={() => setShowTrialModal(true)}
               style={{ width: '100%', backgroundColor: 'transparent', border: '1px solid rgba(139,110,62,0.4)', borderRadius: '4px', padding: '11px 16px', color: 'var(--accent)', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif', marginBottom: '16px' }}

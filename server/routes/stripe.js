@@ -424,18 +424,25 @@ router.get('/trial-info', requireAuth, async (req, res) => {
 
     if (!inTrial) return res.json({ inTrial: false, isCancelled: false })
 
-    const trialingSubs = await stripe.subscriptions.list({
+    // Get all non-cancelled subscriptions (trialing or active)
+    const allSubs = await stripe.subscriptions.list({
       customer: profile.stripe_customer_id,
-      status: 'trialing',
-      limit: 5,
+      limit: 10,
     })
 
-    if (!trialingSubs.data.length) {
+    console.log('trial-info subs for', req.user.id, ':', allSubs.data.map(s => ({
+      id: s.id, status: s.status, cancel_at_period_end: s.cancel_at_period_end, cancel_at: s.cancel_at,
+    })))
+
+    const activeSub = allSubs.data.find(s => s.status === 'trialing' || s.status === 'active')
+
+    if (!activeSub) {
+      // No active or trialing sub — subscription was cancelled or doesn't exist
       return res.json({ inTrial: true, isCancelled: true })
     }
 
-    const sub = trialingSubs.data[0]
-    return res.json({ inTrial: true, isCancelled: sub.cancel_at_period_end === true })
+    const isCancelled = activeSub.cancel_at_period_end === true || activeSub.cancel_at != null
+    return res.json({ inTrial: true, isCancelled })
   } catch (err) {
     console.error('trial-info Fehler:', err)
     res.status(500).json({ error: err.message })
