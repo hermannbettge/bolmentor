@@ -333,9 +333,11 @@ export default function Profil() {
             Analysiere alles, dem du ein Datum zuordnen kannst: ein Land, ein Job-Start, eine Beziehung, ein Kauf, ein Unternehmen.
             {profile?.is_admin
               ? ' Unbegrenzter Zugriff (Admin).'
-              : maxEvents === 12
-                ? <> Aktuell <strong>12 Slots</strong> freigeschaltet.</>
-                : <> Aktuell <strong>{maxEvents}</strong> Slot{maxEvents !== 1 ? 's' : ''} freigeschaltet. Jeden Monat kommt ein weiterer dazu (max. 11). Ereignis-Erweiterung oder Jahrestarif für sofort 12.</>
+              : profile?.subscription_plan === 'annual' && isInTrial()
+                ? <> Im Jahrestarif sind <strong>12 Ereignisse</strong> enthalten. Sie werden nach Ablauf deiner Testphase freigeschaltet.</>
+                : maxEvents === 12
+                  ? <> Aktuell <strong>12 Slots</strong> freigeschaltet.</>
+                  : <> Aktuell <strong>{maxEvents}</strong> Slot{maxEvents !== 1 ? 's' : ''} freigeschaltet. Jeden Monat kommt ein weiterer dazu (max. 11). Ereignis-Erweiterung oder Jahrestarif für sofort 12.</>
             }
           </p>
 
@@ -353,17 +355,21 @@ export default function Profil() {
             </div>
           ))}
 
-          {events.length < maxEvents && !showEventForm && (
-            <button onClick={() => setShowEventForm(true)} style={{ border: '1px dashed var(--accent)', color: 'var(--accent)', background: 'transparent', borderRadius: '3px', padding: '10px 20px', fontSize: '0.82rem', cursor: 'pointer', width: '100%', marginTop: '8px', fontFamily: 'Inter, sans-serif' }}>
-              + Ereignis hinzufügen ({events.length}/{profile?.is_admin ? '∞' : maxEvents})
-            </button>
-          )}
-          {events.length >= maxEvents && !showEventForm && (
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-2)', marginTop: '8px', textAlign: 'center', padding: '10px' }}>
-              {maxEvents < 12
-                ? `Alle ${maxEvents} Slots belegt. Nächster Slot im nächsten Monat, oder Ereignis-Erweiterung / Jahrestarif für sofort 12.`
-                : `Alle 12 Slots belegt.`}
-            </div>
+          {profile?.subscription_plan === 'annual' && isInTrial() ? null : (
+            <>
+              {events.length < maxEvents && !showEventForm && (
+                <button onClick={() => setShowEventForm(true)} style={{ border: '1px dashed var(--accent)', color: 'var(--accent)', background: 'transparent', borderRadius: '3px', padding: '10px 20px', fontSize: '0.82rem', cursor: 'pointer', width: '100%', marginTop: '8px', fontFamily: 'Inter, sans-serif' }}>
+                  + Ereignis hinzufügen ({events.length}/{profile?.is_admin ? '∞' : maxEvents})
+                </button>
+              )}
+              {events.length >= maxEvents && !showEventForm && (
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-2)', marginTop: '8px', textAlign: 'center', padding: '10px' }}>
+                  {maxEvents < 12
+                    ? `Alle ${maxEvents} Slots belegt. Nächster Slot im nächsten Monat, oder Ereignis-Erweiterung / Jahrestarif für sofort 12.`
+                    : `Alle 12 Slots belegt.`}
+                </div>
+              )}
+            </>
           )}
 
           {showEventForm && (
@@ -417,18 +423,23 @@ export default function Profil() {
               <span style={{ color: 'var(--text-1)', fontSize: '0.9rem' }}>{new Date(profile.membership_start).toLocaleDateString('de-DE')}</span>
             </div>
           )}
-          {profile?.purchased_analyses?.length > 0 && (
-            <div style={{ padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
-              <div style={{ color: 'var(--text-2)', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '10px' }}>Gebuchte Zusatzanalysen</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                {profile.purchased_analyses.map(key => (
-                  <span key={key} style={{ backgroundColor: 'rgba(var(--accent-rgb,160,82,45),0.1)', border: '1px solid var(--border)', color: 'var(--accent)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.78rem' }}>
-                    {ANALYSE_LABELS[key] || key}
-                  </span>
-                ))}
+          {(() => {
+            // For annual users, all analyses are included — don't show them as "Zusatzanalysen"
+            const isAnnual = profile?.subscription_plan === 'annual'
+            const extras = (profile?.purchased_analyses || []).filter(key => !isAnnual)
+            return extras.length > 0 ? (
+              <div style={{ padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
+                <div style={{ color: 'var(--text-2)', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '10px' }}>Gebuchte Zusatzanalysen</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {extras.map(key => (
+                    <span key={key} style={{ backgroundColor: 'rgba(var(--accent-rgb,160,82,45),0.1)', border: '1px solid var(--border)', color: 'var(--accent)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.78rem' }}>
+                      {ANALYSE_LABELS[key] || key}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            ) : null
+          })()}
           {profile?.membership_active && profile?.subscription_plan && (
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
               <span style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>Tarif</span>
