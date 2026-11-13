@@ -116,28 +116,53 @@ export default function Monatsanalyse() {
         </div>
       )}
 
-      {!analysis ? (
+      {loading && !analysis && (
+        <div style={{
+          padding: '28px 24px',
+          backgroundColor: 'var(--color-bg-card)',
+          borderRadius: '4px',
+          border: '1px solid rgba(139,110,62,0.2)',
+          marginBottom: '24px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: 'var(--color-gold)',
+              animation: 'pulse-gold 1.5s ease-in-out infinite',
+              flexShrink: 0,
+            }} />
+            <span style={{ color: 'var(--color-gold)', fontSize: '0.95rem', fontWeight: 400 }}>
+              Deine Monatsanalyse wird erstellt
+            </span>
+          </div>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', margin: 0, lineHeight: 1.6 }}>
+            Das dauert einen Moment. Der Text erscheint gleich direkt hier.
+          </p>
+        </div>
+      )}
+
+      {!analysis && !loading ? (
         firstOfMonth ? (
           <button
             onClick={createAnalysis}
-            disabled={loading}
             style={{
-              backgroundColor: loading ? 'transparent' : 'var(--color-gold)',
-              color: loading ? 'var(--color-gold)' : '#000',
-              border: loading ? '1px solid var(--color-gold)' : 'none',
+              backgroundColor: 'var(--color-gold)',
+              color: '#000',
+              border: 'none',
               borderRadius: '4px',
               padding: '14px 32px',
               fontWeight: 500,
               fontSize: '1rem',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              animation: !loading ? 'pulse-gold 3s ease-in-out infinite' : 'none',
+              cursor: 'pointer',
+              animation: 'pulse-gold 3s ease-in-out infinite',
             }}
           >
-            {loading ? (
-              <span className="pulse-gold">Deine Analyse wird erstellt...</span>
-            ) : (
-              'Monatsanalyse jetzt erstellen'
-            )}
+            Monatsanalyse jetzt erstellen
           </button>
         ) : (
           <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
@@ -149,7 +174,7 @@ export default function Monatsanalyse() {
             })()}.
           </p>
         )
-      ) : (
+      ) : analysis ? (
         <>
           <AnalysisDisplay content={analysis} />
           <div style={{ display: 'flex', gap: '16px', marginTop: '32px', flexWrap: 'wrap' }}>
@@ -177,7 +202,7 @@ export default function Monatsanalyse() {
             )}
           </div>
         </>
-      )}
+      ) : null}
     </div>
   )
 }
