@@ -103,10 +103,19 @@ export default function Profil() {
   const [eventSaving, setEventSaving] = useState(false)
   const [eventMsg, setEventMsg] = useState('')
 
+  function isInTrial() {
+    if (!profile?.membership_start || profile?.is_admin) return false
+    const trialEnd = new Date(profile.membership_start).getTime() + 3 * 24 * 60 * 60 * 1000
+    return Date.now() < trialEnd
+  }
+
   function calcMaxEvents() {
     if (profile?.is_admin) return 999
     if (profile?.max_events_override != null) return profile.max_events_override
-    if (profile?.subscription_plan === 'annual') return 12
+    if (profile?.subscription_plan === 'annual') {
+      if (isInTrial()) return 0
+      return 12
+    }
     if ((profile?.purchased_analyses || []).includes('events')) return 12
     const start = profile?.membership_start || profile?.created_at
     const months = start ? Math.floor((Date.now() - new Date(start).getTime()) / (1000 * 60 * 60 * 24 * 30.44)) : 0

@@ -206,12 +206,21 @@ export default function MeineAnalysen() {
               {new Date(ev.event_date).toLocaleDateString('de-DE')}
               {ev.description && ` · ${ev.description}`}
             </p>
-            <button
-              onClick={() => navigate(`/analyse/event/${ev.id}`)}
-              style={{ backgroundColor: 'var(--color-gold)', color: '#000', border: 'none', borderRadius: '4px', padding: '8px 16px', fontSize: '0.82rem', fontWeight: 500, cursor: 'pointer' }}
-            >
-              {!checked ? '…' : eventAnalyses.has(`event_${ev.id}`) ? 'Analyse anzeigen' : 'Analyse erstellen'}
-            </button>
+            {inTrial ? (
+              <button
+                onClick={() => setTrialModal(true)}
+                style={{ border: '1px solid rgba(139,110,62,0.3)', color: 'var(--color-text-muted)', background: 'transparent', borderRadius: '4px', padding: '8px 16px', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
+              >
+                Verfügbar in {trialDaysLeft} {trialDaysLeft === 1 ? 'Tag' : 'Tagen'}
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate(`/analyse/event/${ev.id}`)}
+                style={{ backgroundColor: 'var(--color-gold)', color: '#000', border: 'none', borderRadius: '4px', padding: '8px 16px', fontSize: '0.82rem', fontWeight: 500, cursor: 'pointer' }}
+              >
+                {!checked ? '…' : eventAnalyses.has(`event_${ev.id}`) ? 'Analyse anzeigen' : 'Analyse erstellen'}
+              </button>
+            )}
           </div>
         ))}
 

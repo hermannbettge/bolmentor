@@ -651,6 +651,16 @@ router.post('/monthly', requireAuth, async (req, res) => {
     if (req.body?.month_year && hasAnnualAccess) {
       const [y, m] = req.body.month_year.split('-').map(Number)
       if (!y || !m || m < 1 || m > 12) return res.status(400).json({ error: 'Ungültiges Monatsformat' })
+      // Enforce 12-month forward limit
+      const reqDate = new Date(y, m - 1, 1)
+      const maxDate = new Date(today.getFullYear(), today.getMonth() + 12, 1)
+      if (reqDate > maxDate) return res.status(403).json({ error: 'Analysen sind nur bis zu 12 Monate im Voraus verfügbar.' })
+      // Enforce membership_start lower bound
+      if (profile.membership_start && !profile.is_admin) {
+        const ms = new Date(profile.membership_start)
+        const startDate = new Date(ms.getFullYear(), ms.getMonth(), 1)
+        if (reqDate < startDate) return res.status(403).json({ error: 'Keine Analyse vor dem Mitgliedschaftsbeginn möglich.' })
+      }
       monthYear = `${y}-${String(m).padStart(2, '0')}`
       const monthName = GERMAN_MONTHS[m - 1]
       const kinData = calculateKinFromDate(profile.birth_date)
@@ -898,9 +908,19 @@ Gesamtlänge: ca. 1500–1800 Wörter. Sei konkret und nenne beide Partner bei i
   })
 })
 
+const TRIAL_DAYS = 3
+function isInTrial(profile) {
+  if (!profile.membership_start) return false
+  const trialEnd = new Date(profile.membership_start).getTime() + TRIAL_DAYS * 24 * 60 * 60 * 1000
+  return Date.now() < trialEnd
+}
+
 function getEventLimit(profile) {
   if (profile.is_admin) return Infinity
-  if (profile.subscription_plan === 'annual') return 12
+  if (profile.subscription_plan === 'annual') {
+    if (isInTrial(profile)) return 0
+    return 12
+  }
   if ((profile.purchased_analyses || []).includes('events')) return 12
   const start = profile.membership_start || profile.created_at
   const months = start ? Math.floor((Date.now() - new Date(start).getTime()) / (1000 * 60 * 60 * 24 * 30.44)) : 0
@@ -914,7 +934,14 @@ router.post('/event/:eventId', requireAuth, async (req, res) => {
     const profile = await getProfile(req.user.id)
     checkMembership(profile)
 
+    if (profile.subscription_plan === 'annual' && !profile.is_admin && isInTrial(profile)) {
+      return res.status(403).json({ error: 'Ereignis-Analysen sind erst nach der kostenlosen Testphase verfügbar.' })
+    }
+
     const limit = getEventLimit(profile)
+    if (limit === 0) {
+      return res.status(403).json({ error: 'Ereignis-Analysen sind erst nach der kostenlosen Testphase verfügbar.' })
+    }
     const { count } = await supabase
       .from('user_events')
       .select('id', { count: 'exact', head: true })

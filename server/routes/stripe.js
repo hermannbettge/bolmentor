@@ -184,7 +184,7 @@ router.post('/claim-session', requireAuth, async (req, res) => {
       if (mapping.plan === 'annual' && !isTrial) {
         updateData.purchased_analyses = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership', 'relationship', 'events']
       } else if (mapping.plan === 'annual' && isTrial) {
-        updateData.purchased_analyses = ['events']
+        updateData.purchased_analyses = []
       }
       const { error: updateErr } = await supabase.from('profiles').update(updateData).eq('id', req.user.id)
       if (updateErr) {
