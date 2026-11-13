@@ -40,6 +40,7 @@ export default function MeineAnalysen() {
 
   // Trial: annual users within 3 days of membership_start
   // Hook called unconditionally — passes null when not applicable
+  const isCancelled = profile?.subscription_cancel_at_period_end === true
   const trialMs = useTrialCountdown(isAnnual && !profile?.is_admin ? profile?.membership_start : null)
   const inTrial = trialMs > 0
   const trialDaysLeft = Math.ceil(trialMs / (24 * 60 * 60 * 1000)) // kept for modal
@@ -114,7 +115,7 @@ export default function MeineAnalysen() {
                 {item.description}
               </p>
 
-              {inTrial ? (
+              {inTrial && !isCancelled ? (
                 // Annual user in trial: show countdown button
                 <button
                   onClick={() => setTrialModal(true)}
@@ -171,7 +172,7 @@ export default function MeineAnalysen() {
               {new Date(ev.event_date).toLocaleDateString('de-DE')}
               {ev.description && ` · ${ev.description}`}
             </p>
-            {inTrial ? (
+            {inTrial && !isCancelled ? (
               <button
                 onClick={() => setTrialModal(true)}
                 style={{ border: '1px solid rgba(139,110,62,0.3)', color: 'var(--color-text-muted)', background: 'transparent', borderRadius: '4px', padding: '8px 16px', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}

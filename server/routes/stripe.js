@@ -327,12 +327,16 @@ router.post('/skip-trial', requireAuth, async (req, res) => {
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('stripe_customer_id, subscription_plan, membership_start, membership_active')
+      .select('stripe_customer_id, subscription_plan, membership_start, membership_active, subscription_cancel_at_period_end')
       .eq('id', req.user.id)
       .single()
 
     if (!profile?.membership_active || profile?.subscription_plan !== 'annual') {
       return res.status(400).json({ error: 'Kein aktiver Jahrestarif gefunden' })
+    }
+
+    if (profile?.subscription_cancel_at_period_end) {
+      return res.status(400).json({ error: 'Das Abo wurde bereits gekündigt.' })
     }
 
     // Verify still in trial

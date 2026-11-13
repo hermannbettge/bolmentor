@@ -179,6 +179,11 @@ router.post('/', async (req, res) => {
           for (const item of items) {
             await fulfillOrder(profile.id, item.price?.id, isTrial)
           }
+          // Track cancellation-at-period-end so frontend can hide skip-trial UI
+          await supabase.from('profiles').update({
+            subscription_cancel_at_period_end: subscription.cancel_at_period_end === true,
+            updated_at: new Date().toISOString(),
+          }).eq('id', profile.id)
           // If upgraded to annual, cancel any remaining analysis subscriptions (included in annual)
           const isNowAnnual = items.some(item => {
             const m = PRICE_MAP[item.price?.id]

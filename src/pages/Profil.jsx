@@ -106,6 +106,7 @@ export default function Profil() {
   const [showTrialModal, setShowTrialModal] = useState(false)
 
   const isAnnual = profile?.subscription_plan === 'annual'
+  const isCancelled = profile?.subscription_cancel_at_period_end === true
   const trialMs = useTrialCountdown(isAnnual && !profile?.is_admin ? profile?.membership_start : null)
   const trialCountdown = formatCountdown(trialMs)
 
@@ -347,7 +348,7 @@ export default function Profil() {
             }
           </p>
 
-          {profile?.subscription_plan === 'annual' && isInTrial() && trialCountdown && (
+          {profile?.subscription_plan === 'annual' && isInTrial() && !isCancelled && trialCountdown && (
             <button
               onClick={() => setShowTrialModal(true)}
               style={{ width: '100%', backgroundColor: 'transparent', border: '1px solid rgba(139,110,62,0.4)', borderRadius: '4px', padding: '11px 16px', color: 'var(--accent)', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif', marginBottom: '16px' }}
