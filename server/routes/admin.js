@@ -252,6 +252,16 @@ router.get('/users/:id/analyses', requireAdmin, async (req, res) => {
   res.json(data)
 })
 
+router.delete('/users/:id/analyses', requireAdmin, async (req, res) => {
+  const { type, month_year } = req.query
+  let query = supabase.from('analyses').delete().eq('user_id', req.params.id)
+  if (type) query = query.eq('type', type)
+  if (month_year) query = query.eq('month_year', month_year)
+  const { error, count } = await query.select()
+  if (error) return res.status(500).json({ error: error.message })
+  res.json({ deleted: count ?? 'ok' })
+})
+
 // Backup: alle Daten exportieren
 router.get('/backup', requireAdmin, async (req, res) => {
   try {
