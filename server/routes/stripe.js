@@ -362,6 +362,16 @@ router.post('/skip-trial', requireAuth, async (req, res) => {
       return res.status(404).json({ error: 'Keine aktive Testphase gefunden' })
     }
 
+    // Check cancel_at_period_end directly from Stripe (webhook may have missed it)
+    if (subscription.cancel_at_period_end === true) {
+      // Sync the missed webhook update to Supabase
+      await supabase.from('profiles').update({
+        subscription_cancel_at_period_end: true,
+        updated_at: new Date().toISOString(),
+      }).eq('id', req.user.id)
+      return res.status(400).json({ error: 'Das Abo wurde bereits gekündigt.' })
+    }
+
     // Fetch the price amount to show the user
     const priceId = subscription.items.data[0]?.price?.id
     let amountCents = 0
@@ -390,6 +400,50 @@ router.post('/skip-trial', requireAuth, async (req, res) => {
     res.json({ success: true })
   } catch (err) {
     console.error('Skip-trial Fehler:', err)
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// Sync subscription status from Stripe → Supabase (for cases where webhook was missed)
+router.post('/sync-subscription', requireAuth, async (req, res) => {
+  try {
+    const stripe = getStripe()
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('stripe_customer_id, subscription_plan, is_admin')
+      .eq('id', req.user.id)
+      .single()
+
+    if (!profile?.stripe_customer_id || profile?.is_admin) {
+      return res.json({ synced: false })
+    }
+
+    // Get all active/trialing subscriptions for this customer
+    const [activeSubs, trialingSubs] = await Promise.all([
+      stripe.subscriptions.list({ customer: profile.stripe_customer_id, status: 'active', limit: 5 }),
+      stripe.subscriptions.list({ customer: profile.stripe_customer_id, status: 'trialing', limit: 5 }),
+    ])
+
+    const allSubs = [...activeSubs.data, ...trialingSubs.data]
+    const annualPriceId = process.env.STRIPE_PRICE_MEMBERSHIP_ANNUAL
+
+    const annualSub = allSubs.find(s =>
+      s.items?.data?.some(item => item.price?.id === annualPriceId)
+    )
+
+    if (!annualSub) {
+      return res.json({ synced: false })
+    }
+
+    const cancelAtPeriodEnd = annualSub.cancel_at_period_end === true
+    await supabase.from('profiles').update({
+      subscription_cancel_at_period_end: cancelAtPeriodEnd,
+      updated_at: new Date().toISOString(),
+    }).eq('id', req.user.id)
+
+    return res.json({ synced: true, cancel_at_period_end: cancelAtPeriodEnd })
+  } catch (err) {
+    console.error('sync-subscription Fehler:', err)
     res.status(500).json({ error: err.message })
   }
 })

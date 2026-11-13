@@ -36,7 +36,23 @@ export function AuthProvider({ children }) {
         .select('*')
         .eq('id', userId)
         .single()
-      if (!error && version === profileVersion.current) setProfile(data)
+      if (!error && version === profileVersion.current) {
+        setProfile(data)
+        // For annual users not admin: sync cancel_at_period_end from Stripe in background
+        if (data?.subscription_plan === 'annual' && !data?.is_admin) {
+          const { data: { session } } = await supabase.auth.getSession()
+          if (session?.access_token) {
+            fetch('/api/stripe/sync-subscription', {
+              method: 'POST',
+              headers: { 'Authorization': `Bearer ${session.access_token}` },
+            }).then(r => r.json()).then(json => {
+              if (json?.synced && version === profileVersion.current) {
+                setProfile(prev => prev ? { ...prev, subscription_cancel_at_period_end: json.cancel_at_period_end } : prev)
+              }
+            }).catch(() => {})
+          }
+        }
+      }
     } catch {
       // Profile might not exist yet
     } finally {
