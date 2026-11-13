@@ -347,6 +347,23 @@ export default function Profil() {
             }
           </p>
 
+          {profile?.subscription_plan === 'annual' && isInTrial() && trialCountdown && (
+            <button
+              onClick={() => setShowTrialModal(true)}
+              style={{ width: '100%', backgroundColor: 'transparent', border: '1px solid rgba(139,110,62,0.4)', borderRadius: '4px', padding: '11px 16px', color: 'var(--accent)', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif', marginBottom: '16px' }}
+            >
+              Verfügbar in {trialCountdown} · Sofort freischalten
+            </button>
+          )}
+
+          {showTrialModal && (
+            <TrialModal
+              countdown={trialCountdown}
+              onClose={() => setShowTrialModal(false)}
+              onSkipTrial={() => window.location.reload()}
+            />
+          )}
+
           {events.map(ev => (
             <div key={ev.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', backgroundColor: 'var(--bg-card)', borderRadius: '3px', marginBottom: '8px', border: '1px solid var(--border)' }}>
               <div>
@@ -360,23 +377,6 @@ export default function Profil() {
               </button>
             </div>
           ))}
-
-          {profile?.subscription_plan === 'annual' && isInTrial() && trialCountdown && (
-            <button
-              onClick={() => setShowTrialModal(true)}
-              style={{ width: '100%', backgroundColor: 'transparent', border: '1px solid rgba(139,110,62,0.4)', borderRadius: '4px', padding: '11px 16px', color: 'var(--accent)', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif', marginBottom: '12px' }}
-            >
-              Verfügbar in {trialCountdown} · Sofort freischalten
-            </button>
-          )}
-
-          {showTrialModal && (
-            <TrialModal
-              countdown={trialCountdown}
-              onClose={() => setShowTrialModal(false)}
-              onSkipTrial={() => window.location.reload()}
-            />
-          )}
 
           {profile?.subscription_plan === 'annual' && isInTrial() ? null : (
             <>
