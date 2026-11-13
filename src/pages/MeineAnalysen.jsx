@@ -23,6 +23,45 @@ const ANALYSES = [
   { key: 'partnership', icon: '💑', title: 'Partnerschaftsanalyse', description: 'Du und dein Partner als Paar', requiresPartner: true },
 ]
 
+const TRIAL_DAYS = 3
+
+function getTrialDaysLeft(membershipStart) {
+  if (!membershipStart) return 0
+  const start = new Date(membershipStart)
+  const trialEnd = new Date(start.getTime() + TRIAL_DAYS * 24 * 60 * 60 * 1000)
+  const now = new Date()
+  const msLeft = trialEnd - now
+  if (msLeft <= 0) return 0
+  return Math.ceil(msLeft / (24 * 60 * 60 * 1000))
+}
+
+function TrialModal({ daysLeft, onClose }) {
+  return (
+    <div
+      style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '24px' }}
+      onClick={onClose}
+    >
+      <div
+        style={{ backgroundColor: 'var(--color-bg-card)', border: '1px solid rgba(139,110,62,0.3)', borderRadius: '8px', padding: '32px 28px', maxWidth: '400px', width: '100%' }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div style={{ fontSize: '1.6rem', marginBottom: '16px', textAlign: 'center' }}>⏳</div>
+        <h3 style={{ color: 'var(--color-gold)', fontWeight: 400, fontSize: '1.1rem', marginBottom: '12px', textAlign: 'center' }}>
+          Noch {daysLeft} {daysLeft === 1 ? 'Tag' : 'Tage'} kostenlose Testphase
+        </h3>
+        <p style={{ color: 'var(--color-text-muted)', fontSize: '0.88rem', lineHeight: 1.7, textAlign: 'center', marginBottom: '24px' }}>
+          Die Lebensbereich-Analysen stehen dir nach Ablauf deiner Testphase automatisch zur Verfügung. Du musst nichts weiter tun.
+        </p>
+        <button
+          onClick={onClose}
+          style={{ width: '100%', backgroundColor: 'var(--color-gold)', color: '#000', border: 'none', borderRadius: '4px', padding: '12px', fontWeight: 500, fontSize: '0.9rem', cursor: 'pointer' }}
+        >
+          Verstanden
+        </button>
+      </div>
+    </div>
+  )
+}
 
 export default function MeineAnalysen() {
   const { user, profile } = useAuth()
@@ -31,9 +70,15 @@ export default function MeineAnalysen() {
   const [checked, setChecked] = useState(false)
   const [userEvents, setUserEvents] = useState([])
   const [eventAnalyses, setEventAnalyses] = useState(new Set())
+  const [trialModal, setTrialModal] = useState(false)
 
   const purchased = profile?.purchased_analyses || []
-  const hasAnnualAccess = profile?.subscription_plan === 'annual' || profile?.is_admin
+  const isAnnual = profile?.subscription_plan === 'annual'
+  const hasAnnualAccess = isAnnual || profile?.is_admin
+
+  // Trial: annual users within 3 days of membership_start
+  const trialDaysLeft = isAnnual && !profile?.is_admin ? getTrialDaysLeft(profile?.membership_start) : 0
+  const inTrial = trialDaysLeft > 0
 
   useEffect(() => {
     if (!user || !profile) return
@@ -61,6 +106,8 @@ export default function MeineAnalysen() {
 
   return (
     <div className="app-page">
+      {trialModal && <TrialModal daysLeft={trialDaysLeft} onClose={() => setTrialModal(false)} />}
+
       <div style={{ fontSize: '0.75rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--color-gold-muted)', marginBottom: '12px' }}>
         Zusatzanalysen
       </div>
@@ -71,12 +118,14 @@ export default function MeineAnalysen() {
         Tauche tiefer in spezifische Lebensbereiche ein.
       </p>
 
-<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px' }}>
         {ANALYSES.map(item => {
-          const isPurchased = hasAnnualAccess || purchased.includes(item.key)
-          const hasAnalysis = existingTypes.has(item.key)
+          // Annual users in trial: not yet accessible
+          // Annual users past trial OR admin: fully accessible
+          // Others: check purchased_analyses
+          const fullyPurchased = profile?.is_admin || (!inTrial && isAnnual) || purchased.includes(item.key)
           const hasPartner = !!profile?.partner_birth_date
-          const partnerMissing = item.requiresPartner && isPurchased && !hasPartner
+          const partnerMissing = item.requiresPartner && fullyPurchased && !hasPartner
 
           const route = item.key === 'partnership' ? '/analyse/partnerschaft' : `/analyse/${item.key}`
           const existingKey = item.key === 'partnership' ? 'partnership_compatibility' : item.key
@@ -100,7 +149,15 @@ export default function MeineAnalysen() {
                 {item.description}
               </p>
 
-              {isPurchased ? (
+              {inTrial ? (
+                // Annual user in trial: show countdown button
+                <button
+                  onClick={() => setTrialModal(true)}
+                  style={{ border: '1px solid rgba(139,110,62,0.3)', color: 'var(--color-text-muted)', background: 'transparent', borderRadius: '4px', padding: '8px 16px', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
+                >
+                  Verfügbar in {trialDaysLeft} {trialDaysLeft === 1 ? 'Tag' : 'Tagen'}
+                </button>
+              ) : fullyPurchased ? (
                 partnerMissing ? (
                   <button
                     onClick={() => navigate('/profil')}
@@ -127,6 +184,7 @@ export default function MeineAnalysen() {
             </div>
           )
         })}
+
         {/* Event analysis cards */}
         {userEvents.map(ev => (
           <div key={ev.id} style={{
