@@ -22,7 +22,7 @@ async function requireAdmin(req, res, next) {
 router.get('/users', requireAdmin, async (req, res) => {
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, name, birth_date, membership_active, membership_start, membership_end, purchased_analyses, is_admin, created_at, max_events_override, chat_messages_limit, subscription_plan')
+    .select('id, name, birth_date, membership_active, membership_start, membership_end, purchased_analyses, is_admin, created_at, max_events_override, chat_messages_limit, subscription_plan, subscription_cancel_at_period_end, maya_ki_enabled, partner_first_name, partner_last_name, partner_birth_date, updated_at')
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
   if (error) return res.status(500).json({ error: error.message })

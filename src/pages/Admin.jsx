@@ -18,6 +18,140 @@ const ANALYSIS_TYPES = [
   { key: 'yearly_select', label: 'Jahres-Auswahl' },
 ]
 
+const TRIAL_DAYS = 3
+
+function getSubscriptionStatus(u) {
+  if (!u.membership_active) return { label: 'Inaktiv', color: '#ef4444', bg: 'rgba(239,68,68,0.12)' }
+  if (!u.subscription_plan) return { label: 'Aktiv', color: '#22c55e', bg: 'rgba(34,197,94,0.12)' }
+
+  const inTrial = u.membership_start &&
+    Date.now() < new Date(u.membership_start).getTime() + TRIAL_DAYS * 86400000
+
+  if (u.subscription_plan === 'annual' && inTrial) {
+    if (u.subscription_cancel_at_period_end) {
+      return { label: 'Testabo gekündigt', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' }
+    }
+    return { label: 'Testabo läuft', color: '#3b82f6', bg: 'rgba(59,130,246,0.12)' }
+  }
+  if (u.subscription_plan === 'annual') {
+    return { label: 'Jährlich aktiv', color: '#22c55e', bg: 'rgba(34,197,94,0.12)' }
+  }
+  if (u.subscription_plan === 'monthly') {
+    return { label: 'Monatlich aktiv', color: '#22c55e', bg: 'rgba(34,197,94,0.12)' }
+  }
+  return { label: 'Aktiv', color: '#22c55e', bg: 'rgba(34,197,94,0.12)' }
+}
+
+function SubscriptionBadge({ user }) {
+  const s = getSubscriptionStatus(user)
+  return (
+    <span style={{
+      display: 'inline-block',
+      padding: '2px 10px',
+      borderRadius: '20px',
+      fontSize: '0.7rem',
+      fontWeight: 600,
+      backgroundColor: s.bg,
+      color: s.color,
+      whiteSpace: 'nowrap',
+    }}>
+      {s.label}
+    </span>
+  )
+}
+
+function ProfilePopup({ user, onClose }) {
+  const purchased = user.purchased_analyses || []
+  const ANALYSIS_LABELS = {
+    business: 'Business', health: 'Gesundheit', family: 'Familie',
+    selfexpression: 'Selbstausdruck', finance: 'Finanzen', career: 'Karriere',
+    lifephases: 'Lebensphasen', partnership: 'Partnerschaftsanalyse',
+    relationship: 'Beziehungsmuster', events: 'Ereignis-Analysen', yearly_select: 'Jahres-Auswahl',
+  }
+  const sub = getSubscriptionStatus(user)
+
+  const Row = ({ label, value }) => value ? (
+    <div style={{ display: 'flex', gap: '12px', paddingBottom: '8px', borderBottom: '1px solid var(--border)', marginBottom: '8px' }}>
+      <span style={{ fontSize: '0.75rem', color: 'var(--text-2)', minWidth: '140px', flexShrink: 0 }}>{label}</span>
+      <span style={{ fontSize: '0.82rem', color: 'var(--text-1)', wordBreak: 'break-word' }}>{value}</span>
+    </div>
+  ) : null
+
+  const fmt = (d) => d ? new Date(d).toLocaleDateString('de-DE') : null
+
+  return (
+    <div
+      style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 2000, padding: '32px 16px', overflowY: 'auto' }}
+      onClick={onClose}
+    >
+      <div
+        style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px', padding: '32px', maxWidth: '540px', width: '100%', marginTop: '0' }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+          <div>
+            <div style={{ fontSize: '1.1rem', fontWeight: 500, color: 'var(--text-1)', marginBottom: '4px' }}>{user.name || '—'}</div>
+            <div style={{ fontSize: '0.78rem', color: 'var(--text-2)' }}>ID: {user.id.slice(0, 16)}…</div>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-2)', cursor: 'pointer', fontSize: '1.2rem', padding: '0 0 0 16px' }}>✕</button>
+        </div>
+
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: '10px' }}>Profil</div>
+          <Row label="Name" value={user.name} />
+          <Row label="Geburtsdatum" value={fmt(user.birth_date)} />
+          <Row label="Registriert" value={fmt(user.created_at)} />
+          <Row label="Zuletzt aktualisiert" value={fmt(user.updated_at)} />
+        </div>
+
+        {(user.partner_first_name || user.partner_last_name || user.partner_birth_date) && (
+          <div style={{ marginBottom: '20px' }}>
+            <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: '10px' }}>Partner/in</div>
+            <Row label="Vorname" value={user.partner_first_name} />
+            <Row label="Nachname" value={user.partner_last_name} />
+            <Row label="Geburtsdatum" value={fmt(user.partner_birth_date)} />
+          </div>
+        )}
+
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: '10px' }}>Mitgliedschaft</div>
+          <div style={{ marginBottom: '8px' }}><SubscriptionBadge user={user} /></div>
+          <Row label="Tarif" value={user.subscription_plan === 'annual' ? 'Jahrestarif' : user.subscription_plan === 'monthly' ? 'Monatstarif' : null} />
+          <Row label="Aktiv seit" value={fmt(user.membership_start)} />
+          <Row label="Aktiv bis" value={fmt(user.membership_end)} />
+        </div>
+
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: '10px' }}>
+            Zusatzanalysen ({purchased.filter(k => k !== 'compatibility').length})
+          </div>
+          {purchased.filter(k => k !== 'compatibility').length === 0 ? (
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-2)' }}>Keine Zusatzanalysen</div>
+          ) : (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+              {purchased.filter(k => k !== 'compatibility').map(k => (
+                <span key={k} style={{ padding: '3px 10px', fontSize: '0.75rem', borderRadius: '20px', backgroundColor: 'rgba(var(--accent-rgb,184,151,90),0.1)', color: 'var(--accent)', border: '1px solid rgba(var(--accent-rgb,184,151,90),0.3)' }}>
+                  {ANALYSIS_LABELS[k] || k}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div>
+          <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: '10px' }}>Rechte & Einstellungen</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {user.is_admin && <span style={{ padding: '3px 10px', fontSize: '0.75rem', borderRadius: '20px', backgroundColor: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)' }}>Admin</span>}
+            {user.maya_ki_enabled && <span style={{ padding: '3px 10px', fontSize: '0.75rem', borderRadius: '20px', backgroundColor: 'rgba(var(--accent-rgb,184,151,90),0.1)', color: 'var(--accent)', border: '1px solid rgba(var(--accent-rgb,184,151,90),0.3)' }}>Maya KI</span>}
+            {user.max_events_override && <span style={{ padding: '3px 10px', fontSize: '0.75rem', borderRadius: '20px', backgroundColor: 'rgba(59,130,246,0.1)', color: '#3b82f6', border: '1px solid rgba(59,130,246,0.3)' }}>Max. Ereignisse: {user.max_events_override}</span>}
+            {user.chat_messages_limit && <span style={{ padding: '3px 10px', fontSize: '0.75rem', borderRadius: '20px', backgroundColor: 'rgba(59,130,246,0.1)', color: '#3b82f6', border: '1px solid rgba(59,130,246,0.3)' }}>Chat-Limit: {user.chat_messages_limit}</span>}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 async function apiCall(path, method = 'GET', body = null) {
   const { data: { session } } = await supabase.auth.getSession()
   const res = await fetch(`/api/admin${path}`, {
@@ -159,7 +293,8 @@ export default function Admin() {
   const { user, profile } = useAuth()
   const navigate = useNavigate()
   const isMobile = useIsMobile()
-  const [tab, setTab] = useState('users') // 'users' | 'trash' | 'backup'
+  const [tab, setTab] = useState('users') // 'users' | 'az' | 'trash' | 'backup'
+  const [profilePopup, setProfilePopup] = useState(null)
   const [users, setUsers] = useState([])
   const [trashedUsers, setTrashedUsers] = useState([])
   const [loading, setLoading] = useState(true)
@@ -476,6 +611,7 @@ export default function Admin() {
         <div style={{ display: 'flex', gap: '4px', marginBottom: '24px', borderBottom: '1px solid var(--border)', paddingBottom: '0' }}>
           {[
             { key: 'users', label: `Nutzer (${users.length})` },
+            { key: 'az', label: 'A–Z' },
             { key: 'trash', label: `Papierkorb (${trashedUsers.length})` },
             { key: 'backup', label: 'Backup' },
           ].map(t => (
@@ -533,8 +669,7 @@ export default function Admin() {
                 <thead>
                   <tr style={{ borderBottom: '1px solid var(--border)' }}>
                     <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: 'var(--text-2)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Name</th>
-                    {!isMobile && <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: 'var(--text-2)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>ID</th>}
-                    <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: 'var(--text-2)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Status</th>
+                    {!isMobile && <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: 'var(--text-2)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Abo-Status</th>}
                     {!isMobile && <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: 'var(--text-2)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Analysen</th>}
                     {!isMobile && <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: 'var(--text-2)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Registriert</th>}
                     <th style={{ padding: '10px 16px' }}></th>
@@ -547,19 +682,24 @@ export default function Admin() {
                         {u.name || '—'}
                         {u.is_admin && <span style={{ marginLeft: '6px', fontSize: '0.68rem', color: 'var(--accent)' }}>ADMIN</span>}
                       </td>
-                      {!isMobile && <td style={{ padding: '12px 16px', color: 'var(--text-2)', fontSize: '0.82rem' }}>{u.id.slice(0, 8)}…</td>}
-                      <td style={{ padding: '12px 16px' }}>
-                        <Badge active={u.membership_active} />
-                      </td>
+                      {!isMobile && <td style={{ padding: '12px 16px' }}><SubscriptionBadge user={u} /></td>}
                       {!isMobile && <td style={{ padding: '12px 16px', color: 'var(--text-2)' }}>{(u.purchased_analyses?.filter(k => k !== 'compatibility') || []).length}</td>}
                       {!isMobile && <td style={{ padding: '12px 16px', color: 'var(--text-2)', fontSize: '0.8rem' }}>{new Date(u.created_at).toLocaleDateString('de-DE')}</td>}
                       <td style={{ padding: '12px 16px' }}>
-                        <button
-                          onClick={() => setSelectedUser(selectedUser?.id === u.id ? null : u)}
-                          style={{ background: 'none', border: '1px solid rgba(var(--accent-rgb,184,151,90),0.3)', color: 'var(--accent)', cursor: 'pointer', padding: '4px 12px', fontSize: '0.78rem', borderRadius: '2px', whiteSpace: 'nowrap' }}
-                        >
-                          {selectedUser?.id === u.id ? 'Schließen' : 'Bearbeiten'}
-                        </button>
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                          <button
+                            onClick={() => setProfilePopup(u)}
+                            style={{ background: 'none', border: '1px solid var(--border)', color: 'var(--text-2)', cursor: 'pointer', padding: '4px 10px', fontSize: '0.75rem', borderRadius: '2px', whiteSpace: 'nowrap' }}
+                          >
+                            Profil
+                          </button>
+                          <button
+                            onClick={() => setSelectedUser(selectedUser?.id === u.id ? null : u)}
+                            style={{ background: 'none', border: '1px solid rgba(var(--accent-rgb,184,151,90),0.3)', color: 'var(--accent)', cursor: 'pointer', padding: '4px 10px', fontSize: '0.75rem', borderRadius: '2px', whiteSpace: 'nowrap' }}
+                          >
+                            {selectedUser?.id === u.id ? 'Schließen' : 'Bearbeiten'}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -726,6 +866,56 @@ export default function Admin() {
           </div>
         )}
 
+        {/* A-Z Tab */}
+        {tab === 'az' && (() => {
+          const sorted = [...users].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'de'))
+          const groups = {}
+          sorted.forEach(u => {
+            const letter = (u.name || '?').charAt(0).toUpperCase()
+            if (!groups[letter]) groups[letter] = []
+            groups[letter].push(u)
+          })
+          return (
+            <div>
+              {Object.keys(groups).sort().map(letter => (
+                <div key={letter} style={{ marginBottom: '28px' }}>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 500, color: 'var(--accent)', borderBottom: '1px solid var(--border)', paddingBottom: '6px', marginBottom: '10px', letterSpacing: '0.08em' }}>
+                    {letter}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                    {groups[letter].map(u => (
+                      <div key={u.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 16px', backgroundColor: 'var(--bg-card)', borderRadius: '2px', border: '1px solid var(--border)' }}>
+                        <div style={{ flex: 1, fontSize: '0.88rem', color: 'var(--text-1)' }}>
+                          {u.name || '—'}
+                          {u.is_admin && <span style={{ marginLeft: '8px', fontSize: '0.65rem', color: 'var(--accent)' }}>ADMIN</span>}
+                        </div>
+                        <SubscriptionBadge user={u} />
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-2)', minWidth: '90px', textAlign: 'right' }}>
+                          {new Date(u.created_at).toLocaleDateString('de-DE')}
+                        </div>
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                          <button
+                            onClick={() => setProfilePopup(u)}
+                            style={{ background: 'none', border: '1px solid var(--border)', color: 'var(--text-2)', cursor: 'pointer', padding: '4px 10px', fontSize: '0.75rem', borderRadius: '2px' }}
+                          >
+                            Profil
+                          </button>
+                          <button
+                            onClick={() => { setTab('users'); setSelectedUser(u) }}
+                            style={{ background: 'none', border: '1px solid rgba(var(--accent-rgb,184,151,90),0.3)', color: 'var(--accent)', cursor: 'pointer', padding: '4px 10px', fontSize: '0.75rem', borderRadius: '2px' }}
+                          >
+                            Bearbeiten
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )
+        })()}
+
         {/* Papierkorb-Tab */}
         {tab === 'trash' && (
           <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: '4px', border: '1px solid var(--border)', overflow: 'hidden' }}>
@@ -853,6 +1043,8 @@ export default function Admin() {
         )}
       </div>
     </div>
+
+    {profilePopup && <ProfilePopup user={profilePopup} onClose={() => setProfilePopup(null)} />}
 
     {modal?.type === 'confirm' && (
       <ConfirmModal
