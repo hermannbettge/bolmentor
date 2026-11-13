@@ -404,6 +404,44 @@ router.post('/skip-trial', requireAuth, async (req, res) => {
   }
 })
 
+// Get real-time trial status directly from Stripe (bypasses Supabase/webhook)
+router.get('/trial-info', requireAuth, async (req, res) => {
+  try {
+    const stripe = getStripe()
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('stripe_customer_id, membership_start, subscription_plan, is_admin')
+      .eq('id', req.user.id)
+      .single()
+
+    if (!profile?.stripe_customer_id || profile?.is_admin || profile?.subscription_plan !== 'annual') {
+      return res.json({ inTrial: false, isCancelled: false })
+    }
+
+    const TRIAL_DAYS_LOCAL = 3
+    const trialEnd = new Date(profile.membership_start).getTime() + TRIAL_DAYS_LOCAL * 24 * 60 * 60 * 1000
+    const inTrial = Date.now() < trialEnd
+
+    if (!inTrial) return res.json({ inTrial: false, isCancelled: false })
+
+    const trialingSubs = await stripe.subscriptions.list({
+      customer: profile.stripe_customer_id,
+      status: 'trialing',
+      limit: 5,
+    })
+
+    if (!trialingSubs.data.length) {
+      return res.json({ inTrial: true, isCancelled: true })
+    }
+
+    const sub = trialingSubs.data[0]
+    return res.json({ inTrial: true, isCancelled: sub.cancel_at_period_end === true })
+  } catch (err) {
+    console.error('trial-info Fehler:', err)
+    res.status(500).json({ error: err.message })
+  }
+})
+
 // Sync subscription status from Stripe → Supabase (for cases where webhook was missed)
 router.post('/sync-subscription', requireAuth, async (req, res) => {
   try {

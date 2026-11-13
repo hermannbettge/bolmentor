@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { supabase } from '../lib/supabase.js'
-import { useTrialCountdown, formatCountdown, TrialModal } from '../components/TrialGate.jsx'
+import { useTrialCountdown, formatCountdown, TrialModal, useTrialInfo } from '../components/TrialGate.jsx'
 
 const CATEGORY_ICONS = {
   land: '🌍', job: '💼', beziehung: '💑', unternehmen: '🏢', kauf: '🏠', sonstiges: '✦',
@@ -39,11 +39,9 @@ export default function MeineAnalysen() {
   const hasAnnualAccess = isAnnual || profile?.is_admin
 
   // Trial: annual users within 3 days of membership_start
-  // Hook called unconditionally — passes null when not applicable
-  const isCancelled = profile?.subscription_cancel_at_period_end === true
+  // useTrialInfo fetches real-time status from Stripe (bypasses Supabase webhook)
+  const { inTrial, isCancelled } = useTrialInfo(isAnnual, profile?.is_admin)
   const trialMs = useTrialCountdown(isAnnual && !profile?.is_admin ? profile?.membership_start : null)
-  const inTrial = trialMs > 0
-  const trialDaysLeft = Math.ceil(trialMs / (24 * 60 * 60 * 1000)) // kept for modal
   const trialCountdown = formatCountdown(trialMs)
 
   useEffect(() => {

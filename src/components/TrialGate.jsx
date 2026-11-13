@@ -4,6 +4,30 @@ import { supabase } from '../lib/supabase.js'
 
 const TRIAL_DAYS = 3
 
+// Hook: fetches real-time trial/cancellation status directly from Stripe
+export function useTrialInfo(isAnnual, isAdmin) {
+  const [state, setState] = useState({ inTrial: null, isCancelled: null })
+  useEffect(() => {
+    if (!isAnnual || isAdmin) {
+      setState({ inTrial: false, isCancelled: false })
+      return
+    }
+    let cancelled = false
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session?.access_token || cancelled) return
+      fetch('/api/stripe/trial-info', {
+        headers: { 'Authorization': `Bearer ${session.access_token}` },
+      }).then(r => r.json()).then(json => {
+        if (!cancelled) setState({ inTrial: json.inTrial ?? false, isCancelled: json.isCancelled ?? false })
+      }).catch(() => {
+        if (!cancelled) setState({ inTrial: false, isCancelled: false })
+      })
+    })
+    return () => { cancelled = true }
+  }, [isAnnual, isAdmin])
+  return state
+}
+
 export function getTrialMs(membershipStart) {
   if (!membershipStart) return 0
   const trialEnd = new Date(membershipStart).getTime() + TRIAL_DAYS * 24 * 60 * 60 * 1000
