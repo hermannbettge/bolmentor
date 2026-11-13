@@ -26,17 +26,40 @@ const ANALYSES = [
 
 const TRIAL_DAYS = 3
 
-function getTrialDaysLeft(membershipStart) {
+function getTrialMs(membershipStart) {
   if (!membershipStart) return 0
-  const start = new Date(membershipStart)
-  const trialEnd = new Date(start.getTime() + TRIAL_DAYS * 24 * 60 * 60 * 1000)
-  const now = new Date()
-  const msLeft = trialEnd - now
-  if (msLeft <= 0) return 0
-  return Math.ceil(msLeft / (24 * 60 * 60 * 1000))
+  const trialEnd = new Date(membershipStart).getTime() + TRIAL_DAYS * 24 * 60 * 60 * 1000
+  return Math.max(0, trialEnd - Date.now())
 }
 
-function TrialModal({ daysLeft, onClose, onSkipTrial }) {
+function formatCountdown(ms) {
+  if (ms <= 0) return null
+  const totalSec = Math.floor(ms / 1000)
+  const days = Math.floor(totalSec / 86400)
+  const hours = Math.floor((totalSec % 86400) / 3600)
+  const mins = Math.floor((totalSec % 3600) / 60)
+  const parts = []
+  if (days > 0) parts.push(`${days} ${days === 1 ? 'Tag' : 'Tage'}`)
+  if (hours > 0) parts.push(`${hours} Std`)
+  parts.push(`${mins} Min`)
+  return parts.join(' ')
+}
+
+function useTrialCountdown(membershipStart) {
+  const [ms, setMs] = useState(() => getTrialMs(membershipStart))
+  useEffect(() => {
+    if (!membershipStart) return
+    const id = setInterval(() => {
+      const remaining = getTrialMs(membershipStart)
+      setMs(remaining)
+      if (remaining <= 0) clearInterval(id)
+    }, 60000)
+    return () => clearInterval(id)
+  }, [membershipStart])
+  return ms
+}
+
+function TrialModal({ daysLeft, countdown, onClose, onSkipTrial }) {
   const [step, setStep] = useState('info') // 'info' | 'confirm1' | 'confirm2' | 'loading' | 'done' | 'error'
   const [checked, setChecked] = useState(false)
   const [amount, setAmount] = useState('')
@@ -91,7 +114,7 @@ function TrialModal({ daysLeft, onClose, onSkipTrial }) {
       <>
         <div style={{ fontSize: '1.6rem', marginBottom: '16px', textAlign: 'center' }}>⏳</div>
         <h3 style={{ color: 'var(--color-gold)', fontWeight: 400, fontSize: '1.1rem', marginBottom: '12px', textAlign: 'center' }}>
-          Noch {daysLeft} {daysLeft === 1 ? 'Tag' : 'Tage'} kostenlose Testphase
+          Noch {countdown} kostenlose Testphase
         </h3>
         <p style={{ color: 'var(--color-text-muted)', fontSize: '0.88rem', lineHeight: 1.7, textAlign: 'center', marginBottom: '24px' }}>
           Die Analysen stehen dir nach Ablauf deiner Testphase automatisch zur Verfügung. Du musst nichts weiter tun.
@@ -193,8 +216,11 @@ export default function MeineAnalysen() {
   const hasAnnualAccess = isAnnual || profile?.is_admin
 
   // Trial: annual users within 3 days of membership_start
-  const trialDaysLeft = isAnnual && !profile?.is_admin ? getTrialDaysLeft(profile?.membership_start) : 0
-  const inTrial = trialDaysLeft > 0
+  // Hook called unconditionally — passes null when not applicable
+  const trialMs = useTrialCountdown(isAnnual && !profile?.is_admin ? profile?.membership_start : null)
+  const inTrial = trialMs > 0
+  const trialDaysLeft = Math.ceil(trialMs / (24 * 60 * 60 * 1000)) // kept for modal
+  const trialCountdown = formatCountdown(trialMs)
 
   useEffect(() => {
     if (!user || !profile) return
@@ -222,7 +248,7 @@ export default function MeineAnalysen() {
 
   return (
     <div className="app-page">
-      {trialModal && <TrialModal daysLeft={trialDaysLeft} onClose={() => setTrialModal(false)} onSkipTrial={() => window.location.reload()} />}
+      {trialModal && <TrialModal daysLeft={trialDaysLeft} countdown={trialCountdown} onClose={() => setTrialModal(false)} onSkipTrial={() => window.location.reload()} />}
 
       <div style={{ fontSize: '0.75rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--color-gold-muted)', marginBottom: '12px' }}>
         Zusatzanalysen
@@ -271,7 +297,7 @@ export default function MeineAnalysen() {
                   onClick={() => setTrialModal(true)}
                   style={{ border: '1px solid rgba(139,110,62,0.3)', color: 'var(--color-text-muted)', background: 'transparent', borderRadius: '4px', padding: '8px 16px', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
                 >
-                  Verfügbar in {trialDaysLeft} {trialDaysLeft === 1 ? 'Tag' : 'Tagen'}
+                  Verfügbar in {trialCountdown}
                 </button>
               ) : fullyPurchased ? (
                 partnerMissing ? (
@@ -327,7 +353,7 @@ export default function MeineAnalysen() {
                 onClick={() => setTrialModal(true)}
                 style={{ border: '1px solid rgba(139,110,62,0.3)', color: 'var(--color-text-muted)', background: 'transparent', borderRadius: '4px', padding: '8px 16px', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
               >
-                Verfügbar in {trialDaysLeft} {trialDaysLeft === 1 ? 'Tag' : 'Tagen'}
+                Verfügbar in {trialCountdown}
               </button>
             ) : (
               <button
