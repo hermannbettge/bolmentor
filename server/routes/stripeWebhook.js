@@ -15,18 +15,22 @@ async function fulfillOrder(userId, priceId, isTrial = false) {
   }
 
   if (mapping.type === 'membership') {
+    // Only set membership_start if not already set (don't reset it on subscription.updated events)
+    const { data: existing } = await supabase.from('profiles').select('membership_start').eq('id', userId).single()
     const updateData = {
       membership_active: true,
-      membership_start: new Date().toISOString(),
       subscription_plan: mapping.plan,
       updated_at: new Date().toISOString(),
+    }
+    if (!existing?.membership_start) {
+      updateData.membership_start = new Date().toISOString()
     }
     if (mapping.plan === 'annual' && !isTrial) {
       // Vollzugang erst nach echter Zahlung
       updateData.purchased_analyses = ['business', 'health', 'family', 'selfexpression', 'finance', 'career', 'lifephases', 'partnership', 'relationship', 'events']
     } else if (mapping.plan === 'annual' && isTrial) {
-      // Testphase: nur 1 Ereignis-Analyse
-      updateData.purchased_analyses = ['events']
+      // Testphase: keine Analysen
+      updateData.purchased_analyses = []
     }
     await supabase.from('profiles').update(updateData).eq('id', userId)
   } else if (mapping.type === 'analysis') {
@@ -176,14 +180,16 @@ router.post('/', async (req, res) => {
 
         if (subscription.status === 'active' || subscription.status === 'trialing') {
           const isTrial = subscription.status === 'trialing'
+          console.log('Stripe subscription update:', subscription.id, 'status:', subscription.status, 'cancel_at_period_end:', subscription.cancel_at_period_end)
           for (const item of items) {
             await fulfillOrder(profile.id, item.price?.id, isTrial)
           }
           // Track cancellation-at-period-end so frontend can hide skip-trial UI
-          await supabase.from('profiles').update({
+          const { error: cancelUpdateErr } = await supabase.from('profiles').update({
             subscription_cancel_at_period_end: subscription.cancel_at_period_end === true,
             updated_at: new Date().toISOString(),
           }).eq('id', profile.id)
+          if (cancelUpdateErr) console.error('Stripe: cancel_at_period_end update error:', cancelUpdateErr)
           // If upgraded to annual, cancel any remaining analysis subscriptions (included in annual)
           const isNowAnnual = items.some(item => {
             const m = PRICE_MAP[item.price?.id]
