@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { supabase } from '../lib/supabase.js'
@@ -36,7 +37,7 @@ function getTrialDaysLeft(membershipStart) {
 }
 
 function TrialModal({ daysLeft, onClose }) {
-  return (
+  return createPortal(
     <div
       style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 9999, padding: 'max(env(safe-area-inset-top, 16px), 16px) 24px 24px' }}
       onClick={onClose}
@@ -59,7 +60,8 @@ function TrialModal({ daysLeft, onClose }) {
           Verstanden
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
