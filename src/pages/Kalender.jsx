@@ -59,11 +59,16 @@ export default function Kalender() {
     finally { setLoading(false) }
   }
 
+  // Max 12 months ahead from today
+  const maxDate = new Date(now.getFullYear(), now.getMonth() + 12, 1)
+  const isAtMax = year > maxDate.getFullYear() || (year === maxDate.getFullYear() && month >= maxDate.getMonth() + 1)
+
   function prevMonth() {
     if (month === 1) { setYear(y => y - 1); setMonth(12) }
     else setMonth(m => m - 1)
   }
   function nextMonth() {
+    if (isAtMax) return
     if (month === 12) { setYear(y => y + 1); setMonth(1) }
     else setMonth(m => m + 1)
   }
@@ -92,7 +97,7 @@ export default function Kalender() {
           <span style={{ color: 'var(--text-1)', fontWeight: 500, fontSize: '1.05rem', minWidth: '180px', textAlign: 'center' }}>
             {GERMAN_MONTHS[month - 1]} {year}
           </span>
-          <button onClick={nextMonth} style={navBtn}>›</button>
+          <button onClick={nextMonth} disabled={isAtMax} style={{ ...navBtn, opacity: isAtMax ? 0.3 : 1, cursor: isAtMax ? 'default' : 'pointer' }}>›</button>
           <button onClick={goToday} style={{ ...navBtn, fontSize: '0.78rem', padding: '6px 16px', borderRadius: '20px', marginLeft: '8px' }}>
             Heute
           </button>
