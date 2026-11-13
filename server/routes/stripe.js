@@ -420,27 +420,31 @@ router.post('/sync-subscription', requireAuth, async (req, res) => {
 
     // Get all active/trialing subscriptions for this customer
     const [activeSubs, trialingSubs] = await Promise.all([
-      stripe.subscriptions.list({ customer: profile.stripe_customer_id, status: 'active', limit: 5 }),
-      stripe.subscriptions.list({ customer: profile.stripe_customer_id, status: 'trialing', limit: 5 }),
+      stripe.subscriptions.list({ customer: profile.stripe_customer_id, status: 'active', limit: 10 }),
+      stripe.subscriptions.list({ customer: profile.stripe_customer_id, status: 'trialing', limit: 10 }),
     ])
 
-    const allSubs = [...activeSubs.data, ...trialingSubs.data]
+    // Find the annual membership subscription (trialing first, then active)
     const annualPriceId = process.env.STRIPE_PRICE_MEMBERSHIP_ANNUAL
+    const allSubs = [...trialingSubs.data, ...activeSubs.data]
 
-    const annualSub = allSubs.find(s =>
-      s.items?.data?.some(item => item.price?.id === annualPriceId)
-    )
+    // Try to match by price ID, fall back to first subscription found
+    let membershipSub = annualPriceId
+      ? allSubs.find(s => s.items?.data?.some(item => item.price?.id === annualPriceId))
+      : null
+    if (!membershipSub) membershipSub = allSubs[0]
 
-    if (!annualSub) {
+    if (!membershipSub) {
       return res.json({ synced: false })
     }
 
-    const cancelAtPeriodEnd = annualSub.cancel_at_period_end === true
+    const cancelAtPeriodEnd = membershipSub.cancel_at_period_end === true
     await supabase.from('profiles').update({
       subscription_cancel_at_period_end: cancelAtPeriodEnd,
       updated_at: new Date().toISOString(),
     }).eq('id', req.user.id)
 
+    console.log('sync-subscription:', req.user.id, 'cancel_at_period_end:', cancelAtPeriodEnd, 'sub:', membershipSub.id)
     return res.json({ synced: true, cancel_at_period_end: cancelAtPeriodEnd })
   } catch (err) {
     console.error('sync-subscription Fehler:', err)

@@ -47,7 +47,10 @@ export function AuthProvider({ children }) {
               headers: { 'Authorization': `Bearer ${session.access_token}` },
             }).then(r => r.json()).then(json => {
               if (json?.synced && version === profileVersion.current) {
+                // Update in-memory profile immediately with synced value
                 setProfile(prev => prev ? { ...prev, subscription_cancel_at_period_end: json.cancel_at_period_end } : prev)
+                // Also reload from Supabase to pick up any other webhook changes
+                loadProfile(userId)
               }
             }).catch(() => {})
           }
