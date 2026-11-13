@@ -38,7 +38,7 @@ function getTrialDaysLeft(membershipStart) {
 function TrialModal({ daysLeft, onClose }) {
   return (
     <div
-      style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '24px' }}
+      style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 9999, padding: 'max(env(safe-area-inset-top, 16px), 16px) 24px 24px' }}
       onClick={onClose}
     >
       <div
