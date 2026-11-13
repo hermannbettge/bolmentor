@@ -32,6 +32,12 @@ export default function Monatsanalyse() {
   // Can create: annual users always, monthly users only on 1st of current month
   const canCreate = hasAnnualAccess || (isCurrentMonth && firstOfMonth)
 
+  // Earliest accessible month = membership_start month (or current month as fallback)
+  const membershipStart = profile?.membership_start ? new Date(profile.membership_start) : null
+  const earliestYear = membershipStart ? membershipStart.getFullYear() : today.year
+  const earliestMonth = membershipStart ? membershipStart.getMonth() : today.monthIndex // 0-indexed
+  const isAtEarliestMonth = selectedMonth.year === earliestYear && selectedMonth.month === earliestMonth
+
   useEffect(() => {
     setAnalysis(null)
     setCheckingExisting(true)
@@ -92,6 +98,7 @@ export default function Monatsanalyse() {
 
   function goToPrevMonth() {
     setSelectedMonth(prev => {
+      if (prev.year === earliestYear && prev.month === earliestMonth) return prev // already at start
       if (prev.month === 0) return { year: prev.year - 1, month: 11 }
       return { year: prev.year, month: prev.month - 1 }
     })
@@ -127,7 +134,8 @@ export default function Monatsanalyse() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
           <button
             onClick={goToPrevMonth}
-            style={{ background: 'none', border: '1px solid rgba(139,110,62,0.3)', borderRadius: '4px', color: 'var(--color-gold)', padding: '6px 14px', cursor: 'pointer', fontSize: '1rem', lineHeight: 1 }}
+            disabled={isAtEarliestMonth}
+            style={{ background: 'none', border: '1px solid rgba(139,110,62,0.3)', borderRadius: '4px', color: isAtEarliestMonth ? 'rgba(139,110,62,0.3)' : 'var(--color-gold)', padding: '6px 14px', cursor: isAtEarliestMonth ? 'default' : 'pointer', fontSize: '1rem', lineHeight: 1 }}
           >
             ‹
           </button>
