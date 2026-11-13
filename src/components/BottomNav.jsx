@@ -5,8 +5,7 @@ export default function BottomNav() {
   const { profile } = useAuth()
 
   const navItems = [
-    { to: '/tagesenergie', icon: '🌅', label: 'Heute' },
-    { to: '/monatsanalyse', icon: '📅', label: 'Monat' },
+    { to: '/dashboard', icon: '🌅', label: 'Dashboard' },
     { to: '/kalender', icon: '◈', label: 'Kalender' },
     ...(profile?.is_admin ? [{ to: '/maya-ki', icon: '☽', label: 'Maya KI' }] : []),
     { to: '/analysen', icon: '◎', label: 'Analysen' },
