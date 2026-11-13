@@ -38,17 +38,22 @@ export default function Monatsanalyse() {
   const earliestMonth = membershipStart ? membershipStart.getMonth() : today.monthIndex // 0-indexed
   const isAtEarliestMonth = selectedMonth.year === earliestYear && selectedMonth.month === earliestMonth
 
+  // Clamp month when year changes and selected month is out of range
+  useEffect(() => {
+    setSelectedMonth(prev => {
+      let m = prev.month
+      if (prev.year === earliestYear && m < earliestMonth) m = earliestMonth
+      if (prev.year === maxYear && m > maxMonth) m = maxMonth
+      return m !== prev.month ? { ...prev, month: m } : prev
+    })
+  }, [selectedMonth.year])
+
   useEffect(() => {
     setAnalysis(null)
     setCheckingExisting(true)
     checkExistingAnalysis()
   }, [user, selectedMonth.year, selectedMonth.month])
 
-  useEffect(() => {
-    if (!checkingExisting && !analysis && !loading && canCreate) {
-      createAnalysis()
-    }
-  }, [checkingExisting])
 
   async function checkExistingAnalysis() {
     if (!user) return
@@ -132,26 +137,28 @@ export default function Monatsanalyse() {
         Monatsanalyse
       </div>
 
-      {/* Month navigation for annual users */}
+      {/* Month/year dropdowns for annual users */}
       {hasAnnualAccess && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
-          <button
-            onClick={goToPrevMonth}
-            disabled={isAtEarliestMonth}
-            style={{ background: 'none', border: '1px solid rgba(139,110,62,0.3)', borderRadius: '4px', color: isAtEarliestMonth ? 'rgba(139,110,62,0.3)' : 'var(--color-gold)', padding: '6px 14px', cursor: isAtEarliestMonth ? 'default' : 'pointer', fontSize: '1rem', lineHeight: 1 }}
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+          <select
+            value={selectedMonth.month}
+            onChange={e => setSelectedMonth(prev => ({ ...prev, month: Number(e.target.value) }))}
+            style={{ flex: 1, backgroundColor: 'var(--color-bg-card)', border: '1px solid rgba(139,110,62,0.3)', borderRadius: '4px', color: 'var(--color-gold)', padding: '8px 12px', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif', outline: 'none' }}
           >
-            ‹
-          </button>
-          <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', minWidth: '140px', textAlign: 'center' }}>
-            {getMonthLabel(selectedMonth.year, selectedMonth.month)}
-          </span>
-          <button
-            onClick={goToNextMonth}
-            disabled={isAtMaxMonth}
-            style={{ background: 'none', border: '1px solid rgba(139,110,62,0.3)', borderRadius: '4px', color: isAtMaxMonth ? 'rgba(139,110,62,0.3)' : 'var(--color-gold)', padding: '6px 14px', cursor: isAtMaxMonth ? 'default' : 'pointer', fontSize: '1rem', lineHeight: 1 }}
+            {MONTHS_DE.map((name, i) => {
+              const disabled = (selectedMonth.year === earliestYear && i < earliestMonth) || (selectedMonth.year === maxYear && i > maxMonth)
+              return <option key={i} value={i} disabled={disabled}>{name}</option>
+            })}
+          </select>
+          <select
+            value={selectedMonth.year}
+            onChange={e => setSelectedMonth(prev => ({ ...prev, year: Number(e.target.value) }))}
+            style={{ width: '90px', backgroundColor: 'var(--color-bg-card)', border: '1px solid rgba(139,110,62,0.3)', borderRadius: '4px', color: 'var(--color-gold)', padding: '8px 12px', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'Inter, sans-serif', outline: 'none' }}
           >
-            ›
-          </button>
+            {Array.from({ length: maxYear - earliestYear + 1 }, (_, i) => earliestYear + i).map(y => (
+              <option key={y} value={y}>{y}</option>
+            ))}
+          </select>
         </div>
       )}
 
