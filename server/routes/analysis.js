@@ -642,14 +642,27 @@ router.post('/monthly', requireAuth, async (req, res) => {
   try {
     profile = await getProfile(req.user.id)
     checkMembership(profile)
+    const hasAnnualAccess = profile.subscription_plan === 'annual' || profile.is_admin
+
     const today = new Date()
-    const civil = parseCivilDate(civilDateISO(today))
-    const monthName = GERMAN_MONTHS[civil.month - 1]
-    const year = civil.year
     todayStr = civilDateISO(today)
-    monthYear = `${year}-${String(civil.month).padStart(2, '0')}`
-    const kinData = calculateKinFromDate(profile.birth_date)
-    prompt = buildMonthlyPrompt(profile, kinData, monthName, year)
+
+    // Allow annual users to request a specific month
+    if (req.body?.month_year && hasAnnualAccess) {
+      const [y, m] = req.body.month_year.split('-').map(Number)
+      if (!y || !m || m < 1 || m > 12) return res.status(400).json({ error: 'Ungültiges Monatsformat' })
+      monthYear = `${y}-${String(m).padStart(2, '0')}`
+      const monthName = GERMAN_MONTHS[m - 1]
+      const kinData = calculateKinFromDate(profile.birth_date)
+      prompt = buildMonthlyPrompt(profile, kinData, monthName, y)
+    } else {
+      const civil = parseCivilDate(civilDateISO(today))
+      const monthName = GERMAN_MONTHS[civil.month - 1]
+      const year = civil.year
+      monthYear = `${year}-${String(civil.month).padStart(2, '0')}`
+      const kinData = calculateKinFromDate(profile.birth_date)
+      prompt = buildMonthlyPrompt(profile, kinData, monthName, year)
+    }
   } catch (err) {
     return res.status(400).json({ error: err.message })
   }

@@ -6,6 +6,12 @@ import PDFDownloadButton from '../components/PDFDownloadButton.jsx'
 import { supabase } from '../lib/supabase.js'
 import { readSSEStream } from '../lib/sseReader.js'
 
+const MONTHS_DE = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
+
+function getMonthLabel(year, month) {
+  return `${MONTHS_DE[month]} ${year}`
+}
+
 export default function Monatsanalyse() {
   const { user, profile } = useAuth()
   const [analysis, setAnalysis] = useState(null)
@@ -14,16 +20,26 @@ export default function Monatsanalyse() {
   const [checkingExisting, setCheckingExisting] = useState(true)
 
   const today = getGermanDate()
-  const firstOfMonth = isFirstOfMonth()
-  const countdown = daysUntilFirstOfNextMonth()
   const hasAnnualAccess = profile?.subscription_plan === 'annual' || profile?.is_admin
 
-  useEffect(() => {
-    checkExistingAnalysis()
-  }, [user])
+  // selectedMonth: { year, month (0-indexed) }
+  const [selectedMonth, setSelectedMonth] = useState({ year: today.year, month: today.monthIndex })
+
+  const isCurrentMonth = selectedMonth.year === today.year && selectedMonth.month === today.monthIndex
+  const firstOfMonth = isFirstOfMonth()
+  const countdown = daysUntilFirstOfNextMonth()
+
+  // Can create: annual users always, monthly users only on 1st of current month
+  const canCreate = hasAnnualAccess || (isCurrentMonth && firstOfMonth)
 
   useEffect(() => {
-    if (!checkingExisting && !analysis && !loading) {
+    setAnalysis(null)
+    setCheckingExisting(true)
+    checkExistingAnalysis()
+  }, [user, selectedMonth.year, selectedMonth.month])
+
+  useEffect(() => {
+    if (!checkingExisting && !analysis && !loading && canCreate) {
       createAnalysis()
     }
   }, [checkingExisting])
@@ -31,7 +47,7 @@ export default function Monatsanalyse() {
   async function checkExistingAnalysis() {
     if (!user) return
     try {
-      const monthYear = `${today.year}-${String(today.monthIndex + 1).padStart(2, '0')}`
+      const monthYear = `${selectedMonth.year}-${String(selectedMonth.month + 1).padStart(2, '0')}`
       const { data } = await supabase
         .from('analyses')
         .select('content, created_at')
@@ -54,12 +70,14 @@ export default function Monatsanalyse() {
     setError('')
     try {
       const { data: { session } } = await supabase.auth.getSession()
+      const monthYear = `${selectedMonth.year}-${String(selectedMonth.month + 1).padStart(2, '0')}`
       const res = await fetch('/api/analysis/monthly', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.access_token}`,
         },
+        body: JSON.stringify({ month_year: monthYear }),
       })
       await readSSEStream(res, {
         onChunk: (text) => setAnalysis(text),
@@ -71,6 +89,24 @@ export default function Monatsanalyse() {
       setLoading(false)
     }
   }
+
+  function goToPrevMonth() {
+    setSelectedMonth(prev => {
+      if (prev.month === 0) return { year: prev.year - 1, month: 11 }
+      return { year: prev.year, month: prev.month - 1 }
+    })
+  }
+
+  function goToNextMonth() {
+    setSelectedMonth(prev => {
+      const isAtCurrent = prev.year === today.year && prev.month === today.monthIndex
+      if (isAtCurrent) return prev // Don't go into future
+      if (prev.month === 11) return { year: prev.year + 1, month: 0 }
+      return { year: prev.year, month: prev.month + 1 }
+    })
+  }
+
+  const isAtCurrentMonth = selectedMonth.year === today.year && selectedMonth.month === today.monthIndex
 
   if (checkingExisting) {
     return (
@@ -86,11 +122,33 @@ export default function Monatsanalyse() {
         Monatsanalyse
       </div>
 
+      {/* Month navigation for annual users */}
+      {hasAnnualAccess && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+          <button
+            onClick={goToPrevMonth}
+            style={{ background: 'none', border: '1px solid rgba(139,110,62,0.3)', borderRadius: '4px', color: 'var(--color-gold)', padding: '6px 14px', cursor: 'pointer', fontSize: '1rem', lineHeight: 1 }}
+          >
+            ‹
+          </button>
+          <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', minWidth: '140px', textAlign: 'center' }}>
+            {getMonthLabel(selectedMonth.year, selectedMonth.month)}
+          </span>
+          <button
+            onClick={goToNextMonth}
+            disabled={isAtCurrentMonth}
+            style={{ background: 'none', border: '1px solid rgba(139,110,62,0.3)', borderRadius: '4px', color: isAtCurrentMonth ? 'rgba(139,110,62,0.3)' : 'var(--color-gold)', padding: '6px 14px', cursor: isAtCurrentMonth ? 'default' : 'pointer', fontSize: '1rem', lineHeight: 1 }}
+          >
+            ›
+          </button>
+        </div>
+      )}
+
       <h1 style={{ color: 'var(--color-gold)', fontWeight: 300, fontSize: '2rem', marginBottom: '12px' }}>
         {analysis
-          ? `Deine Analyse für ${today.month} ${today.year}`
-          : firstOfMonth || hasAnnualAccess
-            ? `Deine Analyse für ${today.month} ${today.year}`
+          ? `Deine Analyse für ${getMonthLabel(selectedMonth.year, selectedMonth.month)}`
+          : canCreate
+            ? `Deine Analyse für ${getMonthLabel(selectedMonth.year, selectedMonth.month)}`
             : 'Deine nächste Monatsanalyse'
         }
       </h1>
@@ -141,7 +199,7 @@ export default function Monatsanalyse() {
       )}
 
       {!analysis && !loading ? (
-        firstOfMonth || hasAnnualAccess ? (
+        canCreate ? (
           <button
             onClick={createAnalysis}
             style={{
@@ -161,10 +219,9 @@ export default function Monatsanalyse() {
         ) : (
           <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
             Deine Monatsanalyse erscheint am 1. {(() => {
-              const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
               const next = new Date()
               next.setMonth(next.getMonth() + 1)
-              return months[next.getMonth()]
+              return MONTHS_DE[next.getMonth()]
             })()}.
           </p>
         )
@@ -176,9 +233,9 @@ export default function Monatsanalyse() {
               content={analysis}
               analysisType="monthly"
               userName={profile?.name || 'Analyse'}
-              date={`${today.month} ${today.year}`}
+              date={getMonthLabel(selectedMonth.year, selectedMonth.month)}
             />
-            {(firstOfMonth || hasAnnualAccess) && (
+            {canCreate && (
               <button
                 onClick={() => { setAnalysis(null); createAnalysis() }}
                 style={{

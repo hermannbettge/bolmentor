@@ -33,6 +33,7 @@ export default function MeineAnalysen() {
   const [eventAnalyses, setEventAnalyses] = useState(new Set())
 
   const purchased = profile?.purchased_analyses || []
+  const hasAnnualAccess = profile?.subscription_plan === 'annual' || profile?.is_admin
 
   useEffect(() => {
     if (!user || !profile) return
@@ -72,7 +73,7 @@ export default function MeineAnalysen() {
 
 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px' }}>
         {ANALYSES.map(item => {
-          const isPurchased = profile?.is_admin || purchased.includes(item.key)
+          const isPurchased = hasAnnualAccess || purchased.includes(item.key)
           const hasAnalysis = existingTypes.has(item.key)
           const hasPartner = !!profile?.partner_birth_date
           const partnerMissing = item.requiresPartner && isPurchased && !hasPartner
