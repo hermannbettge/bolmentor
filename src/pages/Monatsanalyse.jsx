@@ -29,7 +29,7 @@ export default function Monatsanalyse() {
   const firstOfMonth = isFirstOfMonth()
   const countdown = daysUntilFirstOfNextMonth()
 
-  // Can create: annual users always, monthly users only on 1st of current month
+  // Can create: annual users for any selectable month, monthly users only on 1st of current month
   const canCreate = hasAnnualAccess || (isCurrentMonth && firstOfMonth)
 
   // Earliest accessible month = membership_start month (or current month as fallback)
@@ -104,16 +104,19 @@ export default function Monatsanalyse() {
     })
   }
 
+  // Annual users can navigate up to 12 months ahead from today
+  const maxDate = new Date(today.year, today.monthIndex + 12, 1)
+  const maxYear = maxDate.getFullYear()
+  const maxMonth = maxDate.getMonth() // 0-indexed
+  const isAtMaxMonth = selectedMonth.year > maxYear || (selectedMonth.year === maxYear && selectedMonth.month >= maxMonth)
+
   function goToNextMonth() {
+    if (isAtMaxMonth) return
     setSelectedMonth(prev => {
-      const isAtCurrent = prev.year === today.year && prev.month === today.monthIndex
-      if (isAtCurrent) return prev // Don't go into future
       if (prev.month === 11) return { year: prev.year + 1, month: 0 }
       return { year: prev.year, month: prev.month + 1 }
     })
   }
-
-  const isAtCurrentMonth = selectedMonth.year === today.year && selectedMonth.month === today.monthIndex
 
   if (checkingExisting) {
     return (
@@ -144,8 +147,8 @@ export default function Monatsanalyse() {
           </span>
           <button
             onClick={goToNextMonth}
-            disabled={isAtCurrentMonth}
-            style={{ background: 'none', border: '1px solid rgba(139,110,62,0.3)', borderRadius: '4px', color: isAtCurrentMonth ? 'rgba(139,110,62,0.3)' : 'var(--color-gold)', padding: '6px 14px', cursor: isAtCurrentMonth ? 'default' : 'pointer', fontSize: '1rem', lineHeight: 1 }}
+            disabled={isAtMaxMonth}
+            style={{ background: 'none', border: '1px solid rgba(139,110,62,0.3)', borderRadius: '4px', color: isAtMaxMonth ? 'rgba(139,110,62,0.3)' : 'var(--color-gold)', padding: '6px 14px', cursor: isAtMaxMonth ? 'default' : 'pointer', fontSize: '1rem', lineHeight: 1 }}
           >
             ›
           </button>
