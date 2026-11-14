@@ -41,6 +41,7 @@ export default function MeineAnalysen() {
   // Trial: annual users within 3 days of membership_start
   // useTrialInfo fetches real-time status from Stripe (bypasses Supabase webhook)
   const { inTrial, isCancelled } = useTrialInfo(isAnnual, profile?.is_admin)
+  const trialLoading = inTrial === null
   const trialMs = useTrialCountdown(isAnnual && !profile?.is_admin ? profile?.membership_start : null)
   const trialCountdown = formatCountdown(trialMs)
 
@@ -84,11 +85,6 @@ export default function MeineAnalysen() {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px' }}>
         {ANALYSES.map(item => {
-          // Annual users in trial: not yet accessible
-          // Annual users past trial OR admin: fully accessible
-          // Others: check purchased_analyses
-          // inTrial=null means still loading; treat as not-in-trial while loading
-          const trialLoading = inTrial === null
           const fullyPurchased = profile?.is_admin || (inTrial === false && isAnnual) || purchased.includes(item.key)
           const hasPartner = !!profile?.partner_birth_date
           const partnerMissing = item.requiresPartner && fullyPurchased && !hasPartner
