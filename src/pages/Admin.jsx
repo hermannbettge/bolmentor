@@ -60,91 +60,180 @@ function SubscriptionBadge({ user }) {
   )
 }
 
+const EVENT_CATEGORY_LABELS = {
+  land: 'Land / Nation', job: 'Job / Karriere', beziehung: 'Beziehung / Partnerschaft',
+  unternehmen: 'Unternehmen / Projekt', kauf: 'Kauf / Besitz', sonstiges: 'Ereignis',
+}
+
+const ANALYSIS_LABELS_MAP = {
+  business: 'Business', health: 'Gesundheit', family: 'Familie',
+  selfexpression: 'Selbstausdruck', finance: 'Finanzen', career: 'Karriere',
+  lifephases: 'Lebensphasen', partnership: 'Partnerschaftsanalyse',
+  relationship: 'Beziehungsmuster', events: 'Ereignis-Analysen', yearly_select: 'Jahres-Auswahl',
+}
+
 function ProfilePopup({ user, onClose }) {
+  const [events, setEvents] = useState([])
+  const [eventsLoading, setEventsLoading] = useState(true)
   const purchased = user.purchased_analyses || []
-  const ANALYSIS_LABELS = {
-    business: 'Business', health: 'Gesundheit', family: 'Familie',
-    selfexpression: 'Selbstausdruck', finance: 'Finanzen', career: 'Karriere',
-    lifephases: 'Lebensphasen', partnership: 'Partnerschaftsanalyse',
-    relationship: 'Beziehungsmuster', events: 'Ereignis-Analysen', yearly_select: 'Jahres-Auswahl',
-  }
   const sub = getSubscriptionStatus(user)
+
+  useEffect(() => {
+    apiCall(`/users/${user.id}/events`).then(data => setEvents(data || [])).catch(() => {}).finally(() => setEventsLoading(false))
+  }, [user.id])
 
   const Row = ({ label, value }) => value ? (
     <div style={{ display: 'flex', gap: '12px', paddingBottom: '8px', borderBottom: '1px solid var(--border)', marginBottom: '8px' }}>
-      <span style={{ fontSize: '0.75rem', color: 'var(--text-2)', minWidth: '140px', flexShrink: 0 }}>{label}</span>
+      <span style={{ fontSize: '0.75rem', color: 'var(--text-2)', minWidth: '150px', flexShrink: 0 }}>{label}</span>
       <span style={{ fontSize: '0.82rem', color: 'var(--text-1)', wordBreak: 'break-word' }}>{value}</span>
     </div>
-  ) : null
+  ) : (
+    <div style={{ display: 'flex', gap: '12px', paddingBottom: '8px', borderBottom: '1px solid var(--border)', marginBottom: '8px' }}>
+      <span style={{ fontSize: '0.75rem', color: 'var(--text-2)', minWidth: '150px', flexShrink: 0 }}>{label}</span>
+      <span style={{ fontSize: '0.82rem', color: 'rgba(239,68,68,0.6)', fontStyle: 'italic' }}>nicht ausgefüllt</span>
+    </div>
+  )
 
   const fmt = (d) => d ? new Date(d).toLocaleDateString('de-DE') : null
 
+  const sectionTitle = (title) => (
+    <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: '12px', paddingBottom: '6px', borderBottom: '2px solid rgba(var(--accent-rgb,184,151,90),0.2)' }}>
+      {title}
+    </div>
+  )
+
   return (
     <div
-      style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 2000, padding: '32px 16px', overflowY: 'auto' }}
+      style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 2000, padding: '24px 16px 48px', overflowY: 'auto' }}
       onClick={onClose}
     >
       <div
-        style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px', padding: '32px', maxWidth: '540px', width: '100%', marginTop: '0' }}
+        style={{ backgroundColor: 'var(--bg-deep)', border: '1px solid var(--border)', borderRadius: '6px', maxWidth: '600px', width: '100%', overflow: 'hidden' }}
         onClick={e => e.stopPropagation()}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+        {/* Header */}
+        <div style={{ padding: '24px 28px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'var(--bg-card)' }}>
           <div>
-            <div style={{ fontSize: '1.1rem', fontWeight: 500, color: 'var(--text-1)', marginBottom: '4px' }}>{user.name || '—'}</div>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-2)' }}>ID: {user.id.slice(0, 16)}…</div>
+            <div style={{ fontSize: '1.1rem', fontWeight: 500, color: 'var(--text-1)', marginBottom: '4px' }}>
+              {user.name || '(kein Name)'} {user.last_name ? user.last_name : ''}
+            </div>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <SubscriptionBadge user={user} />
+              {user.must_change_password && (
+                <span style={{ padding: '2px 10px', borderRadius: '20px', fontSize: '0.68rem', fontWeight: 600, backgroundColor: 'rgba(245,158,11,0.1)', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.3)' }}>
+                  Passwort-Änderung ausstehend
+                </span>
+              )}
+            </div>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-2)', cursor: 'pointer', fontSize: '1.2rem', padding: '0 0 0 16px' }}>✕</button>
         </div>
 
-        <div style={{ marginBottom: '20px' }}>
-          <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: '10px' }}>Profil</div>
-          <Row label="Name" value={user.name} />
-          <Row label="Geburtsdatum" value={fmt(user.birth_date)} />
-          <Row label="Registriert" value={fmt(user.created_at)} />
-          <Row label="Zuletzt aktualisiert" value={fmt(user.updated_at)} />
-        </div>
+        <div style={{ padding: '28px' }}>
 
-        {(user.partner_first_name || user.partner_last_name || user.partner_birth_date) && (
-          <div style={{ marginBottom: '20px' }}>
-            <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: '10px' }}>Partner/in</div>
-            <Row label="Vorname" value={user.partner_first_name} />
-            <Row label="Nachname" value={user.partner_last_name} />
-            <Row label="Geburtsdatum" value={fmt(user.partner_birth_date)} />
+          {/* Persönliche Daten */}
+          <div style={{ marginBottom: '28px' }}>
+            {sectionTitle('Persönliche Daten')}
+            <Row label="Vorname" value={user.name} />
+            <Row label="Nachname" value={user.last_name} />
+            <Row label="Geburtsdatum" value={fmt(user.birth_date)} />
+            <Row label="Mobilnummer" value={user.phone} />
+            <Row label="Registriert am" value={fmt(user.created_at)} />
           </div>
-        )}
 
-        <div style={{ marginBottom: '20px' }}>
-          <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: '10px' }}>Mitgliedschaft</div>
-          <div style={{ marginBottom: '8px' }}><SubscriptionBadge user={user} /></div>
-          <Row label="Tarif" value={user.subscription_plan === 'annual' ? 'Jahrestarif' : user.subscription_plan === 'monthly' ? 'Monatstarif' : null} />
-          <Row label="Aktiv seit" value={fmt(user.membership_start)} />
-          <Row label="Aktiv bis" value={fmt(user.membership_end)} />
-        </div>
-
-        <div style={{ marginBottom: '20px' }}>
-          <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: '10px' }}>
-            Zusatzanalysen ({purchased.filter(k => k !== 'compatibility').length})
+          {/* Partnerdaten */}
+          <div style={{ marginBottom: '28px' }}>
+            {sectionTitle('Partnerdaten')}
+            <Row label="Vorname Partner/in" value={user.partner_first_name} />
+            <Row label="Nachname Partner/in" value={user.partner_last_name} />
+            <Row label="Geburtsdatum Partner/in" value={fmt(user.partner_birth_date)} />
           </div>
-          {purchased.filter(k => k !== 'compatibility').length === 0 ? (
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-2)' }}>Keine Zusatzanalysen</div>
-          ) : (
+
+          {/* Adresse */}
+          <div style={{ marginBottom: '28px' }}>
+            {sectionTitle('Adresse')}
+            <Row label="Straße / Hausnummer" value={user.address} />
+            <Row label="PLZ" value={user.zip} />
+            <Row label="Ort" value={user.city} />
+          </div>
+
+          {/* Maya Profil */}
+          <div style={{ marginBottom: '28px' }}>
+            {sectionTitle('Maya Profil')}
+            {user.birth_date ? (
+              <div style={{ padding: '14px', backgroundColor: 'var(--bg-card)', borderRadius: '4px', border: '1px solid var(--border)', fontSize: '0.82rem', color: 'var(--text-2)' }}>
+                Geburtsdatum vorhanden — Maya-Profil wird aus dem Geburtsdatum berechnet.
+              </div>
+            ) : (
+              <div style={{ padding: '14px', backgroundColor: 'rgba(239,68,68,0.06)', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.2)', fontSize: '0.82rem', color: 'rgba(239,68,68,0.7)' }}>
+                Kein Geburtsdatum hinterlegt — kein Maya-Profil verfügbar.
+              </div>
+            )}
+          </div>
+
+          {/* Mitgliedschaft */}
+          <div style={{ marginBottom: '28px' }}>
+            {sectionTitle('Mitgliedschaft')}
+            <Row label="Abo-Status" value={sub.label} />
+            <Row label="Tarif" value={user.subscription_plan === 'annual' ? 'Jahrestarif' : user.subscription_plan === 'monthly' ? 'Monatstarif' : null} />
+            <Row label="Aktiv seit" value={fmt(user.membership_start)} />
+            <Row label="Aktiv bis" value={fmt(user.membership_end)} />
+          </div>
+
+          {/* Freigeschaltete Analysen */}
+          <div style={{ marginBottom: '28px' }}>
+            {sectionTitle(`Freigeschaltete Analysen (${purchased.filter(k => k !== 'compatibility').length})`)}
+            {purchased.filter(k => k !== 'compatibility').length === 0 ? (
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-2)', fontStyle: 'italic' }}>Keine Zusatzanalysen freigeschaltet</div>
+            ) : (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                {purchased.filter(k => k !== 'compatibility').map(k => (
+                  <span key={k} style={{ padding: '4px 12px', fontSize: '0.75rem', borderRadius: '20px', backgroundColor: 'rgba(var(--accent-rgb,184,151,90),0.1)', color: 'var(--accent)', border: '1px solid rgba(var(--accent-rgb,184,151,90),0.3)' }}>
+                    {ANALYSIS_LABELS_MAP[k] || k}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Ereignisse */}
+          <div style={{ marginBottom: '28px' }}>
+            {sectionTitle(`Angelegte Ereignisse (${eventsLoading ? '…' : events.length})`)}
+            {eventsLoading ? (
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-2)' }}>Lädt…</div>
+            ) : events.length === 0 ? (
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-2)', fontStyle: 'italic' }}>Keine Ereignisse angelegt</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {events.map(ev => (
+                  <div key={ev.id} style={{ padding: '12px 14px', backgroundColor: 'var(--bg-card)', borderRadius: '3px', border: '1px solid var(--border)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                      <div>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 500, color: 'var(--text-1)', marginBottom: '2px' }}>{ev.name}</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-2)' }}>
+                          {EVENT_CATEGORY_LABELS[ev.category] || ev.category} · {new Date(ev.event_date).toLocaleDateString('de-DE')}
+                        </div>
+                        {ev.description && <div style={{ fontSize: '0.75rem', color: 'var(--text-2)', marginTop: '3px' }}>{ev.description}</div>}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Rechte */}
+          <div>
+            {sectionTitle('Rechte & Einstellungen')}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-              {purchased.filter(k => k !== 'compatibility').map(k => (
-                <span key={k} style={{ padding: '3px 10px', fontSize: '0.75rem', borderRadius: '20px', backgroundColor: 'rgba(var(--accent-rgb,184,151,90),0.1)', color: 'var(--accent)', border: '1px solid rgba(var(--accent-rgb,184,151,90),0.3)' }}>
-                  {ANALYSIS_LABELS[k] || k}
-                </span>
-              ))}
+              {user.is_admin && <span style={{ padding: '4px 12px', fontSize: '0.75rem', borderRadius: '20px', backgroundColor: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)' }}>Admin</span>}
+              {user.maya_ki_enabled && <span style={{ padding: '4px 12px', fontSize: '0.75rem', borderRadius: '20px', backgroundColor: 'rgba(var(--accent-rgb,184,151,90),0.1)', color: 'var(--accent)', border: '1px solid rgba(var(--accent-rgb,184,151,90),0.3)' }}>Maya KI</span>}
+              {user.max_events_override != null && <span style={{ padding: '4px 12px', fontSize: '0.75rem', borderRadius: '20px', backgroundColor: 'rgba(59,130,246,0.1)', color: '#3b82f6', border: '1px solid rgba(59,130,246,0.3)' }}>Max. Ereignisse: {user.max_events_override}</span>}
+              {user.chat_messages_limit != null && <span style={{ padding: '4px 12px', fontSize: '0.75rem', borderRadius: '20px', backgroundColor: 'rgba(59,130,246,0.1)', color: '#3b82f6', border: '1px solid rgba(59,130,246,0.3)' }}>Chat-Limit: {user.chat_messages_limit}</span>}
+              {!user.is_admin && !user.maya_ki_enabled && user.max_events_override == null && user.chat_messages_limit == null && (
+                <span style={{ fontSize: '0.82rem', color: 'var(--text-2)', fontStyle: 'italic' }}>Keine besonderen Rechte</span>
+              )}
             </div>
-          )}
-        </div>
-
-        <div>
-          <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: '10px' }}>Rechte & Einstellungen</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-            {user.is_admin && <span style={{ padding: '3px 10px', fontSize: '0.75rem', borderRadius: '20px', backgroundColor: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)' }}>Admin</span>}
-            {user.maya_ki_enabled && <span style={{ padding: '3px 10px', fontSize: '0.75rem', borderRadius: '20px', backgroundColor: 'rgba(var(--accent-rgb,184,151,90),0.1)', color: 'var(--accent)', border: '1px solid rgba(var(--accent-rgb,184,151,90),0.3)' }}>Maya KI</span>}
-            {user.max_events_override && <span style={{ padding: '3px 10px', fontSize: '0.75rem', borderRadius: '20px', backgroundColor: 'rgba(59,130,246,0.1)', color: '#3b82f6', border: '1px solid rgba(59,130,246,0.3)' }}>Max. Ereignisse: {user.max_events_override}</span>}
-            {user.chat_messages_limit && <span style={{ padding: '3px 10px', fontSize: '0.75rem', borderRadius: '20px', backgroundColor: 'rgba(59,130,246,0.1)', color: '#3b82f6', border: '1px solid rgba(59,130,246,0.3)' }}>Chat-Limit: {user.chat_messages_limit}</span>}
           </div>
         </div>
       </div>
@@ -436,6 +525,23 @@ export default function Admin() {
         setError(e.message)
       }
     })
+  }
+
+  function setDefaultPassword(userId) {
+    showConfirm(
+      'Passwort auf Standardwert setzen? Der User muss sich danach ein neues Passwort anlegen.',
+      async () => {
+        closeModal()
+        try {
+          await apiCall(`/users/${userId}/set-default-password`, 'POST')
+          setMsg('Passwort wurde zurückgesetzt. Der User wird beim nächsten Login aufgefordert, ein neues Passwort anzulegen.')
+          setUsers(prev => prev.map(u => u.id === userId ? { ...u, must_change_password: true } : u))
+          if (selectedUser?.id === userId) setSelectedUser(prev => ({ ...prev, must_change_password: true }))
+        } catch (e) {
+          setError(e.message)
+        }
+      }
+    )
   }
 
   function resetPassword(userId) {
@@ -828,6 +934,12 @@ export default function Admin() {
                       style={{ padding: '10px', backgroundColor: 'var(--bg-deep)', border: '1px solid var(--border)', color: 'var(--text-2)', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem', textAlign: 'left' }}
                     >
                       Passwort-Reset senden
+                    </button>
+                    <button
+                      onClick={() => setDefaultPassword(selectedUser.id)}
+                      style={{ padding: '10px', backgroundColor: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.3)', color: '#f59e0b', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem', textAlign: 'left' }}
+                    >
+                      Passwort auf Standardwert setzen
                     </button>
                     <button
                       onClick={() => softDeleteUser(selectedUser)}

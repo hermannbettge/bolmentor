@@ -22,7 +22,7 @@ async function requireAdmin(req, res, next) {
 router.get('/users', requireAdmin, async (req, res) => {
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, name, birth_date, membership_active, membership_start, membership_end, purchased_analyses, is_admin, created_at, max_events_override, chat_messages_limit, subscription_plan, subscription_cancel_at_period_end, maya_ki_enabled, partner_first_name, partner_last_name, partner_birth_date, updated_at')
+    .select('id, name, last_name, birth_date, phone, address, zip, city, membership_active, membership_start, membership_end, purchased_analyses, is_admin, created_at, max_events_override, chat_messages_limit, subscription_plan, subscription_cancel_at_period_end, maya_ki_enabled, partner_first_name, partner_last_name, partner_birth_date, updated_at, must_change_password')
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
   if (error) return res.status(500).json({ error: error.message })
@@ -155,7 +155,7 @@ router.post('/users', requireAdmin, async (req, res) => {
   res.json({ success: true, id: userId })
 })
 
-// Passwort-Reset
+// Passwort-Reset (sendet E-Mail-Link)
 router.post('/users/:id/reset-password', requireAdmin, async (req, res) => {
   const { data: profile } = await supabase.from('profiles').select('id').eq('id', req.params.id).single()
   if (!profile) return res.status(404).json({ error: 'Nutzer nicht gefunden' })
@@ -164,6 +164,35 @@ router.post('/users/:id/reset-password', requireAdmin, async (req, res) => {
   const { error } = await supabase.auth.resetPasswordForEmail(authUser.user.email)
   if (error) return res.status(500).json({ error: error.message })
   res.json({ success: true })
+})
+
+// Passwort auf Standardwert setzen + muss beim nächsten Login geändert werden
+router.post('/users/:id/set-default-password', requireAdmin, async (req, res) => {
+  const id = req.params.id
+  const defaultPassword = process.env.ADMIN_RESET_PASSWORD || '#Sonne2026!#'
+  try {
+    const { error: pwError } = await supabase.auth.admin.updateUserById(id, { password: defaultPassword })
+    if (pwError) return res.status(500).json({ error: pwError.message })
+    const { error: flagError } = await supabase.from('profiles').update({
+      must_change_password: true,
+      updated_at: new Date().toISOString(),
+    }).eq('id', id)
+    if (flagError) return res.status(500).json({ error: flagError.message })
+    res.json({ success: true })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+// Ereignisse eines Users
+router.get('/users/:id/events', requireAdmin, async (req, res) => {
+  const { data, error } = await supabase
+    .from('user_events')
+    .select('*')
+    .eq('user_id', req.params.id)
+    .order('event_date', { ascending: false })
+  if (error) return res.status(500).json({ error: error.message })
+  res.json(data)
 })
 
 // Soft-Delete: User in Papierkorb verschieben (Zugang sperren, Daten behalten)

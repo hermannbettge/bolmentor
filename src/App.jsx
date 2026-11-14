@@ -22,6 +22,7 @@ import Checkout from './pages/Checkout.jsx'
 import ZusatzanalysenPage from './pages/ZusatzanalysenPage.jsx'
 import MayaKI from './pages/MayaKI.jsx'
 import ChatHistory from './pages/ChatHistory.jsx'
+import PasswortAendern from './pages/PasswortAendern.jsx'
 
 function AdminRoute({ children }) {
   const { user, profile, loading } = useAuth()
@@ -56,6 +57,8 @@ function ProtectedRoute({ children, requireMembership = false }) {
 
   if (!user) return <Navigate to="/login" replace />
 
+  if (profile?.must_change_password) return <Navigate to="/passwort-aendern" replace />
+
   if (requireMembership && profile && !profile.membership_active && !profile.is_admin) {
     return <Navigate to={`/checkout?product=membershipMonthly`} replace />
   }
@@ -88,6 +91,7 @@ function AppRoutes() {
         <Route path="/analyse/:type" element={<ProtectedRoute requireMembership><AnalysePage /></ProtectedRoute>} />
         <Route path="/maya-kalender" element={<ProtectedRoute requireMembership><MayaInfo /></ProtectedRoute>} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/passwort-aendern" element={<ProtectedRoute><PasswortAendern /></ProtectedRoute>} />
         <Route path="/maya-ki" element={<AdminRoute><MayaKI /></AdminRoute>} />
         <Route path="/chat-verlauf" element={<AdminRoute><ChatHistory /></AdminRoute>} />
 
