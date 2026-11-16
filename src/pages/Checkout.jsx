@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { redirectToCheckout, redirectToGuestCheckout } from '../lib/stripe.js'
 import { useAuth } from '../hooks/useAuth.jsx'
+import { hasMembership as memberHasAccess } from '../lib/membership.js'
 
 const analysisPrice = '9 € / Monat'
 const analysisNote = '9 € / Monat. Jederzeit kündbar.'
@@ -33,7 +34,7 @@ export default function Checkout() {
   const productKey = params.get('product')
   const product = PRODUCTS.find(p => p.key === productKey)
   const isAnalysis = product && !MEMBERSHIP_KEYS.includes(productKey)
-  const hasMembership = profile?.membership_active || profile?.is_admin
+  const hasMembership = memberHasAccess(profile)
 
   async function handleCheckout() {
     setLoading(true)
