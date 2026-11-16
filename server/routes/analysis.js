@@ -10,6 +10,7 @@ const anthropic = new Anthropic({
 
 
 import { calculateKin as calculateKinFromDate, civilDateISO, parseCivilDate } from '../../src/lib/mayanCalendar.js'
+import { hasMembership } from '../../src/lib/membership.js'
 import { KNOWLEDGE_BASE } from '../../src/lib/knowledgeBase.js'
 import { INTERPRETATION_RULES, calendarFacts, REGEN_CONTEXT } from '../lib/mayaContext.js'
 
@@ -37,7 +38,7 @@ async function getProfile(userId) {
 
 // Check membership
 function checkMembership(profile) {
-  if (!profile.membership_active) throw new Error('Keine aktive Mitgliedschaft')
+  if (!hasMembership(profile)) throw new Error('Keine aktive Mitgliedschaft')
 }
 
 function checkAnnualPlan(profile) {
