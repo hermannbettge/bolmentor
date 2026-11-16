@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
+import { hasMembership as memberHasAccess } from '../lib/membership.js'
 
 const isIntro = new Date() < new Date('2027-01-01T00:00:00Z')
 const SINGLE_PRICE = isIntro ? 7 : 9
@@ -23,7 +24,7 @@ const ALL_ANALYSES = [
 export default function CheckoutModal({ onClose, preselected = null, mode = 'analysis' }) {
   const navigate = useNavigate()
   const { profile } = useAuth()
-  const hasMembership = profile?.membership_active || profile?.is_admin
+  const hasMembership = memberHasAccess(profile)
   const [selected, setSelected] = useState(new Set(preselected ? [preselected] : []))
   const [tab, setTab] = useState(mode === 'annual' ? 'annual' : 'monthly')
 
