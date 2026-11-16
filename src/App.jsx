@@ -23,6 +23,8 @@ import ZusatzanalysenPage from './pages/ZusatzanalysenPage.jsx'
 import MayaKI from './pages/MayaKI.jsx'
 import ChatHistory from './pages/ChatHistory.jsx'
 import PasswortAendern from './pages/PasswortAendern.jsx'
+import WorkshopLogin from './pages/WorkshopLogin.jsx'
+import { hasMembership } from './lib/membership.js'
 
 function AdminRoute({ children }) {
   const { user, profile, loading } = useAuth()
@@ -59,7 +61,7 @@ function ProtectedRoute({ children, requireMembership = false }) {
 
   if (profile?.must_change_password) return <Navigate to="/passwort-aendern" replace />
 
-  if (requireMembership && profile && !profile.membership_active && !profile.is_admin) {
+  if (requireMembership && profile && !hasMembership(profile)) {
     return <Navigate to={`/checkout?product=membershipMonthly`} replace />
   }
 
@@ -73,6 +75,7 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<Salespage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/workshop-login" element={<WorkshopLogin />} />
         <Route path="/registrieren" element={<Registrieren />} />
         <Route path="/impressum" element={<Impressum />} />
         <Route path="/datenschutz" element={<Datenschutz />} />
