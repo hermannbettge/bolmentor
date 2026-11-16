@@ -8,6 +8,7 @@ import chatRoutes from './routes/chat.js'
 import webhookRoutes from './routes/webhooks.js'
 import adminRoutes from './routes/admin.js'
 import authRoutes from './routes/auth.js'
+import workshopSsoRoutes from './routes/workshopSso.js'
 import stripeRoutes from './routes/stripe.js'
 import stripeWebhookRoutes from './routes/stripeWebhook.js'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -46,6 +47,7 @@ app.use('/api/chat', chatRoutes)
 app.use('/api/webhooks', webhookRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/auth', authRoutes)
+app.use('/api/auth', workshopSsoRoutes)
 app.use('/api/stripe', stripeRoutes)
 app.use('/api/stripe/webhook', stripeWebhookRoutes)
 

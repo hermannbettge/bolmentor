@@ -6,6 +6,7 @@ import { useIsMobile } from '../hooks/useIsMobile.js'
 import { calculateKin } from '../lib/mayanCalendar.js'
 import { supabase } from '../lib/supabase.js'
 import { redirectToCustomerPortal } from '../lib/stripe.js'
+import { hasMembership } from '../lib/membership.js'
 import { useTrialCountdown, formatCountdown, TrialModal, useTrialInfo } from '../components/TrialGate.jsx'
 
 const ANALYSE_LABELS = {
@@ -437,10 +438,16 @@ export default function Profil() {
         <Section title="Mitgliedschaft">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
             <span style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>Status</span>
-            <span style={{ fontSize: '0.85rem', fontWeight: 500, color: profile?.membership_active ? '#2d8a4e' : '#c0392b' }}>
-              {profile?.membership_active ? '● Aktiv' : '● Inaktiv'}
+            <span style={{ fontSize: '0.85rem', fontWeight: 500, color: hasMembership(profile) ? '#2d8a4e' : '#c0392b' }}>
+              {hasMembership(profile) ? '● Aktiv' : '● Inaktiv'}
             </span>
           </div>
+          {profile?.live_membership_until && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
+              <span style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>Workshop-Zugang bis</span>
+              <span style={{ color: 'var(--text-1)', fontSize: '0.9rem' }}>{new Date(`${profile.live_membership_until}T12:00:00`).toLocaleDateString('de-DE')}</span>
+            </div>
+          )}
           {profile?.membership_start && (
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
               <span style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>Mitglied seit</span>
