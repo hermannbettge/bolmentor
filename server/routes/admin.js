@@ -18,13 +18,28 @@ async function requireAdmin(req, res, next) {
   next()
 }
 
+const USERS_SELECT_FULL = 'id, name, last_name, birth_date, phone, address, zip, city, membership_active, membership_start, membership_end, purchased_analyses, is_admin, created_at, max_events_override, chat_messages_limit, subscription_plan, subscription_cancel_at_period_end, maya_ki_enabled, partner_first_name, partner_last_name, partner_birth_date, updated_at, must_change_password'
+const USERS_SELECT_COMPAT = 'id, name, last_name, birth_date, phone, address, zip, city, membership_active, membership_start, membership_end, purchased_analyses, is_admin, created_at, max_events_override, chat_messages_limit, subscription_plan, subscription_cancel_at_period_end, maya_ki_enabled, partner_first_name, partner_last_name, partner_birth_date, updated_at'
+
 // Alle aktiven User auflisten (ohne soft-deleted)
 router.get('/users', requireAdmin, async (req, res) => {
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from('profiles')
-    .select('id, name, last_name, birth_date, phone, address, zip, city, membership_active, membership_start, membership_end, purchased_analyses, is_admin, created_at, max_events_override, chat_messages_limit, subscription_plan, subscription_cancel_at_period_end, maya_ki_enabled, partner_first_name, partner_last_name, partner_birth_date, updated_at, must_change_password')
+    .select(USERS_SELECT_FULL)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
+
+  if (error && error.message && error.message.includes('must_change_password')) {
+    // Spalte existiert noch nicht — Migration ausstehend, Fallback ohne das Feld
+    const fallback = await supabase
+      .from('profiles')
+      .select(USERS_SELECT_COMPAT)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false })
+    if (fallback.error) return res.status(500).json({ error: fallback.error.message })
+    return res.json(fallback.data)
+  }
+
   if (error) return res.status(500).json({ error: error.message })
   res.json(data)
 })
