@@ -396,6 +396,7 @@ export default function Admin() {
   const [restoreResult, setRestoreResult] = useState(null)
   const [createModal, setCreateModal] = useState(false)
   const [createLoading, setCreateLoading] = useState(false)
+  const [sendingMailFor, setSendingMailFor] = useState(null)
 
   useEffect(() => {
     if (profile && !profile.is_admin) navigate('/')
@@ -615,14 +616,31 @@ export default function Admin() {
   async function createUser(form) {
     setCreateLoading(true)
     try {
-      await apiCall('/users', 'POST', form)
-      setMsg(`Nutzer ${form.email} angelegt. Passwort-Mail wurde gesendet.`)
+      const result = await apiCall('/users', 'POST', form)
+      if (result.partial) {
+        setError(`Nutzer angelegt. Die Zugangs-Mail wurde gesendet, aber: ${result.warning} — Bitte nutze "Zugangs-Mail erneut senden" falls nötig.`)
+      } else {
+        setMsg(`Nutzer ${form.email} wurde angelegt. Die Einladungsmail wurde angefordert.`)
+      }
       setCreateModal(false)
       await loadAll()
     } catch (e) {
       setError(e.message)
     } finally {
       setCreateLoading(false)
+    }
+  }
+
+  async function sendAccessMail(userId) {
+    setSendingMailFor(userId)
+    setError('')
+    try {
+      const result = await apiCall(`/users/${userId}/reset-password`, 'POST')
+      setMsg(`Zugangs-Mail an ${result.email} wurde angefordert.`)
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setSendingMailFor(null)
     }
   }
 
@@ -930,10 +948,11 @@ export default function Admin() {
                       E-Mail ändern…
                     </button>
                     <button
-                      onClick={() => resetPassword(selectedUser.id)}
-                      style={{ padding: '10px', backgroundColor: 'var(--bg-deep)', border: '1px solid var(--border)', color: 'var(--text-2)', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem', textAlign: 'left' }}
+                      onClick={() => sendAccessMail(selectedUser.id)}
+                      disabled={sendingMailFor === selectedUser.id}
+                      style={{ padding: '10px', backgroundColor: 'var(--bg-deep)', border: '1px solid var(--border)', color: sendingMailFor === selectedUser.id ? 'var(--text-2)' : 'var(--text-1)', cursor: sendingMailFor === selectedUser.id ? 'not-allowed' : 'pointer', borderRadius: '2px', fontSize: '0.82rem', textAlign: 'left', opacity: sendingMailFor === selectedUser.id ? 0.6 : 1 }}
                     >
-                      Passwort-Reset senden
+                      {sendingMailFor === selectedUser.id ? 'Wird gesendet …' : 'Zugangs-Mail erneut senden'}
                     </button>
                     <button
                       onClick={() => setDefaultPassword(selectedUser.id)}

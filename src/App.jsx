@@ -23,6 +23,7 @@ import ZusatzanalysenPage from './pages/ZusatzanalysenPage.jsx'
 import MayaKI from './pages/MayaKI.jsx'
 import ChatHistory from './pages/ChatHistory.jsx'
 import PasswortAendern from './pages/PasswortAendern.jsx'
+import PasswortSetzen from './pages/PasswortSetzen.jsx'
 import WorkshopLogin from './pages/WorkshopLogin.jsx'
 import { hasMembership } from './lib/membership.js'
 
@@ -95,6 +96,7 @@ function AppRoutes() {
         <Route path="/maya-kalender" element={<ProtectedRoute requireMembership><MayaInfo /></ProtectedRoute>} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/passwort-aendern" element={<ProtectedRoute><PasswortAendern /></ProtectedRoute>} />
+        <Route path="/passwort-setzen" element={<PasswortSetzen />} />
         <Route path="/maya-ki" element={<AdminRoute><MayaKI /></AdminRoute>} />
         <Route path="/chat-verlauf" element={<AdminRoute><ChatHistory /></AdminRoute>} />
 

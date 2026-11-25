@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import { randomBytes } from 'crypto'
 import { supabase } from '../lib/supabase.js'
 
 const router = Router()
@@ -140,45 +141,65 @@ router.patch('/users/:id/email', requireAdmin, async (req, res) => {
   res.json({ success: true })
 })
 
-// Nutzer anlegen (Admin erstellt Account, sendet Passwort-Reset-Mail)
+function getAppUrl() {
+  const url = process.env.APP_URL
+  if (!url || url.trim() === '' || url.includes('localhost')) {
+    console.warn('[Admin] APP_URL nicht gesetzt oder zeigt auf localhost:', url)
+  }
+  return url && url.trim() !== '' ? url.trim().replace(/\/$/, '') : 'http://localhost:5173'
+}
+
+// Nutzer anlegen — verwendet Supabase Invite-Flow (atomar: Account + Mail in einem Schritt)
 router.post('/users', requireAdmin, async (req, res) => {
   const { email, name, birth_date } = req.body
   if (!email) return res.status(400).json({ error: 'E-Mail fehlt' })
 
-  // Zufälliges temporäres Passwort — wird sofort per Reset-Mail überschrieben
-  const tempPassword = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2).toUpperCase() + '!1'
+  const redirectTo = `${getAppUrl()}/passwort-setzen`
 
-  const { data: authData, error: createError } = await supabase.auth.admin.createUser({
-    email,
-    password: tempPassword,
-    email_confirm: true,
+  // inviteUserByEmail: legt Auth-User an UND sendet die Einladungsmail atomar
+  const { data: inviteData, error: inviteError } = await supabase.auth.admin.inviteUserByEmail(email, {
+    redirectTo,
   })
-  if (createError) return res.status(500).json({ error: createError.message })
 
-  const userId = authData.user.id
+  if (inviteError) {
+    if (inviteError.message?.toLowerCase().includes('already') || inviteError.status === 422) {
+      return res.status(409).json({ error: 'Diese E-Mail-Adresse ist bereits registriert.' })
+    }
+    return res.status(500).json({ error: inviteError.message })
+  }
 
-  // Profil anlegen
+  const userId = inviteData.user.id
+
+  // Profil anlegen — Teilerfolg bei Fehler klar kommunizieren
   const profileData = { id: userId, updated_at: new Date().toISOString() }
   if (name) profileData.name = name
   if (birth_date) profileData.birth_date = birth_date
-  await supabase.from('profiles').upsert(profileData)
+  const { error: profileError } = await supabase.from('profiles').upsert(profileData)
 
-  // Passwort-Reset-Mail senden damit der Nutzer sein Passwort selbst setzt
-  const appUrl = process.env.APP_URL || 'http://localhost:5173'
-  await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${appUrl}/passwort-setzen` })
+  if (profileError) {
+    console.error('[Admin] Profil-Upsert nach Invite fehlgeschlagen:', profileError.message)
+    return res.status(207).json({
+      success: false,
+      partial: true,
+      id: userId,
+      warning: `Nutzer angelegt und Einladungsmail gesendet, aber Profil konnte nicht erstellt werden: ${profileError.message}`,
+    })
+  }
 
   res.json({ success: true, id: userId })
 })
 
-// Passwort-Reset (sendet E-Mail-Link)
+// Zugangs-Mail erneut senden (für bestehende Nutzer — ändert kein Passwort, keine Rolle, kein Abo)
 router.post('/users/:id/reset-password', requireAdmin, async (req, res) => {
-  const { data: profile } = await supabase.from('profiles').select('id').eq('id', req.params.id).single()
-  if (!profile) return res.status(404).json({ error: 'Nutzer nicht gefunden' })
-  const { data: authUser } = await supabase.auth.admin.getUserById(req.params.id)
-  if (!authUser?.user?.email) return res.status(404).json({ error: 'E-Mail nicht gefunden' })
-  const { error } = await supabase.auth.resetPasswordForEmail(authUser.user.email)
+  const { data: authUser, error: getUserError } = await supabase.auth.admin.getUserById(req.params.id)
+  if (getUserError || !authUser?.user) return res.status(404).json({ error: 'Auth-Nutzer nicht gefunden' })
+  const email = authUser.user.email
+  if (!email) return res.status(404).json({ error: 'Keine E-Mail-Adresse vorhanden' })
+
+  const redirectTo = `${getAppUrl()}/passwort-setzen`
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo })
   if (error) return res.status(500).json({ error: error.message })
-  res.json({ success: true })
+  res.json({ success: true, email })
 })
 
 // Passwort auf Standardwert setzen + muss beim nächsten Login geändert werden
