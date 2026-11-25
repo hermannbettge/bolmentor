@@ -165,6 +165,9 @@ router.post('/users', requireAdmin, async (req, res) => {
     if (inviteError.message?.toLowerCase().includes('already') || inviteError.status === 422) {
       return res.status(409).json({ error: 'Diese E-Mail-Adresse ist bereits registriert.' })
     }
+    if (inviteError.message?.toLowerCase().includes('rate limit')) {
+      return res.status(429).json({ error: 'Versandlimit erreicht. Supabase erlaubt im kostenlosen Plan nur 2 E-Mails pro Stunde. Bitte warte etwas und versuche es erneut, oder richte einen eigenen SMTP-Server in Supabase ein.' })
+    }
     return res.status(500).json({ error: inviteError.message })
   }
 
@@ -198,7 +201,12 @@ router.post('/users/:id/reset-password', requireAdmin, async (req, res) => {
 
   const redirectTo = `${getAppUrl()}/passwort-setzen`
   const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo })
-  if (error) return res.status(500).json({ error: error.message })
+  if (error) {
+    if (error.message?.toLowerCase().includes('rate limit')) {
+      return res.status(429).json({ error: 'Versandlimit erreicht. Supabase erlaubt im kostenlosen Plan nur 2 E-Mails pro Stunde. Bitte warte etwas und versuche es erneut, oder richte einen eigenen SMTP-Server in Supabase ein.' })
+    }
+    return res.status(500).json({ error: error.message })
+  }
   res.json({ success: true, email })
 })
 
