@@ -95,6 +95,11 @@ export default function Profil() {
   const [msg, setMsg] = useState('')
   const [recalcMsg, setRecalcMsg] = useState('')
   const [recalcing, setRecalcing] = useState(false)
+  const [pwCurrent, setPwCurrent] = useState('')
+  const [pwNew, setPwNew] = useState('')
+  const [pwConfirm, setPwConfirm] = useState('')
+  const [pwSaving, setPwSaving] = useState(false)
+  const [pwMsg, setPwMsg] = useState('')
 
   const [events, setEvents] = useState([])
   const [showEventForm, setShowEventForm] = useState(false)
@@ -224,6 +229,25 @@ export default function Profil() {
       setMsg('Fehler beim Speichern.')
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function handlePasswordChange(e) {
+    e.preventDefault()
+    if (pwNew.length < 8) { setPwMsg('Das neue Passwort muss mindestens 8 Zeichen haben.'); return }
+    if (pwNew !== pwConfirm) { setPwMsg('Die neuen Passwörter stimmen nicht überein.'); return }
+    setPwSaving(true); setPwMsg('')
+    try {
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email: profile?.email, password: pwCurrent })
+      if (signInError) { setPwMsg('Das aktuelle Passwort ist nicht korrekt.'); return }
+      const { error } = await supabase.auth.updateUser({ password: pwNew })
+      if (error) { setPwMsg('Fehler: ' + error.message); return }
+      setPwMsg('Passwort erfolgreich geändert.')
+      setPwCurrent(''); setPwNew(''); setPwConfirm('')
+    } catch (err) {
+      setPwMsg('Fehler: ' + err.message)
+    } finally {
+      setPwSaving(false)
     }
   }
 
@@ -534,6 +558,28 @@ export default function Profil() {
               </button>
             </div>
           )}
+
+          {/* Passwort ändern */}
+          <div style={{ padding: '14px 0', borderBottom: '1px solid var(--border)' }}>
+            <div style={{ color: 'var(--text-2)', fontSize: '0.9rem', marginBottom: '14px' }}>Passwort ändern</div>
+            <form onSubmit={handlePasswordChange}>
+              <Field label="Aktuelles Passwort" value={pwCurrent} onChange={setPwCurrent} type="password" placeholder="Dein aktuelles Passwort" />
+              <Field label="Neues Passwort" value={pwNew} onChange={setPwNew} type="password" placeholder="Mindestens 8 Zeichen" />
+              <Field label="Neues Passwort bestätigen" value={pwConfirm} onChange={setPwConfirm} type="password" placeholder="Passwort wiederholen" />
+              {pwMsg && (
+                <p style={{ fontSize: '0.83rem', color: pwMsg.includes('Fehler') || pwMsg.includes('korrekt') || pwMsg.includes('stimmen') || pwMsg.includes('Zeichen') ? '#c0392b' : 'var(--accent)', marginBottom: '12px' }}>
+                  {pwMsg}
+                </p>
+              )}
+              <button
+                type="submit"
+                disabled={pwSaving || !pwCurrent || !pwNew || !pwConfirm}
+                style={{ border: '1px solid var(--border)', color: 'var(--text-2)', background: 'transparent', borderRadius: '40px', padding: '10px 20px', fontSize: '0.82rem', cursor: pwSaving || !pwCurrent || !pwNew || !pwConfirm ? 'not-allowed' : 'pointer', opacity: pwSaving || !pwCurrent || !pwNew || !pwConfirm ? 0.5 : 1, fontFamily: 'Inter, sans-serif' }}
+              >
+                {pwSaving ? 'Wird gespeichert…' : 'Passwort speichern'}
+              </button>
+            </form>
+          </div>
 
           {/* Abmelden */}
           <div style={{ paddingTop: '20px' }}>
