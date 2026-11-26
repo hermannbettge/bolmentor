@@ -333,6 +333,49 @@ function InputModal({ label, onConfirm, onCancel }) {
   )
 }
 
+function PasswordModal({ onConfirm, onCancel, loading }) {
+  const [pw, setPw] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const [err, setErr] = useState('')
+  function handleSubmit() {
+    if (pw.length < 8) { setErr('Mindestens 8 Zeichen.'); return }
+    if (pw !== confirm) { setErr('Passwörter stimmen nicht überein.'); return }
+    onConfirm(pw)
+  }
+  return (
+    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px' }}>
+      <div style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '4px', padding: '32px', maxWidth: '420px', width: '100%' }}>
+        <div style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.14em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: '20px' }}>Passwort setzen</div>
+        {[{ label: 'Neues Passwort', val: pw, set: setPw }, { label: 'Passwort bestätigen', val: confirm, set: setConfirm }].map(({ label, val, set }) => (
+          <div key={label} style={{ marginBottom: '14px' }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-2)', marginBottom: '6px' }}>{label}</div>
+            <input
+              type="password"
+              value={val}
+              onChange={e => { set(e.target.value); setErr('') }}
+              onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+              style={{ width: '100%', padding: '10px 12px', backgroundColor: 'var(--bg-deep)', border: '1px solid var(--border)', borderRadius: '2px', color: 'var(--text-1)', fontSize: '0.9rem', boxSizing: 'border-box' }}
+            />
+          </div>
+        ))}
+        {err && <p style={{ fontSize: '0.82rem', color: '#ef4444', marginBottom: '12px' }}>{err}</p>}
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button onClick={onCancel} style={{ flex: 1, padding: '12px', backgroundColor: 'var(--bg-deep)', border: '1px solid var(--border)', color: 'var(--text-2)', cursor: 'pointer', borderRadius: '2px', fontSize: '0.88rem' }}>
+            Abbrechen
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={loading}
+            style={{ flex: 1, padding: '12px', backgroundColor: 'rgba(var(--accent-rgb,184,151,90),0.15)', border: '1px solid rgba(var(--accent-rgb,184,151,90),0.4)', color: 'var(--accent)', cursor: loading ? 'not-allowed' : 'pointer', borderRadius: '2px', fontSize: '0.88rem', fontWeight: 600, opacity: loading ? 0.6 : 1 }}
+          >
+            {loading ? 'Wird gespeichert…' : 'Speichern'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function CreateUserModal({ onConfirm, onCancel, loading }) {
   const [form, setForm] = useState({ email: '', name: '', birth_date: '' })
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
@@ -397,6 +440,8 @@ export default function Admin() {
   const [createModal, setCreateModal] = useState(false)
   const [createLoading, setCreateLoading] = useState(false)
   const [sendingMailFor, setSendingMailFor] = useState(null)
+  const [pwModal, setPwModal] = useState(null) // userId
+  const [pwModalLoading, setPwModalLoading] = useState(false)
 
   useEffect(() => {
     if (profile && !profile.is_admin) navigate('/')
@@ -628,6 +673,19 @@ export default function Admin() {
       setError(e.message)
     } finally {
       setCreateLoading(false)
+    }
+  }
+
+  async function setCustomPassword(userId, password) {
+    setPwModalLoading(true)
+    try {
+      await apiCall(`/users/${userId}/set-password`, 'POST', { password })
+      setMsg('Passwort wurde gesetzt.')
+      setPwModal(null)
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setPwModalLoading(false)
     }
   }
 
@@ -948,6 +1006,12 @@ export default function Admin() {
                       E-Mail ändern…
                     </button>
                     <button
+                      onClick={() => setPwModal(selectedUser.id)}
+                      style={{ padding: '10px', backgroundColor: 'var(--bg-deep)', border: '1px solid var(--border)', color: 'var(--text-1)', cursor: 'pointer', borderRadius: '2px', fontSize: '0.82rem', textAlign: 'left' }}
+                    >
+                      Passwort manuell setzen…
+                    </button>
+                    <button
                       onClick={() => sendAccessMail(selectedUser.id)}
                       disabled={sendingMailFor === selectedUser.id}
                       style={{ padding: '10px', backgroundColor: 'var(--bg-deep)', border: '1px solid var(--border)', color: sendingMailFor === selectedUser.id ? 'var(--text-2)' : 'var(--text-1)', cursor: sendingMailFor === selectedUser.id ? 'not-allowed' : 'pointer', borderRadius: '2px', fontSize: '0.82rem', textAlign: 'left', opacity: sendingMailFor === selectedUser.id ? 0.6 : 1 }}
@@ -1198,6 +1262,13 @@ export default function Admin() {
         loading={createLoading}
         onConfirm={createUser}
         onCancel={() => setCreateModal(false)}
+      />
+    )}
+    {pwModal && (
+      <PasswordModal
+        loading={pwModalLoading}
+        onConfirm={(pw) => setCustomPassword(pwModal, pw)}
+        onCancel={() => setPwModal(null)}
       />
     )}
     </>

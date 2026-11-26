@@ -228,6 +228,15 @@ router.post('/users/:id/set-default-password', requireAdmin, async (req, res) =>
   }
 })
 
+// Passwort manuell auf einen bestimmten Wert setzen (kein Pflicht-Wechsel)
+router.post('/users/:id/set-password', requireAdmin, async (req, res) => {
+  const { password } = req.body
+  if (!password || password.length < 8) return res.status(400).json({ error: 'Passwort muss mindestens 8 Zeichen haben.' })
+  const { error } = await supabase.auth.admin.updateUserById(req.params.id, { password })
+  if (error) return res.status(500).json({ error: error.message })
+  res.json({ success: true })
+})
+
 // Ereignisse eines Users
 router.get('/users/:id/events', requireAdmin, async (req, res) => {
   const { data, error } = await supabase
